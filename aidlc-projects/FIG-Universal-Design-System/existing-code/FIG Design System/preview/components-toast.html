@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Components — Toast / Snackbar</title>
+<link rel="stylesheet" href="../primitives.css">
+<link rel="stylesheet" href="../semantic.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  body { margin: 0; padding: var(--space-6, 24px); background: var(--bg-app, #F8FAFC); font-family: var(--font-sans); display: flex; flex-direction: column; gap: var(--space-5, 20px); }
+
+  .stage { position: relative; min-height: 200px; background: linear-gradient(180deg, #E0F2FE 0%, #F1F5F9 100%); border: 1px solid var(--color-border-subtle, #E2E8F0); border-radius: var(--radius-lg, 16px); overflow: hidden; padding: var(--space-5, 20px); }
+  .stage__label { font-family: var(--font-mono); font-size: var(--text-xs, 12px); color: var(--color-text-tertiary, #94A3B8); margin-bottom: var(--space-3, 12px); }
+  .stage__hint { font-size: var(--text-sm, 14px); color: var(--color-text-secondary, #475569); }
+
+  .toast { display: flex; align-items: center; gap: var(--space-3, 12px); padding: var(--space-3, 12px) var(--space-4, 16px); border-radius: 12px; background: var(--color-surface-inverse, #0F172A); color: var(--color-text-inverse, #F8FAFC); font-size: var(--text-sm, 14px); box-shadow: 0 10px 30px rgba(0,0,0,0.18); min-width: 280px; max-width: 480px; }
+  .toast__icon { display: grid; place-items: center; flex-shrink: 0; }
+  .toast__icon svg { width: 18px; height: 18px; }
+  .toast__body { flex: 1; }
+  .toast__action { color: #34D399; font-weight: 700; text-decoration: none; padding: var(--space-1, 4px) var(--space-2, 8px); border-radius: 6px; }
+  .toast__action:hover { background: rgba(255,255,255,0.08); }
+  .toast__close { width: 28px; height: 28px; border: none; background: transparent; cursor: pointer; border-radius: 6px; color: #94A3B8; display: grid; place-items: center; }
+  .toast__close svg { width: 16px; height: 16px; }
+
+  .toast--success .toast__icon { color: #34D399; }
+  .toast--error   .toast__icon { color: #FCA5A5; }
+  .toast--info    .toast__icon { color: #93C5FD; }
+
+  .anchor-bl { position: absolute; left: var(--space-5, 20px); bottom: var(--space-5, 20px); }
+  .anchor-bc { position: absolute; left: 50%; bottom: var(--space-5, 20px); transform: translateX(-50%); }
+  .anchor-tr { position: absolute; right: var(--space-5, 20px); top: var(--space-5, 20px); }
+
+  .stack { display: flex; flex-direction: column-reverse; gap: var(--space-2, 8px); }
+</style>
+</head>
+<body>
+
+  <div class="stage">
+    <div class="stage__label">Snackbar — 左下（M3 標準位置）</div>
+    <p class="stage__hint">操作の確認・取り消し可能なフィードバック。自動で消えるが Undo アクションで取り消し可。</p>
+    <div class="anchor-bl">
+      <div class="toast" role="status" aria-live="polite">
+        <span class="toast__icon"><i data-lucide="check"></i></span>
+        <div class="toast__body">予約をキャンセルしました</div>
+        <a href="#" class="toast__action">元に戻す</a>
+        <button class="toast__close" aria-label="閉じる"><i data-lucide="x"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage__label">Toast — 下中央（モバイル向け）</div>
+    <p class="stage__hint">サクセス / エラーの即時通知。情報のみで操作を要求しない。</p>
+    <div class="anchor-bc">
+      <div class="toast toast--success" role="status" aria-live="polite">
+        <span class="toast__icon"><i data-lucide="check-circle-2"></i></span>
+        <div class="toast__body">クリップボードにコピーしました</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage__label">Stacked — 複数同時表示（右上 / PC）</div>
+    <p class="stage__hint">非同期処理の完了通知。新しいものが上、古いものが下に流れる。</p>
+    <div class="anchor-tr stack">
+      <div class="toast toast--success" role="status" aria-live="polite">
+        <span class="toast__icon"><i data-lucide="check-circle-2"></i></span>
+        <div class="toast__body">レポート PDF を生成しました</div>
+        <button class="toast__close" aria-label="閉じる"><i data-lucide="x"></i></button>
+      </div>
+      <div class="toast toast--info" role="status" aria-live="polite">
+        <span class="toast__icon"><i data-lucide="info"></i></span>
+        <div class="toast__body">CSV のインポートを開始しました</div>
+        <button class="toast__close" aria-label="閉じる"><i data-lucide="x"></i></button>
+      </div>
+      <div class="toast toast--error" role="alert" aria-live="assertive">
+        <span class="toast__icon"><i data-lucide="alert-circle"></i></span>
+        <div class="toast__body">同期に失敗しました（再試行中…）</div>
+        <button class="toast__close" aria-label="閉じる"><i data-lucide="x"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

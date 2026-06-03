@@ -1,0 +1,224 @@
+/* FIG Universal Design System — Sample Components (Profile-Aware)
+ * ─────────────────────────────────────────────────────────────
+ * 本ファイルは --fig-* トークンを「正しく消費」する見本コンポーネント。
+ * エンジニアはこれをコピペすれば、プロファイル切替で自動的に
+ * Admin / Consumer / Terminal に最適化された見た目になる。
+ *
+ * 鉄則:
+ *   - 部品定義から生 px を書かない（必ず --fig-* 経由）
+ *   - フォントファミリは --fig-font-family-* / --font-* を使う
+ *   - 色は semantic.css の --color-* を継続して使用（プロファイル不変）
+ * ───────────────────────────────────────────────────────────── */
+
+/* ════════════════════════════════════════════════
+   .fig-button — 主要 CTA
+   ════════════════════════════════════════════════ */
+.fig-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fig-spacing-xs);
+  font-family: var(--fig-font-family-base);
+  font-size: var(--fig-size-body);
+  font-weight: var(--fw-semibold);
+  line-height: var(--fig-line-height-tight);
+  letter-spacing: var(--tracking-jp-label);
+  padding: var(--fig-control-padding-y) var(--fig-control-padding-x);
+  min-height: var(--fig-target-min);
+  min-width: var(--fig-target-min);
+  border: 1px solid transparent;
+  border-radius: var(--fig-radius-control);
+  background: var(--color-surface-brand);
+  color: var(--color-text-onBrand);
+  cursor: pointer;
+  transition:
+    background-color var(--fig-motion-duration-quick) var(--motion-easing-standard),
+    transform        var(--fig-motion-duration-quick) var(--motion-easing-standard);
+  -webkit-tap-highlight-color: transparent;
+}
+.fig-button:hover {
+  background: var(--color-brand-primary);
+}
+.fig-button:active {
+  transform: scale(var(--interaction-scale-pressed));
+}
+.fig-button:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-border-focus);
+  outline-offset: var(--focus-ring-offset);
+}
+.fig-button[disabled],
+.fig-button[aria-disabled="true"] {
+  background: var(--color-text-disabled);
+  color: var(--color-text-inverse);
+  cursor: not-allowed;
+}
+
+.fig-button--secondary {
+  background: var(--color-surface-default);
+  color: var(--color-text-brand);
+  border-color: var(--color-border-default);
+}
+.fig-button--secondary:hover {
+  background: var(--color-surface-container-low);
+}
+
+.fig-button--ghost {
+  background: transparent;
+  color: var(--color-text-brand);
+}
+.fig-button--ghost:hover {
+  background: var(--color-surface-brand-subtle);
+}
+
+/* ════════════════════════════════════════════════
+   .fig-card — 標準カード
+   ════════════════════════════════════════════════ */
+.fig-card {
+  display: block;
+  padding: var(--fig-spacing-m);
+  background: var(--color-surface-default);
+  border: 1px solid var(--color-border-card);
+  border-radius: var(--fig-radius-card);
+  box-shadow: var(--fig-elevation-card);
+}
+.fig-card__title {
+  font-family: var(--fig-font-family-base);
+  font-size: var(--fig-size-title);
+  font-weight: var(--fw-bold);
+  line-height: var(--fig-line-height-tight);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--fig-spacing-xs);
+}
+.fig-card__body {
+  font-family: var(--fig-font-family-base);
+  font-size: var(--fig-size-body);
+  line-height: var(--fig-line-height-body);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* ════════════════════════════════════════════════
+   .fig-input — テキスト入力
+   ════════════════════════════════════════════════ */
+.fig-input {
+  display: block;
+  width: 100%;
+  font-family: var(--fig-font-family-base);
+  font-size: var(--fig-size-body);
+  line-height: var(--fig-line-height-tight);
+  padding: var(--fig-control-padding-y) var(--fig-control-padding-x);
+  min-height: var(--fig-target-min);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--fig-radius-control);
+  background: var(--color-surface-default);
+  color: var(--color-text-primary);
+  outline: none;
+  transition: border-color var(--fig-motion-duration-quick) var(--motion-easing-standard);
+}
+.fig-input::placeholder { color: var(--color-text-disabled); }
+.fig-input:focus-visible {
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 var(--focus-ring-width) color-mix(in srgb, var(--color-border-focus) 25%, transparent);
+}
+
+/* ════════════════════════════════════════════════
+   .fig-list / .fig-list-item — リスト
+   ════════════════════════════════════════════════ */
+.fig-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--fig-density-stack-gap);
+}
+.fig-list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--fig-spacing-s);
+  min-height: var(--fig-density-row-height);
+  padding: var(--fig-density-row-padding-y) var(--fig-spacing-m);
+  background: var(--color-surface-default);
+  border: 1px solid var(--color-border-card);
+  border-radius: var(--fig-radius-control);
+  font-family: var(--fig-font-family-base);
+  font-size: var(--fig-size-body);
+  color: var(--color-text-primary);
+}
+
+/* ════════════════════════════════════════════════
+   .fig-typography-* — 文字役割
+   ════════════════════════════════════════════════ */
+.fig-display {
+  font-family: var(--fig-font-family-base);
+  font-size: var(--fig-size-display);
+  font-weight: var(--fw-extrabold);
+  line-height: var(--fig-line-height-tight);
+  letter-spacing: var(--tracking-jp-display);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+.fig-headline {
+  font-family: var(--fig-font-family-base);
+  font-size: var(--fig-size-headline);
+  font-weight: var(--fw-extrabold);
+  line-height: var(--fig-line-height-tight);
+  letter-spacing: var(--tracking-jp-headline);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+.fig-title {
+  font-family: var(--fig-font-family-base);
+  font-size: var(--fig-size-title);
+  font-weight: var(--fw-bold);
+  line-height: var(--fig-line-height-tight);
+  letter-spacing: var(--tracking-jp-title);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+.fig-body {
+  font-family: var(--fig-font-family-base);
+  font-size: var(--fig-size-body);
+  font-weight: var(--fw-regular);
+  line-height: var(--fig-line-height-body);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+.fig-caption {
+  font-family: var(--fig-font-family-base);
+  font-size: var(--fig-size-caption);
+  font-weight: var(--fw-regular);
+  line-height: var(--fig-line-height-tight);
+  letter-spacing: var(--tracking-jp-caption);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+.fig-numeric {
+  font-family: var(--fig-font-family-numeric);
+  font-variant-numeric: var(--fig-font-variant-numeric);
+}
+
+/* ════════════════════════════════════════════════
+   .fig-stack / .fig-cluster — レイアウト原始
+   ════════════════════════════════════════════════ */
+.fig-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fig-density-stack-gap);
+}
+.fig-stack--loose { gap: var(--fig-spacing-l); }
+.fig-stack--tight { gap: var(--fig-spacing-xs); }
+
+.fig-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--fig-spacing-s);
+}
+
+.fig-container {
+  width: 100%;
+  max-width: var(--fig-max-content-width);
+  margin-inline: auto;
+  padding-inline: var(--fig-spacing-m);
+}

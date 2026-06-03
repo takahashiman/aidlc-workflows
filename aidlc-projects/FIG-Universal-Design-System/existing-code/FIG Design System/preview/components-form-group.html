@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Components — Form Group</title>
+<link rel="stylesheet" href="../primitives.css">
+<link rel="stylesheet" href="../semantic.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  body { margin: 0; padding: var(--space-6, 24px); background: var(--bg-app, #F8FAFC); font-family: var(--font-sans); display: flex; flex-direction: column; gap: var(--space-5, 20px); }
+  .stage { background: var(--color-surface-default, #FFFFFF); border: 1px solid var(--color-border-subtle, #E2E8F0); border-radius: var(--radius-lg, 16px); padding: var(--space-5, 20px); max-width: 540px; }
+  .stage__title { font-size: var(--text-xs, 12px); color: var(--color-text-tertiary, #94A3B8); font-family: var(--font-mono); margin-bottom: var(--space-4, 16px); }
+
+  .form-group { display: flex; flex-direction: column; gap: var(--space-2, 8px); margin-bottom: var(--space-5, 20px); }
+  .form-group:last-child { margin-bottom: 0; }
+  .form-group__label { font-size: var(--text-sm, 14px); font-weight: 600; color: var(--color-text-primary, #0F172A); display: flex; align-items: center; gap: var(--space-2, 8px); }
+  .form-group__required { color: var(--color-feedback-error-strong, #DC2626); font-size: var(--text-xs, 12px); }
+  .form-group__optional { color: var(--color-text-muted, #64748B); font-size: var(--text-xs, 12px); font-weight: 400; }
+  .form-group__help { font-size: var(--text-xs, 12px); color: var(--color-text-muted, #64748B); line-height: 1.6; }
+  .form-group__error { font-size: var(--text-xs, 12px); color: var(--color-feedback-error-strong, #DC2626); display: flex; align-items: flex-start; gap: var(--space-2, 8px); }
+  .form-group__error svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px; }
+  .form-group__success { font-size: var(--text-xs, 12px); color: var(--color-feedback-success-strong, #16A34A); display: flex; align-items: center; gap: var(--space-2, 8px); }
+  .form-group__success svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  .input { width: 100%; padding: var(--space-3, 12px) var(--space-4, 16px); border: 2px solid var(--color-border-subtle, #E2E8F0); border-radius: 12px; font-size: var(--text-base, 16px); font-family: inherit; color: var(--color-text-primary, #0F172A); background: var(--color-surface-default, #FFFFFF); box-sizing: border-box; outline: none; transition: border-color 160ms ease; }
+  .input:focus { border-color: var(--color-border-focus, #26B7BC); }
+  .input--error { border-color: var(--color-feedback-error-strong, #DC2626); }
+  .input--success { border-color: var(--color-feedback-success-strong, #16A34A); }
+  .input::placeholder { color: var(--color-text-tertiary, #94A3B8); }
+
+  fieldset { border: 1px solid var(--color-border-subtle, #E2E8F0); border-radius: 14px; padding: var(--space-4, 16px) var(--space-5, 20px); margin: 0 0 var(--space-5, 20px); }
+  fieldset legend { padding: 0 var(--space-2, 8px); font-weight: 700; color: var(--color-text-primary, #0F172A); font-size: var(--text-sm, 14px); }
+</style>
+</head>
+<body>
+
+  <div class="stage">
+    <div class="stage__title">標準（必須・任意・補助文・エラー・成功）</div>
+
+    <div class="form-group">
+      <label class="form-group__label" for="fg-email">メールアドレス<span class="form-group__required">*必須</span></label>
+      <input type="email" id="fg-email" class="input" value="mari@example.com" aria-describedby="fg-email-help">
+      <div class="form-group__help" id="fg-email-help">ログイン ID として使用します</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-group__label" for="fg-pass">パスワード<span class="form-group__required">*必須</span></label>
+      <input type="password" id="fg-pass" class="input input--error" value="12345" aria-invalid="true" aria-describedby="fg-pass-err">
+      <div class="form-group__error" id="fg-pass-err"><i data-lucide="alert-circle"></i>8 文字以上、英数字・記号を含めてください</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-group__label" for="fg-name">表示名<span class="form-group__optional">（任意）</span></label>
+      <input type="text" id="fg-name" class="input input--success" value="モバイル 太郎" aria-describedby="fg-name-ok">
+      <div class="form-group__success" id="fg-name-ok"><i data-lucide="check-circle-2"></i>利用可能な名前です</div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage__title">fieldset によるグループ化</div>
+
+    <fieldset>
+      <legend>連絡先</legend>
+      <div class="form-group">
+        <label class="form-group__label" for="fg-tel">電話番号</label>
+        <input type="tel" id="fg-tel" class="input" placeholder="03-1234-5678">
+      </div>
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-group__label" for="fg-addr">住所</label>
+        <input type="text" id="fg-addr" class="input" placeholder="東京都渋谷区道玄坂…">
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>通知設定</legend>
+      <div class="form-group" style="margin-bottom: 0;">
+        <div class="form-group__help">運行情報・緊急連絡などをこのメールアドレスに送信します。配信頻度は週次サマリ + 緊急時のみ。</div>
+      </div>
+    </fieldset>
+  </div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

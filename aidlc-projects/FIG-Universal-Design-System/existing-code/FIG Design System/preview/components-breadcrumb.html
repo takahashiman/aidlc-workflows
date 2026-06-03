@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Components — Breadcrumb</title>
+<link rel="stylesheet" href="../primitives.css">
+<link rel="stylesheet" href="../semantic.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  body { margin: 0; padding: var(--space-6, 24px); background: var(--bg-app, #F8FAFC); font-family: var(--font-sans); display: flex; flex-direction: column; gap: var(--space-5, 20px); }
+  .stage { background: var(--color-surface-default, #FFFFFF); border: 1px solid var(--color-border-subtle, #E2E8F0); border-radius: var(--radius-lg, 16px); padding: var(--space-4, 16px) var(--space-5, 20px); }
+  .label { font-family: var(--font-mono); font-size: var(--text-xs, 12px); color: var(--color-text-tertiary, #94A3B8); margin-bottom: var(--space-3, 12px); }
+
+  .crumbs { display: flex; align-items: center; gap: var(--space-2, 8px); flex-wrap: wrap; font-size: var(--text-sm, 14px); }
+  .crumbs a { color: var(--color-text-secondary, #475569); text-decoration: none; padding: var(--space-1, 4px) var(--space-2, 8px); border-radius: 8px; }
+  .crumbs a:hover { background: var(--color-surface-subtle, #F1F5F9); color: var(--color-text-primary, #0F172A); }
+  .crumbs [aria-current="page"] { color: var(--color-text-primary, #0F172A); font-weight: 600; padding: var(--space-1, 4px) var(--space-2, 8px); }
+  .crumbs .sep { color: var(--color-text-tertiary, #94A3B8); display: grid; place-items: center; }
+  .crumbs .sep svg { width: 14px; height: 14px; }
+  .crumbs__home svg { width: 16px; height: 16px; vertical-align: -3px; margin-right: 4px; }
+  .crumbs__more { padding: var(--space-1, 4px) var(--space-2, 8px); background: var(--color-surface-subtle, #F1F5F9); border-radius: 8px; color: var(--color-text-muted, #64748B); border: none; cursor: pointer; font-size: 12px; }
+</style>
+</head>
+<body>
+
+  <div class="stage">
+    <div class="label">標準（3 階層）</div>
+    <nav class="crumbs" aria-label="現在地">
+      <a href="#" class="crumbs__home"><i data-lucide="home"></i>ホーム</a>
+      <span class="sep" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
+      <a href="#">路線管理</a>
+      <span class="sep" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
+      <span aria-current="page">渋谷 — 新宿 線</span>
+    </nav>
+  </div>
+
+  <div class="stage">
+    <div class="label">長い階層（中間を省略）</div>
+    <nav class="crumbs" aria-label="現在地">
+      <a href="#" class="crumbs__home"><i data-lucide="home"></i>ホーム</a>
+      <span class="sep" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
+      <button class="crumbs__more" aria-label="中間階層を展開">…</button>
+      <span class="sep" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
+      <a href="#">2026 年度</a>
+      <span class="sep" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
+      <span aria-current="page">月次レポート</span>
+    </nav>
+  </div>
+
+  <div class="stage">
+    <div class="label">レスポンシブ：現在地のみ表示（モバイル）</div>
+    <nav class="crumbs" aria-label="現在地">
+      <a href="#" aria-label="一つ上の階層">
+        <i data-lucide="chevron-left" style="width:16px;height:16px;vertical-align:-3px;"></i>
+        路線管理
+      </a>
+    </nav>
+  </div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

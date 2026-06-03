@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Semantic Tokens</title>
+<link rel="stylesheet" href="../primitives.css">
+<link rel="stylesheet" href="../semantic.css">
+<style>
+  body { margin: 0; padding: 32px 24px; background: var(--bg-app); }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  .eyebrow { display: inline-flex; gap: 8px; padding: 6px 12px; border-radius: 9999px; background: var(--color-surface-brand-subtle); color: var(--color-text-brand); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; }
+  h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; margin: 12px 0 8px; }
+  .lede { margin: 0 0 20px; font-size: 13px; color: var(--color-text-tertiary); line-height: 1.7; }
+  .section { font-size: 10px; font-weight: 800; letter-spacing: 0.16em; color: var(--color-text-disabled); text-transform: uppercase; margin: 26px 0 12px; display: flex; align-items: center; gap: 10px; }
+  .section::after { content: ''; flex: 1; height: 1px; background: var(--color-border-default); }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .row { display: grid; grid-template-columns: 36px 1fr; gap: 12px; padding: 12px 14px; background: var(--color-surface-default); border: 1px solid var(--color-border-card); border-radius: 12px; align-items: center; }
+  .sw { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--color-border-default); }
+  .name { font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--color-text-primary); }
+  .hex { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-muted); margin-top: 2px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <span class="eyebrow">SEMANTIC TOKENS</span>
+    <h1>color.text / surface / icon / border</h1>
+    <p class="lede">プリミティブ（生 HEX）を意味ロールに再マッピングしたセマンティック層。コンポーネントは必ずこれを経由して参照します。</p>
+
+    <div class="section">color.text</div>
+    <div class="grid">
+      <div class="row"><div class="sw" style="background:#1E293B"></div><div><div class="name">color.text.primary</div><div class="hex">#1E293B</div></div></div>
+      <div class="row"><div class="sw" style="background:#334155"></div><div><div class="name">color.text.secondary</div><div class="hex">#334155</div></div></div>
+      <div class="row"><div class="sw" style="background:#475569"></div><div><div class="name">color.text.tertiary</div><div class="hex">#475569</div></div></div>
+      <div class="row"><div class="sw" style="background:#64748B"></div><div><div class="name">color.text.muted</div><div class="hex">#64748B</div></div></div>
+      <div class="row"><div class="sw" style="background:#94A3B8"></div><div><div class="name">color.text.disabled</div><div class="hex">#94A3B8</div></div></div>
+      <div class="row"><div class="sw" style="background:#FFFFFF;border:1px solid #E2E8F0"></div><div><div class="name">color.text.inverse</div><div class="hex">#FFFFFF</div></div></div>
+      <div class="row"><div class="sw" style="background:#26B7BC"></div><div><div class="name">color.text.brand</div><div class="hex">#26B7BC</div></div></div>
+      <div class="row"><div class="sw" style="background:#38A1DB"></div><div><div class="name">color.text.accent</div><div class="hex">#38A1DB</div></div></div>
+      <div class="row"><div class="sw" style="background:#047857"></div><div><div class="name">color.text.success</div><div class="hex">#047857</div></div></div>
+      <div class="row"><div class="sw" style="background:#B45309"></div><div><div class="name">color.text.warning</div><div class="hex">#B45309</div></div></div>
+      <div class="row"><div class="sw" style="background:#DC2626"></div><div><div class="name">color.text.error</div><div class="hex">#DC2626</div></div></div>
+      <div class="row"><div class="sw" style="background:#38A1DB"></div><div><div class="name">color.text.link</div><div class="hex">#38A1DB</div></div></div>
+    </div>
+
+    <div class="section">color.surface (Layering)</div>
+    <div class="grid">
+      <div class="row"><div class="sw" style="background:linear-gradient(135deg,#E6EEED,#F0F4F4,#E9F0EF)"></div><div><div class="name">color.surface.canvas</div><div class="hex">gradient app-bg</div></div></div>
+      <div class="row"><div class="sw" style="background:#FFFFFF;border:1px solid #E2E8F0"></div><div><div class="name">color.surface.default</div><div class="hex">#FFFFFF</div></div></div>
+      <div class="row"><div class="sw" style="background:#F8FAFC"></div><div><div class="name">color.surface.container-low</div><div class="hex">#F8FAFC</div></div></div>
+      <div class="row"><div class="sw" style="background:#F1F5F9"></div><div><div class="name">color.surface.container</div><div class="hex">#F1F5F9</div></div></div>
+      <div class="row"><div class="sw" style="background:#E2E8F0"></div><div><div class="name">color.surface.container-high</div><div class="hex">#E2E8F0</div></div></div>
+      <div class="row"><div class="sw" style="background:rgba(255,255,255,0.70);backdrop-filter:blur(4px)"></div><div><div class="name">color.surface.glass</div><div class="hex">white / 70%</div></div></div>
+      <div class="row"><div class="sw" style="background:#26B7BC"></div><div><div class="name">color.surface.brand</div><div class="hex">#26B7BC</div></div></div>
+      <div class="row"><div class="sw" style="background:rgba(38, 183, 188,0.10)"></div><div><div class="name">color.surface.brand-subtle</div><div class="hex">teal / 10%</div></div></div>
+      <div class="row"><div class="sw" style="background:#ECFDF5"></div><div><div class="name">color.surface.success</div><div class="hex">#ECFDF5</div></div></div>
+      <div class="row"><div class="sw" style="background:#FFFBEB"></div><div><div class="name">color.surface.warning</div><div class="hex">#FFFBEB</div></div></div>
+      <div class="row"><div class="sw" style="background:#FEF2F2"></div><div><div class="name">color.surface.error</div><div class="hex">#FEF2F2</div></div></div>
+      <div class="row"><div class="sw" style="background:#1E293B"></div><div><div class="name">color.surface.inverse</div><div class="hex">#1E293B</div></div></div>
+    </div>
+
+    <div class="section">color.icon</div>
+    <div class="grid">
+      <div class="row"><div class="sw" style="background:#94A3B8"></div><div><div class="name">color.icon.default</div><div class="hex">#94A3B8</div></div></div>
+      <div class="row"><div class="sw" style="background:#CBD5E1"></div><div><div class="name">color.icon.muted</div><div class="hex">#CBD5E1</div></div></div>
+      <div class="row"><div class="sw" style="background:#475569"></div><div><div class="name">color.icon.strong</div><div class="hex">#475569</div></div></div>
+      <div class="row"><div class="sw" style="background:#26B7BC"></div><div><div class="name">color.icon.brand</div><div class="hex">#26B7BC</div></div></div>
+      <div class="row"><div class="sw" style="background:#38A1DB"></div><div><div class="name">color.icon.accent</div><div class="hex">#38A1DB</div></div></div>
+      <div class="row"><div class="sw" style="background:#047857"></div><div><div class="name">color.icon.success</div><div class="hex">#047857</div></div></div>
+      <div class="row"><div class="sw" style="background:#B45309"></div><div><div class="name">color.icon.warning</div><div class="hex">#B45309</div></div></div>
+      <div class="row"><div class="sw" style="background:#DC2626"></div><div><div class="name">color.icon.error</div><div class="hex">#DC2626</div></div></div>
+    </div>
+
+    <div class="section">color.border</div>
+    <div class="grid">
+      <div class="row"><div class="sw" style="background:#FFFFFF;border:1px solid #F1F5F9"></div><div><div class="name">color.border.subtle</div><div class="hex">#F1F5F9</div></div></div>
+      <div class="row"><div class="sw" style="background:#FFFFFF;border:1px solid #E2E8F0"></div><div><div class="name">color.border.default</div><div class="hex">#E2E8F0</div></div></div>
+      <div class="row"><div class="sw" style="background:#FFFFFF;border:1px solid #CBD5E1"></div><div><div class="name">color.border.strong</div><div class="hex">#CBD5E1</div></div></div>
+      <div class="row"><div class="sw" style="background:#FFFFFF;border:2px solid #26B7BC"></div><div><div class="name">color.border.brand</div><div class="hex">#26B7BC</div></div></div>
+      <div class="row"><div class="sw" style="background:#FFFFFF;border:2px solid #38A1DB"></div><div><div class="name">color.border.focus</div><div class="hex">#38A1DB</div></div></div>
+      <div class="row"><div class="sw" style="background:#FFFFFF;border:1px solid #FECACA"></div><div><div class="name">color.border.error</div><div class="hex">#FECACA</div></div></div>
+    </div>
+  </div>
+</body>
+</html>

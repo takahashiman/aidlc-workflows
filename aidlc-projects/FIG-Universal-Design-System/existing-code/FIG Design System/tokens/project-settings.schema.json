@@ -1,0 +1,128 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://fig.local/tokens/project-settings.schema.json",
+  "title": "FIG Universal Design System — Project Settings",
+  "description": "extensions/{project}/project-settings.json の正典スキーマ。signatureColor.harmonization は tokens/signature-presets.json の Hue × Taste マトリクスから 1 セルを選んだ結果を構造化して持つ。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["projectName", "displayName", "designSystem", "signatureColor"],
+  "properties": {
+    "$schema": { "type": "string" },
+
+    "projectName": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "kebab-case・英小文字。URL・パス・クラス名の元。"
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "ポータル表示名（日英可）。"
+    },
+    "description": {
+      "type": "string",
+      "description": "1 行でプロジェクト概要（ポータルのサイドバーに表示）。"
+    },
+
+    "designSystem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["coreVersion", "profile"],
+      "properties": {
+        "coreVersion": {
+          "type": "string",
+          "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "description": "参照する Core バージョン。例: v1.2.0"
+        },
+        "profile": {
+          "type": "string",
+          "enum": ["Web-Admin", "Mobile-Consumer", "Mobile-Terminal"],
+          "description": "デバイスプロファイル。"
+        },
+        "lockedAt": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "description": "Core バージョンを固定した日付 (YYYY-MM-DD)。"
+        }
+      }
+    },
+
+    "signatureColor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "name", "harmonization"],
+      "properties": {
+        "value": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "description": "プロダクト識別色（hex）。tokens/signature-presets.json のプリセット値からの上書き可。"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "識別色の表示名。"
+        },
+        "harmonization": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["preset", "hue", "taste", "relation", "baseToken"],
+          "description": "Core ブランドとの調和を構造化した記述。tokens/signature-presets.json から派生。",
+          "properties": {
+            "preset": {
+              "type": "string",
+              "description": "tokens/signature-presets.json の presets キー。例: turquoise-trust",
+              "enum": [
+                "turquoise-pop", "turquoise-trust", "turquoise-calm",
+                "blue-pop",      "blue-trust",      "blue-calm",
+                "red-pop",       "red-trust",       "red-calm",
+                "orange-pop",    "orange-trust",    "orange-calm",
+                "mono-pop",      "mono-trust",      "mono-calm",
+                "custom"
+              ]
+            },
+            "hue": {
+              "type": "string",
+              "enum": ["turquoise", "blue", "red", "orange", "mono"],
+              "description": "色相カテゴリ。"
+            },
+            "taste": {
+              "type": "string",
+              "enum": ["pop", "trust", "calm"],
+              "description": "テイスト（Pop=明・親しみ / Trust=深・業務 / Calm=淡・静謐）。"
+            },
+            "relation": {
+              "type": "string",
+              "enum": ["monochromatic", "analogous", "complementary", "triadic", "neutral-mono"],
+              "description": "ベーストークンとの配色論的関係。"
+            },
+            "baseToken": {
+              "type": "string",
+              "enum": [
+                "--color-brand-primary",
+                "--color-brand-secondary",
+                "--color-neutral-light",
+                "--color-neutral-dark"
+              ],
+              "description": "Core 不変点のうちどのトークンから派生したか。"
+            },
+            "note": {
+              "type": "string",
+              "description": "任意の補足（プリセット選択理由・微調整意図など）。"
+            }
+          }
+        }
+      }
+    },
+
+    "owners": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^@" },
+      "description": "変更レビュー担当者（GitHub ハンドル）。"
+    },
+    "createdAt": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "プロジェクト作成日 (YYYY-MM-DD)。"
+    }
+  }
+}

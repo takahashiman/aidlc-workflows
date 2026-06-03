@@ -1,0 +1,115 @@
+{
+  "projectMetadata": {
+    "projectName": "Bus App",
+    "projectId": "busapp-2026",
+    "baseVersion": "1.0.0",
+    "inceptionDate": "2026-06-03",
+    "status": "Construction Phase 1 — Card Component Complete"
+  },
+
+  "signatureColor": {
+    "hex": "#26B7BC",
+    "name": "FIGターコイズ",
+    "category": "PRIMARY",
+    "harmonization": "公共交通ドメイン向けの信頼性・安心感を表現するFIGコア色。バスターミナルなど過酷な現場環境でも絶対的な視認性を確保。WCAG 2.1 AA 準拠（コントラスト比 4.5:1）。補色はスレート系（#1E293B）で深みを持たせる。",
+    "references": {
+      "wcag": "WCAG 2.1 AA 準拠",
+      "fieldContext": "公共交通（バスターミナル、駅舎）での視認性テスト必須"
+    }
+  },
+
+  "designSystem": {
+    "profile": "Mobile-Consumer",
+    "profileDescription": "バスアプリのモバイルファースト・タッチUI。ユーザーは通勤者。初期フェーズは本プロファイルのみ対応。",
+    "expandPlan": "Phase 4 以降で Mobile-Terminal / Web-Admin プロファイルの追加を検討。Semantic トークン設計段階で複数対応を見据え、CSS 変数構造を先制的に準備。"
+  },
+
+  "semanticTokens": {
+    "strategy": "プロファイルクラスをトリガーにしたCSS変数上書き方式",
+    "implementation": {
+      "layer1": "Primitive — primitives.css / 生値のみ",
+      "layer2": "Semantic — semantic.css / 役割トークン",
+      "layer3": "Component — components/*.jsx / React のみ"
+    },
+    "rule": "上位層は下位層のみ参照。逆流禁止。",
+    "multiProfile": "複数プロファイル対応時は、<body class=\"fig-profile-consumer\"> で CSS 変数値を段階的に上書き"
+  },
+
+  "components": {
+    "priority": [
+      {
+        "order": 1,
+        "name": "Card",
+        "status": "Phase 1 — Complete",
+        "file": "components/Card.jsx",
+        "preview": "preview/card.html",
+        "states": ["default", "interactive", "floating", "hero"]
+      },
+      {
+        "order": 2,
+        "name": "Button & FAB",
+        "status": "Phase 2 — Pending",
+        "file": "components/Button.jsx",
+        "preview": "preview/button.html"
+      },
+      {
+        "order": 3,
+        "name": "TextField",
+        "status": "Phase 3 — Pending",
+        "file": "components/TextField.jsx",
+        "preview": "preview/textfield.html"
+      }
+    ]
+  },
+
+  "architecture": {
+    "pattern": "三層アーキテクチャ",
+    "layers": {
+      "layer1_primitive": {
+        "name": "Primitive",
+        "file": "tokens/primitives.css",
+        "content": "HEX、px、数値の生値。依存なし。"
+      },
+      "layer2_semantic": {
+        "name": "Semantic",
+        "file": "tokens/semantic.css",
+        "content": "意味づけ。color.text.*, color.surface.*, typography.*, motion.* 等。Primitive のみ参照。"
+      },
+      "layer3_component": {
+        "name": "Component",
+        "file": "components/*.jsx",
+        "content": "React JSX。Semantic のみ参照。直書き禁止。"
+      }
+    },
+    "rule": "上から下のみ参照。逆方向厳禁。"
+  },
+
+  "successCriteria": {
+    "phase1Card": {
+      "livePreview": "preview/card.html で 4 バリエーション（default, interactive, floating, hero）の 5 状態を可視化",
+      "reactImplementation": "components/Card.jsx にインラインスタイル / 直書き値なし。Semantic トークンのみ参照。",
+      "semanticTokens": "tokens/semantic.css に Card に必要なすべてのトークンが定義。color.surface-*, color.border-*, radius-*, elevation-* 等完全",
+      "designSystemCompliance": "三層アーキテクチャ 100% 準拠。エンジニアの目視で『現場でも見間違えない視認性』を確認"
+    }
+  },
+
+  "reusability": {
+    "templateGranularity": "ディレクトリ単位複製",
+    "workflow": "extensions/busapp/ 全体をコピー → project-settings.json の signatureColor を新規値に変更 → CSS 自動反映",
+    "documentation": {
+      "minimal": true,
+      "required": ["project-settings.json", "README.md"],
+      "optional": []
+    }
+  },
+
+  "distribution": {
+    "method": "git submodule",
+    "usage": "他プロダクトが FIG Universal Design System を submodule として取り込み、`git pull` で常時最新を同期"
+  },
+
+  "validation": {
+    "selfCheck": "AI が生成後に自分で JSON を読み込んで検証：『signatureColor が正確か』『profile が requirement-verification-questions の回答に整合しているか』",
+    "schemaValidation": "Cursor のエディタが project-settings.schema.json を読み込んでリアルタイム検証"
+  }
+}

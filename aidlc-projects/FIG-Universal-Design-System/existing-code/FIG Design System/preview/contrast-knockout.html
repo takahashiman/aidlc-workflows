@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Contrast — Knockout Rules</title>
+<link rel="stylesheet" href="../primitives.css">
+<link rel="stylesheet" href="../semantic.css">
+<style>
+  body { margin: 0; padding: 24px; background: #FFFFFF; }
+  h2 { margin: 0 0 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: var(--color-neutral-dark); }
+  .group { margin-bottom: 28px; }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .swatch {
+    border-radius: 12px;
+    padding: 20px 18px;
+    border: 1px solid var(--color-border-default);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 130px;
+    justify-content: space-between;
+  }
+  .swatch .heading { font-size: 20px; font-weight: 800; }
+  .swatch .body { font-size: 14px; }
+  .swatch .meta { font-size: 11px; font-family: var(--font-mono); opacity: 0.8; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 8px; border-radius: 9999px;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.05em;
+    background: rgba(255,255,255,0.20); color: inherit;
+    align-self: flex-start;
+    text-transform: uppercase;
+  }
+  .badge.ok       { background: #D1FAE5; color: #047857; }
+  .badge.warn     { background: #FEF3C7; color: #92400E; }
+  .badge.fail     { background: #FEE2E2; color: #B91C1C; }
+  .legend {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    line-height: var(--lh-jp-body);
+    padding: 12px 14px;
+    background: var(--color-surface-container-low);
+    border-radius: 12px;
+    margin-bottom: 20px;
+  }
+  .row { display: flex; justify-content: space-between; align-items: flex-end; }
+</style>
+</head>
+<body>
+
+<div class="legend">
+  <strong>白抜き (Knockout) ルール</strong>：濃色面のみ白テキスト 4.5:1 を確保できます。明色ブランド面 (vivid) は装飾専用 — 本文を直接置かないでください。
+</div>
+
+<div class="group">
+  <h2>白抜き対応面 — Knockout-Safe（本文 OK）</h2>
+  <div class="grid">
+    <div class="swatch" style="background: var(--color-surface-brand); color: var(--color-text-onBrand);">
+      <span class="badge ok">4.85 : 1 · AA</span>
+      <div class="heading">主要 CTA</div>
+      <div class="body">ご乗車の前にお読みください</div>
+      <div class="meta">surface.brand · #1A8589</div>
+    </div>
+    <div class="swatch" style="background: var(--color-surface-accent); color: var(--color-text-onBrand);">
+      <span class="badge ok">4.79 : 1 · AA</span>
+      <div class="heading">Secondary CTA</div>
+      <div class="body">アクセント面でも本文が読めます</div>
+      <div class="meta">surface.accent · #2378A8</div>
+    </div>
+    <div class="swatch" style="background: var(--color-surface-inverse); color: var(--color-text-inverse);">
+      <span class="badge ok">14.94 : 1 · AAA</span>
+      <div class="heading">Inverse / Dark</div>
+      <div class="body">最も安全な knockout 面</div>
+      <div class="meta">surface.inverse · #1E293B</div>
+    </div>
+    <div class="swatch" style="background: var(--color-neutral-dark); color: #FFFFFF;">
+      <span class="badge ok">8.13 : 1 · AAA</span>
+      <div class="heading">Neutral Dark</div>
+      <div class="body">FIG サブカラー濃色</div>
+      <div class="meta">neutral.dark · #595757</div>
+    </div>
+  </div>
+</div>
+
+<div class="group">
+  <h2>装飾専用 — Vivid（本文を置かない）</h2>
+  <div class="grid">
+    <div class="swatch" style="background: var(--color-surface-brand-vivid); color: var(--color-text-onBrand-vivid);">
+      <span class="badge fail">2.55 : 1 · 本文 NG</span>
+      <div class="heading">ヒーロー / ロゴ面</div>
+      <div class="body">本文を直接置いてはいけない</div>
+      <div class="meta">brand-vivid · #26B7BC</div>
+    </div>
+    <div class="swatch" style="background: var(--color-surface-accent-vivid); color: var(--color-text-onBrand-vivid);">
+      <span class="badge warn">3.21 : 1 · 大型のみ可</span>
+      <div class="heading">Accent Vivid</div>
+      <div class="body">本文 NG、≥18px or ≥14px bold のみ</div>
+      <div class="meta">accent-vivid · #38A1DB</div>
+    </div>
+  </div>
+</div>
+
+<div class="group">
+  <h2>ソフト面 — Brand Tint（濃色テキスト）</h2>
+  <div class="grid">
+    <div class="swatch" style="background: var(--color-surface-brand-subtle); color: var(--color-text-brand);">
+      <span class="badge ok">4.85 : 1 · AA</span>
+      <div class="heading">選択 / Active</div>
+      <div class="body">brand-subtle 上に brand-dark テキスト</div>
+      <div class="meta">brand-subtle / text.brand</div>
+    </div>
+    <div class="swatch" style="background: var(--color-surface-accent-subtle); color: var(--color-text-accent);">
+      <span class="badge ok">4.79 : 1 · AA</span>
+      <div class="heading">情報 / Info</div>
+      <div class="body">accent-subtle 上に accent-dark</div>
+      <div class="meta">accent-subtle / text.accent</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

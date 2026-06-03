@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Transport Domain Tokens</title>
+<link rel="stylesheet" href="../primitives.css">
+<link rel="stylesheet" href="../semantic.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  body { margin: 0; padding: 32px 24px; }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  .eyebrow { display: inline-flex; gap: 8px; padding: 6px 12px; border-radius: 9999px; background: var(--color-surface-accent-subtle); color: var(--color-text-accent); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; }
+  h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; margin: 12px 0 8px; }
+  .lede { margin: 0 0 24px; font-size: 13px; color: var(--color-text-tertiary); line-height: 1.7; }
+
+  .section { font-size: 10px; font-weight: 800; letter-spacing: 0.16em; color: var(--color-text-disabled); text-transform: uppercase; margin: 26px 0 12px; display: flex; align-items: center; gap: 10px; }
+  .section::after { content: ''; flex: 1; height: 1px; background: var(--color-border-default); }
+
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .item {
+    background: var(--color-surface-default);
+    border: 1px solid var(--color-border-card);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 12px; border-radius: 9999px;
+    font-size: 13px; font-weight: 600;
+    flex-shrink: 0;
+  }
+  .body { flex: 1; min-width: 0; }
+  .tok { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-primary); font-weight: 700; line-height: 1.4; }
+  .hex { font-family: var(--font-mono); font-size: 10px; color: var(--color-text-muted); margin-top: 3px; }
+  .desc { font-size: 12px; color: var(--color-text-tertiary); margin-top: 6px; line-height: 1.5; }
+
+  i[data-lucide] { width: 16px; height: 16px; stroke-width: 2; }
+  .v-icon { width: 36px; height: 36px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .v-icon i { width: 20px; height: 20px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <span class="eyebrow">TRANSPORT DOMAIN</span>
+    <h1>status / route / vehicle</h1>
+    <p class="lede">交通ドメイン固有のセマンティック。プロジェクトの差別化価値となるトークン群で、UI のどこにバスや電車、運行状態が登場しても一貫した色で表現します。</p>
+
+    <div class="section">status.* — 運行状態</div>
+    <div class="grid">
+      <div class="item">
+        <span class="pill" style="background:#ECFDF5;color:#047857"><i data-lucide="check-circle"></i>通常運行</span>
+        <div class="body"><div class="tok">status.onTime</div><div class="hex">fg #047857 · bg #ECFDF5</div><div class="desc">遅延なく定時運行中。</div></div>
+      </div>
+      <div class="item">
+        <span class="pill" style="background:#FFFBEB;color:#B45309"><i data-lucide="clock"></i>遅延の可能性</span>
+        <div class="body"><div class="tok">status.delayRisk</div><div class="hex">fg #B45309 · bg #FFFBEB</div><div class="desc">混雑等で遅延の見込み。確定ではない。</div></div>
+      </div>
+      <div class="item">
+        <span class="pill" style="background:#FEF2F2;color:#B91C1C"><i data-lucide="clock"></i>約15分遅延</span>
+        <div class="body"><div class="tok">status.delayed</div><div class="hex">fg #B91C1C · bg #FEF2F2</div><div class="desc">遅延確定。分数を併記。</div></div>
+      </div>
+      <div class="item">
+        <span class="pill" style="background:#FEF2F2;color:#B91C1C"><i data-lucide="x-circle"></i>運休</span>
+        <div class="body"><div class="tok">status.suspended</div><div class="hex">fg #B91C1C · bg #FEF2F2</div><div class="desc">運休。理由メッセージとペアで表示。</div></div>
+      </div>
+      <div class="item">
+        <span class="pill" style="background:#F1F5F9;color:#64748B"><i data-lucide="check"></i>通過済</span>
+        <div class="body"><div class="tok">status.passed</div><div class="hex">fg #64748B · bg #F1F5F9</div><div class="desc">該当便は通過済み。非活性扱い。</div></div>
+      </div>
+    </div>
+
+    <div class="section">transport.route.* — 路線種別</div>
+    <div class="grid">
+      <div class="item">
+        <span class="pill" style="background:rgba(38, 183, 188,0.10);color:#26B7BC">普通</span>
+        <div class="body"><div class="tok">transport.route.local</div><div class="hex">fg #26B7BC · bg teal/10</div><div class="desc">各停。ブランド軸の標準色。</div></div>
+      </div>
+      <div class="item">
+        <span class="pill" style="background:rgba(56, 161, 219,0.10);color:#38A1DB">急行</span>
+        <div class="body"><div class="tok">transport.route.express</div><div class="hex">fg #38A1DB · bg indigo/10</div><div class="desc">急行・特急。Tertiary 軸の「速さ」。</div></div>
+      </div>
+      <div class="item">
+        <span class="pill" style="background:rgba(30,64,175,0.10);color:#1E40AF">快速</span>
+        <div class="body"><div class="tok">transport.route.rapid</div><div class="hex">fg #1E40AF · bg blue/10</div><div class="desc">快速便。深い青で識別。</div></div>
+      </div>
+      <div class="item">
+        <span class="pill" style="background:rgba(180,83,9,0.10);color:#B45309">コミュニティ</span>
+        <div class="body"><div class="tok">transport.route.community</div><div class="hex">fg #B45309 · bg amber/10</div><div class="desc">地域コミュニティバス。親しみの琥珀。</div></div>
+      </div>
+      <div class="item">
+        <span class="pill" style="background:rgba(30,41,59,0.10);color:#1E293B">深夜</span>
+        <div class="body"><div class="tok">transport.route.night</div><div class="hex">fg #1E293B · bg slate/10</div><div class="desc">深夜便。slate-800 で「夜」を示唆。</div></div>
+      </div>
+    </div>
+
+    <div class="section">vehicle.* — 車両種別</div>
+    <div class="grid">
+      <div class="item">
+        <div class="v-icon" style="background:rgba(38, 183, 188,0.10);color:#26B7BC"><i data-lucide="bus"></i></div>
+        <div class="body"><div class="tok">vehicle.bus</div><div class="hex">#26B7BC</div><div class="desc">バス。本アプリのプライマリ車両。</div></div>
+      </div>
+      <div class="item">
+        <div class="v-icon" style="background:rgba(30,64,175,0.10);color:#1E40AF"><i data-lucide="train-front"></i></div>
+        <div class="body"><div class="tok">vehicle.train</div><div class="hex">#1E40AF</div><div class="desc">JR・私鉄。乗換案内・連携 UI 用。</div></div>
+      </div>
+      <div class="item">
+        <div class="v-icon" style="background:rgba(107,33,168,0.10);color:#6B21A8"><i data-lucide="train-track"></i></div>
+        <div class="body"><div class="tok">vehicle.subway</div><div class="hex">#6B21A8</div><div class="desc">地下鉄。京都市営地下鉄等。</div></div>
+      </div>
+      <div class="item">
+        <div class="v-icon" style="background:rgba(180,83,9,0.10);color:#B45309"><i data-lucide="tram-front"></i></div>
+        <div class="body"><div class="tok">vehicle.tram</div><div class="hex">#B45309</div><div class="desc">路面電車・LRT。</div></div>
+      </div>
+      <div class="item">
+        <div class="v-icon" style="background:rgba(202,138,4,0.10);color:#CA8A04"><i data-lucide="car-taxi-front"></i></div>
+        <div class="body"><div class="tok">vehicle.taxi</div><div class="hex">#CA8A04</div><div class="desc">タクシー。慣習色の黄系。</div></div>
+      </div>
+      <div class="item">
+        <div class="v-icon" style="background:rgba(14,116,144,0.10);color:#0E7490"><i data-lucide="ship"></i></div>
+        <div class="body"><div class="tok">vehicle.ferry</div><div class="hex">#0E7490</div><div class="desc">フェリー。沖縄等の島嶼で使用想定。</div></div>
+      </div>
+    </div>
+  </div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

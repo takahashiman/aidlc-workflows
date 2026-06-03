@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Material Theme Builder — トークン割当 v2</title>
+<link rel="stylesheet" href="../primitives.css">
+<style>
+  :root { color-scheme: light; }
+  body {
+    margin: 0; padding: 32px 24px;
+    font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', 'Meiryo', system-ui, sans-serif;
+    background: linear-gradient(135deg,#E6EEED 0%, #F0F4F4 50%, #E9F0EF 100%);
+    color: #1E293B;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 800px; margin: 0 auto; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px; border-radius: 9999px;
+    background: rgba(38, 183, 188,0.10); color: #26B7BC;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+  }
+  h1 {
+    font-size: 24px; font-weight: 800; letter-spacing: -0.02em;
+    margin: 12px 0 8px; line-height: 1.3;
+  }
+  .lede { margin: 0 0 20px; font-size: 13px; line-height: 1.7; color: #475569; }
+
+  .section-title {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.16em;
+    color: #94A3B8; text-transform: uppercase;
+    margin: 22px 0 10px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title::after {
+    content: ''; flex: 1; height: 1px; background: #E2E8F0;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 84px 1fr;
+    gap: 16px;
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 10px;
+    align-items: stretch;
+  }
+  .swatch {
+    border-radius: 12px;
+    display: flex;
+    align-items: flex-end;
+    padding: 8px 10px;
+    color: #fff;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .swatch.light { color: #1E293B; }
+  .body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .head {
+    display: flex; align-items: baseline; gap: 10px;
+    flex-wrap: wrap;
+  }
+  .name { font-size: 16px; font-weight: 800; color: #1E293B; letter-spacing: -0.01em; }
+  .role-tag {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+    padding: 2px 8px; border-radius: 9999px;
+    background: rgba(56, 161, 219,0.10); color: #38A1DB;
+  }
+  .role-tag.brand { background: rgba(38, 183, 188,0.10); color: #26B7BC; }
+  .role-tag.info  { background: rgba(51,65,85,0.10); color: #334155; }
+  .role-tag.status { background: rgba(180,83,9,0.10); color: #B45309; }
+  .hex {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 12px; font-weight: 600; color: #26B7BC;
+  }
+  .sub { font-size: 11px; color: #94A3B8; font-weight: 600; letter-spacing: 0.02em; }
+  .where { font-size: 12px; color: #475569; line-height: 1.65; }
+  .where strong { color: #1E293B; font-weight: 700; }
+  .where code {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 11px; color: #38A1DB; font-weight: 600;
+  }
+
+  .tones { display: flex; gap: 4px; margin-top: 6px; }
+  .tone {
+    flex: 1; height: 18px; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-family: var(--font-mono, ui-monospace, monospace);
+    font-weight: 700;
+  }
+  .tone.lt { color: #1E293B; }
+  .tone.dk { color: #fff; }
+
+  .note {
+    margin-top: 14px;
+    padding: 14px 16px;
+    background: rgba(56, 161, 219,0.06);
+    border: 1px solid rgba(56, 161, 219,0.18);
+    border-radius: 14px;
+    font-size: 12px;
+    color: #1E1B4B;
+    line-height: 1.7;
+  }
+  .note strong { color: #312E81; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <span class="eyebrow">MATERIAL THEME BUILDER · v2</span>
+    <h1>Core colors の割当（Warning と Tertiary を分離）</h1>
+    <p class="lede">
+      Tertiary を「警告」ではなく「アクセント／MaaS・AI 系の装飾」として独立させ、警告は Status トークンへ移しました。Core colors（ブランド軸）と Status colors（意味軸）を明確に分離した構成です。
+    </p>
+
+    <!-- ─────────── CORE BRAND ─────────── -->
+    <div class="section-title">CORE — BRAND / NEUTRAL / ACCENT</div>
+
+    <!-- Primary -->
+    <div class="row">
+      <div class="swatch" style="background:#26B7BC">#26B7BC</div>
+      <div class="body">
+        <div class="head">
+          <div class="name">Primary</div>
+          <div class="hex">#26B7BC</div>
+          <span class="role-tag brand">CORE BRAND</span>
+          <div class="sub">— 運行 / 安心 / 基本ブランド</div>
+        </div>
+        <div class="where">
+          ブランドの主色。<strong>運行情報タブのアクティブ色</strong>、<strong>「あと◯分」（通常時の数字）</strong>、<strong>通常運行ピル</strong>、<strong>定期券カードのグラデーション</strong>、<strong>地域インジケータ</strong>。安心・信頼・運行の正常性を表す軸。
+        </div>
+        <div class="tones">
+          <div class="tone lt" style="background:#E1F3F4">10</div>
+          <div class="tone lt" style="background:#A4DCDE">40</div>
+          <div class="tone dk" style="background:#26B7BC">60</div>
+          <div class="tone dk" style="background:#1A8589">80</div>
+          <div class="tone dk" style="background:#0F5253">95</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Secondary -->
+    <div class="row">
+      <div class="swatch" style="background:#334155">#334155</div>
+      <div class="body">
+        <div class="head">
+          <div class="name">Secondary</div>
+          <div class="hex">#334155</div>
+          <span class="role-tag info">INFORMATIONAL NEUTRAL</span>
+          <div class="sub">— 濃色情報 UI</div>
+        </div>
+        <div class="where">
+          情報密度が高い濃色 UI のための補助色。<strong>路線番号バッジ（16・64・92）</strong>、<strong>ヘッダー / 本文の濃色テキスト</strong>、<strong>セカンダリボタン</strong>、<strong>FAB の地</strong>、<strong>時刻・運行表の数値ブロック</strong>。Primary のティールと喧嘩しない、彩度を抑えた中性ダーク。<code style="color:#334155">#1E293B</code> から <code style="color:#334155">#334155</code> へ一段浅めへ調整し、より「情報」寄りに。
+        </div>
+        <div class="tones">
+          <div class="tone lt" style="background:#F1F5F9">10</div>
+          <div class="tone lt" style="background:#CBD5E1">40</div>
+          <div class="tone dk" style="background:#475569">60</div>
+          <div class="tone dk" style="background:#334155">80</div>
+          <div class="tone dk" style="background:#1E293B">95</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tertiary -->
+    <div class="row">
+      <div class="swatch" style="background:#38A1DB">#38A1DB</div>
+      <div class="body">
+        <div class="head">
+          <div class="name">Tertiary</div>
+          <div class="hex">#38A1DB</div>
+          <span class="role-tag">DECORATIVE / SMART</span>
+          <div class="sub">— MaaS / AI / Future / Accent</div>
+        </div>
+        <div class="where">
+          ブランドの未来性・知性を担う装飾アクセント。<strong>AI 提案バッジ</strong>、<strong>「直近の便」「最短ルート」など MaaS 系のサジェスト</strong>、<strong>ハイライト / 新機能告知</strong>、<strong>マップ上のパーソナライズドピン</strong>、<strong>定期券の特殊状態（プレミアムなど）</strong>。Primary（teal）と補色寄りの関係にあり、装飾的に効くインディゴ。警告とは意味的に切り離します。
+        </div>
+        <div class="tones">
+          <div class="tone lt" style="background:#EEF2FF">10</div>
+          <div class="tone lt" style="background:#C7D2FE">40</div>
+          <div class="tone dk" style="background:#818CF8">60</div>
+          <div class="tone dk" style="background:#38A1DB">80</div>
+          <div class="tone dk" style="background:#3730A3">95</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────── STATUS ─────────── -->
+    <div class="section-title">STATUS — SEMANTIC ONLY</div>
+
+    <!-- Success -->
+    <div class="row">
+      <div class="swatch" style="background:#047857">#047857</div>
+      <div class="body">
+        <div class="head">
+          <div class="name">Success</div>
+          <div class="hex">#047857</div>
+          <span class="role-tag status" style="background:rgba(4,120,87,0.10);color:#047857">STATUS</span>
+          <div class="sub">— 正常 / 通常運行</div>
+        </div>
+        <div class="where">
+          意味色の「正常」軸。<strong>通常運行ピル</strong>、<strong>完了モーダル（乗車記録 / 決済完了）</strong>、<strong>定期券の「乗車中」状態</strong>。Primary（teal）と近縁ですが、Primary はブランド軸、Success は意味軸として明確に分けます。背景は <code style="color:#047857">#ECFDF5</code>。
+        </div>
+        <div class="tones">
+          <div class="tone lt" style="background:#ECFDF5">10</div>
+          <div class="tone lt" style="background:#A7F3D0">40</div>
+          <div class="tone dk" style="background:#10B981">60</div>
+          <div class="tone dk" style="background:#047857">80</div>
+          <div class="tone dk" style="background:#064E3B">95</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Warning -->
+    <div class="row">
+      <div class="swatch" style="background:#B45309">#B45309</div>
+      <div class="body">
+        <div class="head">
+          <div class="name">Warning</div>
+          <div class="hex">#B45309</div>
+          <span class="role-tag status">STATUS</span>
+          <div class="sub">— 遅延の可能性</div>
+        </div>
+        <div class="where">
+          意味色の「警告」軸。Tertiary から独立。<strong>「遅延の可能性」ピル</strong>、<strong>「あと◯分」（警告時）</strong>、<strong>NFC 設定の注意バナー</strong>、<strong>カード背景の淡黄ウォッシュ（<code style="color:#B45309">#FFFBEB</code>）</strong>。アクセント用途には使わず、注意喚起のみに限定します。
+        </div>
+        <div class="tones">
+          <div class="tone lt" style="background:#FFFBEB">10</div>
+          <div class="tone lt" style="background:#FDE68A">40</div>
+          <div class="tone dk" style="background:#F59E0B">60</div>
+          <div class="tone dk" style="background:#B45309">80</div>
+          <div class="tone dk" style="background:#78350F">95</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div class="row">
+      <div class="swatch" style="background:#DC2626">#DC2626</div>
+      <div class="body">
+        <div class="head">
+          <div class="name">Error</div>
+          <div class="hex">#DC2626</div>
+          <span class="role-tag status" style="background:rgba(220,38,38,0.10);color:#DC2626">STATUS</span>
+          <div class="sub">— 遅延確定 / 運休</div>
+        </div>
+        <div class="where">
+          意味色の「エラー」軸。<strong>「遅延確定」ピル</strong>、<strong>「あと◯分」（エラー時）</strong>、<strong>「運休」表示</strong>、<strong>ログアウト文言</strong>、<strong>NFC 読み取り失敗モーダル</strong>。
+        </div>
+        <div class="tones">
+          <div class="tone lt" style="background:#FEF2F2">10</div>
+          <div class="tone lt" style="background:#FECACA">40</div>
+          <div class="tone dk" style="background:#EF4444">60</div>
+          <div class="tone dk" style="background:#DC2626">80</div>
+          <div class="tone dk" style="background:#7F1D1D">95</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────── NEUTRALS ─────────── -->
+    <div class="section-title">NEUTRAL — SURFACES</div>
+
+    <!-- Neutral -->
+    <div class="row">
+      <div class="swatch light" style="background:#F1F5F9">#F1F5F9</div>
+      <div class="body">
+        <div class="head">
+          <div class="name">Neutral</div>
+          <div class="hex">#64748B</div>
+          <div class="sub">— サーフェス全般</div>
+        </div>
+        <div class="where">
+          背景・カード・サーフェスのベース。<strong>アプリ背景のセージミントグラデ（<code style="color:#26B7BC">#E6EEED → #F0F4F4 → #E9F0EF</code>）</strong>、<strong>白カード</strong>、<strong>サイドバー / モーダル背景</strong>、<strong>区切り線</strong>。
+        </div>
+        <div class="tones">
+          <div class="tone lt" style="background:#F8FAFC">10</div>
+          <div class="tone lt" style="background:#F1F5F9">20</div>
+          <div class="tone lt" style="background:#E2E8F0">40</div>
+          <div class="tone dk" style="background:#64748B">60</div>
+          <div class="tone dk" style="background:#334155">80</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Neutral Variant -->
+    <div class="row">
+      <div class="swatch" style="background:#94A3B8">#94A3B8</div>
+      <div class="body">
+        <div class="head">
+          <div class="name">Neutral Variant</div>
+          <div class="hex">#94A3B8</div>
+          <div class="sub">— 中強調・補助</div>
+        </div>
+        <div class="where">
+          ボーダー・補助テキスト・中強調用。<strong>プレースホルダー</strong>、<strong>マイクロコピー（「直近の便」「毎日運行」）</strong>、<strong>「本日の便は終了しました」の低彩度テキスト</strong>、<strong>アイコン既定色</strong>、<strong>入力ボーダー</strong>。
+        </div>
+        <div class="tones">
+          <div class="tone lt" style="background:#F1F5F9">10</div>
+          <div class="tone lt" style="background:#CBD5E1">40</div>
+          <div class="tone dk" style="background:#94A3B8">60</div>
+          <div class="tone dk" style="background:#64748B">80</div>
+          <div class="tone dk" style="background:#475569">95</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>変更ポイント。</strong>
+      Material 3 の Tertiary は本来「アクセント / 装飾」のためのスロットで、警告色を兼任させると意味が衝突します。今回の分離により、(1) Tertiary <code>#38A1DB</code> を MaaS・AI・未来機能の装飾アクセントとして純粋に運用でき、(2) Warning <code>#B45309</code> は Status トークン下で Success / Error と並ぶ意味色として安定します。Secondary を <code>#334155</code> に一段浅めへ調整したのは、Primary（teal）と Tertiary（indigo）の彩度差に挟まれて、Secondary が暗く沈みすぎないよう情報 UI 寄りにバランスを取るためです。
+    </div>
+  </div>
+</body>
+</html>

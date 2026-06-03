@@ -1,0 +1,546 @@
+/* FIG Design System — Core Primitives
+ * ──────────────────────────────────────────────────────────────────
+ * ブランド定義は『FIGロゴマニュアル』に準拠：
+ *   - メイン1（ターコイズ）: R38 G183 B188 / #26B7BC
+ *   - メイン2（ブルー）    : R56 G161 B219 / #38A1DB
+ *   - サブ1（ライトグレー） : R181 G181 B182 / #B5B5B6
+ *   - サブ2（ダークグレー） : R89 G87 B87   / #595757
+ *   - 和文: 源ノ角ゴシック Bold（Noto Sans JP / Source Han Sans JP）
+ *   - 英文: M PLUS Rounded 1c Bold（Rounded-X M+ 2c の近縁ファミリ）
+ *   - アイソレーション: 上左右 0.3A / 下 0.25A
+ * ──────────────────────────────────────────────────────────────────
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap');
+
+:root {
+  /* ── Brand · Primary (ターコイズ系 — メイン1) ── */
+  --color-brand-primary:        #26B7BC;
+  --color-brand-primary-light:  #5CCED2;
+  --color-brand-primary-dark:   #1A8589;
+  --color-brand-primary-tint:   rgba(38, 183, 188, 0.10);
+  --color-brand-primary-shadow: rgba(38, 183, 188, 0.25);
+
+  /* ── Brand · Secondary (ブルー系 — メイン2) ── */
+  --color-brand-secondary:        #38A1DB;
+  --color-brand-secondary-light:  #6BB8E4;
+  --color-brand-secondary-dark:   #2378A8;
+  --color-brand-secondary-tint:   rgba(56, 161, 219, 0.10);
+  --color-brand-secondary-shadow: rgba(56, 161, 219, 0.25);
+
+  /* ── Brand · Neutrals (FIGサブカラー) ──
+   * ロゴマニュアル準拠の中立色。--fg-* スレートスケールと共存する。
+   * 用途: モノクロ環境、無効状態、補助テキストの正典中立。
+   */
+  --color-neutral-light: #B5B5B6;   /* C0 M0 Y0 K40 */
+  --color-neutral-dark:  #595757;   /* C0 M0 Y0 K80 */
+
+  /* ── App background — FIGターコイズ/ブルーの極淡ウォッシュ ── */
+  --bg-stop-1: #EFF9FA;   /* ターコイズ 極淡 */
+  --bg-stop-2: #F4F8FB;   /* ニュートラル */
+  --bg-stop-3: #EBF4FB;   /* ブルー 極淡 */
+  --bg-app: linear-gradient(135deg, var(--bg-stop-1) 0%, var(--bg-stop-2) 50%, var(--bg-stop-3) 100%);
+
+  /* ── Surfaces ── */
+  --surface-card: #FFFFFF;
+  --surface-glass: rgba(255, 255, 255, 0.70);
+  --surface-glass-border: rgba(255, 255, 255, 0.60);
+  --surface-tabs: rgba(226, 232, 240, 0.50);     /* slate-200/50 */
+  --surface-scrim: rgba(15, 23, 42, 0.40);       /* slate-900/40 */
+  --surface-modal: rgba(0, 0, 0, 0.30);
+
+  /* ── Foreground (slate scale) ── */
+  --fg-1: #1E293B;   /* slate-800 — primary text */
+  --fg-2: #334155;   /* slate-700 */
+  --fg-3: #475569;   /* slate-600 */
+  --fg-4: #64748B;   /* slate-500 — body secondary */
+  --fg-5: #94A3B8;   /* slate-400 — labels / muted */
+  --fg-6: #CBD5E1;   /* slate-300 — chevron / dividers strong */
+
+  /* ── Borders / dividers ── */
+  --border-strong: #CBD5E1;          /* slate-300 */
+  --border-default: #E2E8F0;         /* slate-200 */
+  --border-soft: #F1F5F9;            /* slate-100 */
+  --border-card: #E5E7EB;            /* gray-200 */
+
+  /* ── Status (pill bg / pill fg pairs) ── */
+  --status-normal-bg: #ECFDF5;       /* green-50 */
+  --status-normal-fg: #047857;       /* green-700 */
+  --status-delay-bg: #FFFBEB;        /* amber-50 */
+  --status-delay-fg: #B45309;        /* amber-700 */
+  --status-suspend-bg: #FEF2F2;      /* red-50 */
+  --status-suspend-fg: #B91C1C;      /* red-700 */
+
+  /* ── Tinted backgrounds for icon bubbles ── */
+  --bubble-blue-bg: #DBEAFE;         /* blue-100 */
+  --bubble-blue-fg: #1D4ED8;         /* blue-700 */
+  --bubble-emerald-bg: rgba(16, 185, 129, 0.10);
+  --bubble-emerald-fg: #047857;
+  --bubble-teal-bg: var(--color-brand-primary-tint);
+  --bubble-teal-fg: var(--color-brand-primary);
+  --bubble-blue-brand-bg: var(--color-brand-secondary-tint);
+  --bubble-blue-brand-fg: var(--color-brand-secondary);
+
+  /* ── Semantic accent (error / warn) ── */
+  --warn-bg: rgba(254, 243, 199, 0.80);   /* amber-50/80 */
+  --warn-border: rgba(253, 230, 138, 0.60);
+  --warn-fg: #92400E;                      /* amber-800 */
+  --error-fg: #EF4444;                     /* red-500 */
+  --error-bg: #FEF2F2;
+  --orange-accent: #F97316;                /* orange-500 — error retry */
+
+  /* ── Typography Primitives ──
+   * 役割（display / body / arrival-time 等）の正典は semantic.css の
+   * --typography-* に集約。本層は「材料」のみ提供する。
+   */
+
+  /* Font family — FIGブランド準拠。和文と英文を明示的に分離。
+   * ─ sans      : 和文本文・見出しの基転。「源ノ角ゴシック」をWebで採るためのGoogle Fonts同一体
+   *               Noto Sans JP を筆頭に指定。
+   * ─ rounded  : ブランドボイス・英文見出し・重要不動産のアクセント。
+   *               ロゴマニュアル規定「Rounded-X M+ 2c bold」の近縁。
+   * ─ numeric  : 「桁が揃うこと」が情報理解に直結する数字専用。
+   *               tabular-nums 前提。
+   * ─ mono     : コード表示・識別子など「等幅の中立性」が要る領域。
+   */
+  --font-sans: 'Noto Sans JP', 'Source Han Sans JP', 'Source Han Sans',
+               "Hiragino Kaku Gothic ProN", "Hiragino Sans",
+               "Yu Gothic", "Meiryo", -apple-system, BlinkMacSystemFont,
+               "Segoe UI", system-ui, sans-serif;
+  --font-rounded: 'M PLUS Rounded 1c', 'Noto Sans JP', 'Source Han Sans JP',
+                  "Hiragino Maru Gothic ProN", "Hiragino Kaku Gothic ProN",
+                  "Yu Gothic", system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --font-numeric: 'M PLUS Rounded 1c', 'Inter', 'Roboto Mono', ui-monospace,
+                  "SF Mono", "JetBrains Mono", "Hiragino Sans", "Yu Gothic",
+                  system-ui, sans-serif;
+
+  /* 数字の表示オプション — tabular-nums で桁揃え、lining-nums で 0 を明示。 */
+  --font-variant-numeric:         tabular-nums lining-nums;
+  --font-variant-numeric-slashed: tabular-nums lining-nums slashed-zero;
+
+  /* Font weight — 命名規則統一（--font-weight-* が正典、--fw-* は後方互換） */
+  --font-weight-regular:   400;
+  --font-weight-medium:    500;
+  --font-weight-semibold:  600;
+  --font-weight-bold:      700;
+  --font-weight-extrabold: 800;
+  --fw-regular:   var(--font-weight-regular);
+  --fw-medium:    var(--font-weight-medium);
+  --fw-semibold:  var(--font-weight-semibold);
+  --fw-bold:      var(--font-weight-bold);
+  --fw-extrabold: var(--font-weight-extrabold);
+
+  /* Font size — --font-size-* が正典、--text-* は後方互換エイリアス */
+  --font-size-xs:   11px;
+  --font-size-sm:   13px;
+  --font-size-base: 14px;
+  --font-size-md:   15px;
+  --font-size-lg:   18px;
+  --font-size-xl:   22px;
+  --font-size-2xl:  28px;
+  --font-size-3xl:  32px;
+  --text-xs:   var(--font-size-xs);
+  --text-sm:   var(--font-size-sm);
+  --text-base: var(--font-size-base);
+  --text-md:   var(--font-size-md);
+  --text-lg:   var(--font-size-lg);
+  --text-xl:   var(--font-size-xl);
+  --text-2xl:  var(--font-size-2xl);
+  --text-3xl:  var(--font-size-3xl);
+
+  /* Line height — 不足していた行間の正典化。font ショートハンドで `/` の右に置く。 */
+  --lh-none:    1;       /* 数字バッジ・大型数値（重ね合わせの基準） */
+  --lh-tight:   1.25;    /* 見出し */
+  --lh-snug:    1.4;     /* ラベル・キャプション */
+  --lh-base:    1.5;     /* 本文標準 */
+  --lh-relaxed: 1.625;   /* 長文・遅延理由文 */
+  --lh-loose:   1.75;    /* ブロッククォート的余裕 */
+
+  /* ── Line-height · Japanese (DADS準拠) ──
+   * 日本語は行送りを広めに取らないと「漢字・かなの密度差」で読みづらくなる。
+   * デジタル庁デザインシステム（DADS）の本文推奨は 1.7〜1.8。
+   * 「相手の立場に立つ＝慈愛」の精神を行間で物理的に担保する。
+   *
+   * 役割マトリクス:
+   *   display(大見出し)  : 1.3   — 数字混在で締める
+   *   headline(見出し)    : 1.4
+   *   title(中見出し)     : 1.5
+   *   body(本文)          : 1.75  ← DADS本文の中央値
+   *   body-loose(長文)    : 1.85  ← 慈愛特化（説明文・遅延理由・案内文）
+   *   caption / label     : 1.5〜1.6
+   */
+  --lh-jp-display:    1.30;
+  --lh-jp-headline:   1.40;
+  --lh-jp-title:      1.50;
+  --lh-jp-body:       1.75;   /* 本文の正典 */
+  --lh-jp-body-loose: 1.85;   /* 案内文・長文 */
+  --lh-jp-caption:    1.60;
+  --lh-jp-label:      1.50;
+
+  /* Letter spacing */
+  --tracking-tighter: -0.02em;
+  --tracking-tight:   -0.01em;
+  --tracking-normal:  0;
+  --tracking-wide:    0.02em;
+  --tracking-wider:   0.05em;
+  --tracking-widest:  0.10em;
+
+  /* ── Letter-spacing · Japanese ──
+   * 和文は欧文と違い「字面の懐」が広いため、詰めすぎると逆に読みづらくなる。
+   * DADS / Material 3 JP の知見:
+   *   - 大見出しは -0.02em まで詰めても可（堅さ抑制・凝縮感）
+   *   - 本文は 0 が原則（負の値は禁止）
+   *   - 強調ラベル・キャプションは +0.02em〜+0.05em
+   */
+  --tracking-jp-display:  -0.02em;
+  --tracking-jp-headline: -0.01em;
+  --tracking-jp-title:    -0.005em;
+  --tracking-jp-body:     0;          /* 本文の正典（負の値は禁止） */
+  --tracking-jp-label:    0.02em;
+  --tracking-jp-caption:  0.02em;
+  --tracking-jp-eyebrow:  0.10em;
+
+  /* ── Text-wrap · Japanese 禁則・分断対策 ──
+   * 「長い英単語が和文の途中で改行されて読めない」「行末に句読点だけ残る」
+   * といった日本語特有の表示崩れを防ぐ。
+   *   word-break: keep-all  → 英単語の途中で改行しない
+   *   line-break: strict    → 句読点・括弧・繰り返し記号の厳格禁則
+   *   overflow-wrap: anywhere → 極端に長いURL等の最終手段
+   *   text-wrap: pretty     → 末尾孤立行（オーファン）の回避
+   *   text-wrap: balance    → 見出しを均等改行
+   * CSS変数として規約化し、コンポーネントが直書きする生値をなくす。
+   */
+  --word-break-jp:      keep-all;
+  --line-break-jp:      strict;
+  --overflow-wrap-jp:   anywhere;
+  --text-wrap-default:  pretty;
+  --text-wrap-headline: balance;
+
+  /* ── Radii ── */
+  --radius-sm:  6px;    /* shadcn md */
+  --radius-md:  12px;   /* card */
+  --radius-lg:  16px;   /* tab bar */
+  --radius-xl:  20px;   /* modal sections */
+  --radius-2xl: 28px;   /* pass card */
+  --radius-pill: 9999px;
+
+  /* ── Elevation Primitives ──
+   * 「材料としての影」の 5 段ラダー + none。
+   * 用途別（header / fab / pass-card 等）の個別トークンは廃止し、
+   * 本ラダーに統合。役割は semantic.css の --surface-elevation-* が担う。
+   * 影色は black 系で統一。ブランドティント影（teal）は xl のみ採用。
+   */
+  --elevation-none: none;
+  --elevation-xs:   0 1px 3px rgba(0, 0, 0, 0.05);                 /* shadow-header 軽量域 */
+  --elevation-sm:   0 4px 16px rgba(0, 0, 0, 0.06);                /* shadow-tab-active 相当 */
+  --elevation-md:   0 8px 30px rgba(0, 0, 0, 0.08);                /* shadow-header / cta 強化 */
+  --elevation-lg:   0 12px 40px rgba(0, 0, 0, 0.12);               /* shadow-fab 相当 */
+  --elevation-xl:   0 20px 50px rgba(38, 183, 188, 0.25);          /* FIG ターコイズ tint（ブランド影） */
+
+  /* ── Spacing scale (Tailwind-equivalent, 4px ベース) ──
+   * 0 と px は「ゼロ」と「ヘアライン」の意味的特例。
+   * 1〜16 は 4px ステップで完備（飛び番禁止）。
+   * セマンティック層（semantic.css の layout.*）はここを参照する。
+   */
+  --space-0:  0;
+  --space-px: 1px;
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-7:  28px;
+  --space-8:  32px;
+  --space-9:  36px;
+  --space-10: 40px;
+  --space-11: 44px;
+  --space-12: 48px;
+  --space-13: 56px;   /* Tailwind 14 相当：3 倍ステップに丸めず固定 */
+  --space-14: 64px;
+  --space-15: 80px;
+  --space-16: 96px;
+
+  /* ── Container widths ──
+   * ページ最大コンテンツ幅のラダー。モバイル → タブレット → デスクトップ。
+   */
+  --container-xs: 360px;   /* 最小モバイル */
+  --container-sm: 640px;   /* 大型モバイル / 小型タブレット */
+  --container-md: 768px;   /* 既定タブレット — 現行アプリ max-w-3xl と一致 */
+  --container-lg: 1024px;  /* デスクトップ / 管理画面 */
+
+  /* ── Touch target ──
+   * iOS HIG 44pt / Material 48dp の最小値。タップ可能要素の物理下限。
+   * 視覚サイズが小さくても、ヒット領域はこれを下回ってはならない。
+   */
+  --touch-target-min: 44px;
+
+  /* ── Safe area ──
+   * iOS のノッチ・ホームインジケータ等を回避するための env() ラッパー。
+   * 非対応環境では 0 にフォールバック。
+   */
+  --safe-area-top:    env(safe-area-inset-top, 0px);
+  --safe-area-right:  env(safe-area-inset-right, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left:   env(safe-area-inset-left, 0px);
+
+  /* ── Breakpoints ──
+   * メディアクエリの数値。CSS 内では var() を直接 @media に書けないため、
+   * JS / postcss-custom-media へ受け渡す参照値。値の正典はここ。
+   *   sm: モバイル → 大型モバイル
+   *   md: タブレット
+   *   lg: デスクトップ / 管理画面
+   */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+
+  /* ── Grid ──
+   * 多デバイス展開を見据えた列数とガター。モバイル 4 列、デスクトップ 12 列。
+   */
+  --grid-column-count-mobile:  4;
+  --grid-column-count-tablet:  8;
+  --grid-column-count-desktop: 12;
+  --grid-column-count:         var(--grid-column-count-mobile);   /* 既定値 */
+  --grid-gutter-tight:  var(--space-2);    /* 8px  — 密集グリッド */
+  --grid-gutter:        var(--space-4);    /* 16px — モバイル既定 */
+  --grid-gutter-wide:   var(--space-6);    /* 24px — デスクトップ既定 */
+
+  /* ── Numeric typography variants（重複定義は上部に集約済み） ── */
+  /* --font-numeric / --font-variant-numeric{,-slashed} は上部で定義済み */
+
+  /* ════════════════════════════════════════════════
+     Isolation（アイソレーションゾーン）— FIGロゴマニュアル準拠
+     ────────────────────────────────────────────────
+     ロゴおよびブランド要素の周囲に確保する「他要素配置禁止ゾーン」を
+     比率トークンとして抽象化し、コンポーネントの最小余白規約に落とす。
+
+     原則:
+       上・左・右 = 0.3A  / 下 = 0.25A
+       （A はブランド要素の「基準寸法」= 通常はロゴ高さ）
+
+     使い方:
+       コンポーネント側で --isolation-A を上書きすれば、
+       --isolation-around / --isolation-bottom が自動的に再計算される。
+
+       .brand-block { --isolation-A: 64px; padding: var(--isolation-around);
+                      padding-bottom: var(--isolation-bottom); }
+     ════════════════════════════════════════════════ */
+  --isolation-ratio-around: 0.3;          /* 上・左・右 */
+  --isolation-ratio-bottom: 0.25;         /* 下 */
+  --isolation-A:        48px;             /* 既定の A 寸法（中サイズ運用） */
+  --isolation-A-sm:     32px;             /* 小サイズ（チップ・バッジ近傍） */
+  --isolation-A-md:     48px;             /* 中サイズ（カードヘッダー・通知） */
+  --isolation-A-lg:     80px;             /* 大サイズ（ヒーロー・ランディング） */
+  --isolation-around:   calc(var(--isolation-A) * var(--isolation-ratio-around));
+  --isolation-bottom:   calc(var(--isolation-A) * var(--isolation-ratio-bottom));
+
+  /* ロゴ最小使用サイズ（ロゴマニュアル p.5）— UI 上のロゴ縮小下限 */
+  --logo-min-width-full:    96px;   /* 正式社名あり 25mm 相当 @ 96dpi */
+  --logo-min-width-compact: 56px;   /* 省略時 15mm 相当 */
+
+  /* ── Motion duration (semantic naming alias) ──
+   * 既存の --dur-* と同値の意味的別名。新コードでは --motion-duration-* を優先。
+   * 旧 --dur-* は後方互換のため残置。
+   */
+  --motion-duration-instant: var(--dur-instant);   /* 75ms */
+  --motion-duration-fast:    var(--dur-fast);      /* 150ms */
+  --motion-duration-base:    var(--dur-base);      /* 250ms */
+  --motion-duration-moderate:var(--dur-moderate);  /* 400ms */
+  --motion-duration-slow:    var(--dur-slow);      /* 600ms */
+
+  /* Experience budget band — Step 4「体感バジェット」専用エイリアス */
+  --motion-duration-budget-press: var(--dur-budget-press);  /* 150ms */
+  --motion-duration-budget-quick: var(--dur-budget-quick);  /* 180ms */
+  --motion-duration-budget-nav:   var(--dur-budget-nav);    /* 200ms */
+  --motion-duration-budget-sheet: var(--dur-budget-sheet);  /* 240ms */
+  --motion-duration-budget-modal: var(--dur-budget-modal);  /* 280ms */
+
+  /* ── Motion easing (semantic naming alias) ──
+   * 4 種のロール対応カーブ。--ease-* のエイリアスとして公開。
+   */
+  --motion-easing-standard:    var(--ease-in-out);                /* 双方向の標準 */
+  --motion-easing-emphasized:  var(--ease-emphasized);            /* 強調遷移 */
+  --motion-easing-decelerate:  var(--ease-emphasized-decelerate); /* 登場（減速） */
+  --motion-easing-accelerate:  var(--ease-emphasized-accelerate); /* 退場（加速） */
+
+  /* ── Interaction scale ──
+   * press / drag 時のスケール変換量。生の 0.98 直書きを禁ずるための正典。
+   * state.* の --state-*-scale はここを参照する形にエイリアス化。
+   */
+  --interaction-scale-pressed:        0.98;   /* CTA / 標準ボタン押下 */
+  --interaction-scale-pressed-strong: 0.92;   /* NFC タップ・物理を強く感じさせたい箇所 */
+  --interaction-scale-dragged:        1.02;   /* ドラッグ中の浮遊感 */
+  --interaction-scale-zoom-in:        1.04;   /* 軽い注目・ホバー強調 */
+  --interaction-rotate-dragged:       1deg;
+  --interaction-translate-press:      1px;    /* 押し込みの軽い沈み込み */
+
+  /* ── Focus ring ──
+   * a11y のフォーカスリング寸法。色は semantic.css の --color-border-focus を使用。
+   */
+  --focus-ring-width:        3px;
+  --focus-ring-width-thin:   2px;
+  --focus-ring-offset:       2px;
+  --focus-ring-offset-tight: 1px;
+
+  /* ── Motion ──
+   * Duration 8 段（instant 〜 ambient-long）と Easing セット。
+   * セマンティック層（semantic.css の motion.*）から参照される前提。
+   * UI 反応系は -instant〜-slow、定常アンビエントは -ambient-* を使用。
+   */
+  --dur-instant:     75ms;     /* hover/press の即時フィードバック */
+  --dur-fast:        150ms;    /* チップ・トースト消失、ボタン押下 */
+  --dur-base:        250ms;    /* 標準 enter/exit、タブ切替 */
+  --dur-moderate:    400ms;    /* モーダル登場、サイドバー */
+  --dur-slow:        600ms;    /* 大きい登場、シーン遷移 */
+
+  /* ── Experience budget band ──
+   * Step 4「200ms 以内」の体感バジェット契約用の追加段。
+   * 既存 --dur-* を壊さずに、Experience セマンティクス（motion-experience.*）
+   * が直接引く専用帯。「ユーザーが意思決定 → 結果反映」までの上限を保証する。
+   *
+   *   budget-quick    180ms : ポップオーバー / メニュー登場
+   *   budget-nav      200ms : タブ・サブビュー切替（200ms バジェットの上限）
+   *   budget-sheet    240ms : ボトムシート登場（高さがある = 例外許容）
+   *   budget-modal    280ms : モーダル登場（焦点遷移を伴う最大例外）
+   */
+  --dur-budget-press:  150ms;  /* press → result（= --dur-fast 同値、別名で意図を明示） */
+  --dur-budget-quick:  180ms;  /* ポップオーバー / ドロップダウン */
+  --dur-budget-nav:    200ms;  /* ナビゲーション遷移 */
+  --dur-budget-sheet:  240ms;  /* ボトムシート上昇 */
+  --dur-budget-modal:  280ms;  /* モーダル上昇 */
+
+  --dur-ambient-1:   1200ms;   /* 呼吸ドット */
+  --dur-ambient-2:   2400ms;   /* NFC リングパルス */
+  --dur-ambient-3:   3000ms;   /* 定期券シマー、長尺アンビエント */
+
+  /* Easing — 直線参照不可。常にカーブ。 */
+  --ease-linear:       linear;
+  --ease-out-expo:     cubic-bezier(0.22, 1, 0.36, 1);   /* ブランド既定 — 素早く減速 */
+  --ease-out:          cubic-bezier(0.0, 0, 0.2, 1);     /* 一般的な出現 */
+  --ease-in:           cubic-bezier(0.4, 0, 1, 1);       /* 退場・離脱 */
+  --ease-in-out:       cubic-bezier(0.4, 0, 0.2, 1);     /* 双方向遷移 */
+  --ease-default:      cubic-bezier(0.4, 0, 0.2, 1);     /* 後方互換エイリアス */
+  --ease-emphasized:   cubic-bezier(0.2, 0, 0, 1);       /* 強調された遷移（Material M3 風） */
+  --ease-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ease-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+
+  /* Spring は CSS で表現不可。motion/react 側で以下の固定値を使う:
+   *   spring.gentle  → { stiffness: 200, damping: 25, mass: 1 }
+   *   spring.snappy  → { stiffness: 320, damping: 22, mass: 0.9 }
+   *   spring.bouncy  → { stiffness: 380, damping: 14, mass: 0.8 }
+   */
+
+  /* ── Opacity ──
+   * 10 段スケール。半透明色は rgba 直書きせず color-mix か rgba(色, var(--opacity-*)) を使う。
+   * セマンティック層（semantic.css の opacity.*）はここを参照する。
+   */
+  --opacity-0:   0;
+  --opacity-5:   0.05;
+  --opacity-10:  0.10;
+  --opacity-20:  0.20;
+  --opacity-30:  0.30;
+  --opacity-40:  0.40;
+  --opacity-60:  0.60;
+  --opacity-70:  0.70;
+  --opacity-80:  0.80;
+  --opacity-90:  0.90;
+  --opacity-100: 1;
+
+  /* ── Z-index scale ──
+   * 100 刻みの推奨スケール。各層の間に 99 個の差し込み余地を残してある。
+   * elevation（semantic.css の elevation.*）と対になる重なり順。
+   * `z-index: 数値` の直書きは禁止。必ず本トークン経由で指定する。
+   */
+  --z-base:     0;      /* 通常フロー、フラットなコンテンツ */
+  --z-raised:   100;    /* カード、低位ボタン（elevation.1 と対） */
+  --z-sticky:   200;    /* sticky ヘッダー、フッターナビ */
+  --z-dropdown: 300;    /* プルダウン、ポップオーバー、メニュー */
+  --z-fab:      400;    /* FAB、スナックバー、固定 CTA */
+  --z-drawer:   500;    /* サイドバー、ボトムシート */
+  --z-modal:    600;    /* ダイアログ、モーダル（背面 scrim 含む） */
+  --z-toast:    700;    /* トースト、最前面通知（= tooltip と同レベル） */
+  --z-tooltip:  700;    /* ツールチップ、コンテキストヒント */
+  --z-debug:    9999;   /* 開発用最前面（本番未使用） */
+}
+
+/* ─── Semantic type roles ─── */
+
+html, body {
+  font-family: var(--font-sans);
+  color: var(--fg-1);
+  font-size: var(--text-base);
+  line-height: var(--lh-jp-body);
+  background: var(--bg-app);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* DADS準拠 — 日本語の禁則・分断・末尾孤立行回避をプロジェクト既定で有効化。
+   * 個別に上書きしたい箇所は .jp-headline / 直接プロパティで指定する。 */
+  word-break:    var(--word-break-jp);
+  line-break:    var(--line-break-jp);
+  overflow-wrap: var(--overflow-wrap-jp);
+  text-wrap:     var(--text-wrap-default);
+}
+
+.h1, h1.ds {
+  font-size: var(--text-3xl);
+  font-weight: var(--fw-extrabold);
+  letter-spacing: var(--tracking-jp-display);
+  line-height: var(--lh-jp-display);
+  color: var(--fg-1);
+}
+
+.h2, h2.ds {
+  font-size: var(--text-2xl);
+  font-weight: var(--fw-extrabold);
+  letter-spacing: var(--tracking-jp-headline);
+  line-height: var(--lh-jp-headline);
+  color: var(--fg-1);
+}
+
+.h3, h3.ds {
+  font-size: var(--text-xl);
+  font-weight: var(--fw-bold);
+  letter-spacing: -0.01em;
+  color: var(--fg-1);
+}
+
+.title, .lg-bold {
+  font-size: var(--text-lg);
+  font-weight: var(--fw-bold);
+  letter-spacing: -0.005em;
+  color: var(--fg-2);
+}
+
+.body, p.ds {
+  font-size: var(--text-base);
+  font-weight: var(--fw-regular);
+  color: var(--fg-2);
+  line-height: var(--lh-jp-body);
+}
+
+.body-sm {
+  font-size: var(--text-sm);
+  color: var(--fg-3);
+}
+
+.caption {
+  font-size: var(--text-xs);
+  color: var(--fg-5);
+}
+
+.label-eyebrow {
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  color: var(--fg-5);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Components — Icon Bubble</title>
+<link rel="stylesheet" href="../primitives.css">
+<link rel="stylesheet" href="../semantic.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  body { margin: 0; padding: var(--space-6, 24px); background: var(--bg-app, #F8FAFC); font-family: var(--font-sans); display: flex; flex-direction: column; gap: var(--space-5, 20px); }
+  .stage { background: var(--color-surface-default, #FFFFFF); border: 1px solid var(--color-border-subtle, #E2E8F0); border-radius: var(--radius-lg, 16px); padding: var(--space-5, 20px); }
+  .label { font-family: var(--font-mono); font-size: var(--text-xs, 12px); color: var(--color-text-tertiary, #94A3B8); margin-bottom: var(--space-3, 12px); }
+  .row { display: flex; flex-wrap: wrap; gap: var(--space-5, 20px); align-items: center; }
+  .cell { display: flex; flex-direction: column; gap: var(--space-2, 8px); align-items: center; min-width: 80px; }
+  .cell__name { font-family: var(--font-mono); font-size: var(--text-xs, 12px); color: var(--color-text-muted, #64748B); }
+
+  .bubble { display: grid; place-items: center; border-radius: 18px; flex-shrink: 0; }
+  .bubble svg { width: 24px; height: 24px; }
+  .bubble--sm { width: 36px; height: 36px; border-radius: 12px; }
+  .bubble--sm svg { width: 18px; height: 18px; }
+  .bubble--md { width: 48px; height: 48px; }
+  .bubble--lg { width: 64px; height: 64px; border-radius: 22px; }
+  .bubble--lg svg { width: 30px; height: 30px; }
+
+  /* Color variants — semantic tints */
+  .bubble--brand   { background: var(--color-surface-brand-soft, #E0F5F5); color: var(--color-text-brand, #0E7C80); }
+  .bubble--success { background: #DCFCE7; color: #16A34A; }
+  .bubble--warning { background: #FEF3C7; color: #B45309; }
+  .bubble--error   { background: #FEE2E2; color: #DC2626; }
+  .bubble--info    { background: #DBEAFE; color: #2563EB; }
+  .bubble--neutral { background: var(--color-surface-subtle, #F1F5F9); color: var(--color-text-secondary, #475569); }
+  .bubble--filled  { background: var(--color-surface-brand, #26B7BC); color: #fff; }
+  .bubble--inverse { background: var(--color-surface-inverse, #0F172A); color: #fff; }
+
+  /* List row usage example */
+  .list-row { display: flex; align-items: center; gap: var(--space-3, 12px); padding: var(--space-3, 12px) 0; border-bottom: 1px solid var(--color-border-subtle, #E2E8F0); }
+  .list-row:last-child { border-bottom: none; }
+  .list-row__body { flex: 1; }
+  .list-row__title { font-weight: 600; color: var(--color-text-primary, #0F172A); font-size: var(--text-sm, 14px); }
+  .list-row__desc { font-size: var(--text-xs, 12px); color: var(--color-text-muted, #64748B); margin-top: 2px; }
+  .list-row__caret { color: var(--color-text-tertiary, #94A3B8); }
+  .list-row__caret svg { width: 16px; height: 16px; }
+</style>
+</head>
+<body>
+
+  <div class="stage">
+    <div class="label">色バリアント（用途別の意味づけ）</div>
+    <div class="row">
+      <div class="cell"><span class="bubble bubble--md bubble--brand" aria-hidden="true"><i data-lucide="zap"></i></span><span class="cell__name">Brand</span></div>
+      <div class="cell"><span class="bubble bubble--md bubble--success" aria-hidden="true"><i data-lucide="check"></i></span><span class="cell__name">Success</span></div>
+      <div class="cell"><span class="bubble bubble--md bubble--warning" aria-hidden="true"><i data-lucide="alert-triangle"></i></span><span class="cell__name">Warning</span></div>
+      <div class="cell"><span class="bubble bubble--md bubble--error" aria-hidden="true"><i data-lucide="x"></i></span><span class="cell__name">Error</span></div>
+      <div class="cell"><span class="bubble bubble--md bubble--info" aria-hidden="true"><i data-lucide="info"></i></span><span class="cell__name">Info</span></div>
+      <div class="cell"><span class="bubble bubble--md bubble--neutral" aria-hidden="true"><i data-lucide="settings"></i></span><span class="cell__name">Neutral</span></div>
+      <div class="cell"><span class="bubble bubble--md bubble--filled" aria-hidden="true"><i data-lucide="star"></i></span><span class="cell__name">Filled</span></div>
+      <div class="cell"><span class="bubble bubble--md bubble--inverse" aria-hidden="true"><i data-lucide="moon"></i></span><span class="cell__name">Inverse</span></div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="label">サイズバリアント</div>
+    <div class="row">
+      <div class="cell"><span class="bubble bubble--sm bubble--brand" aria-hidden="true"><i data-lucide="bus"></i></span><span class="cell__name">36×36</span></div>
+      <div class="cell"><span class="bubble bubble--md bubble--brand" aria-hidden="true"><i data-lucide="bus"></i></span><span class="cell__name">48×48</span></div>
+      <div class="cell"><span class="bubble bubble--lg bubble--brand" aria-hidden="true"><i data-lucide="bus"></i></span><span class="cell__name">64×64</span></div>
+    </div>
+    <p style="margin: var(--space-3, 12px) 0 0; font-size: var(--text-xs, 12px); color: var(--color-text-muted, #64748B);">装飾的コンテナのため <code>aria-hidden="true"</code> を既定で付与。意味は親要素のテキストで集約表現。</p>
+  </div>
+
+  <div class="stage">
+    <div class="label">リスト行内での使用例</div>
+    <div class="list-row">
+      <span class="bubble bubble--sm bubble--brand" aria-hidden="true"><i data-lucide="bell"></i></span>
+      <div class="list-row__body">
+        <div class="list-row__title">通知設定</div>
+        <div class="list-row__desc">プッシュ通知・メール・SMS の頻度</div>
+      </div>
+      <span class="list-row__caret"><i data-lucide="chevron-right"></i></span>
+    </div>
+    <div class="list-row">
+      <span class="bubble bubble--sm bubble--success" aria-hidden="true"><i data-lucide="credit-card"></i></span>
+      <div class="list-row__body">
+        <div class="list-row__title">支払い情報</div>
+        <div class="list-row__desc">登録済みカードと IC カード</div>
+      </div>
+      <span class="list-row__caret"><i data-lucide="chevron-right"></i></span>
+    </div>
+    <div class="list-row">
+      <span class="bubble bubble--sm bubble--info" aria-hidden="true"><i data-lucide="map-pin"></i></span>
+      <div class="list-row__body">
+        <div class="list-row__title">位置情報</div>
+        <div class="list-row__desc">使用時のみ許可</div>
+      </div>
+      <span class="list-row__caret"><i data-lucide="chevron-right"></i></span>
+    </div>
+  </div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

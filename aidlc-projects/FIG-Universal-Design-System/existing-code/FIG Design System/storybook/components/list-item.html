@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>List Item — Storybook</title>
+<link rel="stylesheet" href="../_chrome.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  .list { width: 320px; background: #fff; border-radius: var(--radius-md, 12px); border: 1px solid var(--color-border-subtle, #E2E8F0); overflow: hidden; }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    min-height: var(--a11y-touch-target, 44px);
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    transition: var(--motion-hover);
+  }
+  .row + .row { border-top: 1px solid var(--color-border-subtle, #E2E8F0); }
+  .row:hover { background: var(--color-surface-container-low, #F8FAFC); }
+  .row:focus-visible { outline: var(--a11y-focus-ring); outline-offset: -2px; }
+  .row[aria-disabled="true"] { opacity: var(--state-disabled-opacity, 0.4); cursor: not-allowed; }
+  .row svg { flex-shrink: 0; }
+  .row-icon { width: 20px; height: 20px; color: var(--color-icon-default, #64748B); }
+  .row-icon-brand { color: var(--color-icon-brand, #26B7BC); }
+  .row-text { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .row-label { font: var(--typography-body-strong); }
+  .row-desc { font: var(--typography-caption); color: var(--color-text-muted, #64748B); }
+  .row-trailing { display: flex; align-items: center; gap: var(--space-2); color: var(--color-text-muted, #64748B); }
+  .row[aria-selected="true"] { background: var(--color-surface-brand-subtle, #ECFDF5); }
+  .row--destructive .row-label { color: var(--color-feedback-error-strong, #DC2626); }
+  .row--destructive .row-icon { color: var(--color-feedback-error-strong, #DC2626); }
+</style>
+</head>
+<body>
+
+<header class="sb-page-header">
+  <h1 class="sb-page-title">List Item</h1>
+  <p class="sb-page-subtitle">リスト UI の原子。Navigation / Selection / Action / Info の 4 バリアント。<code>&lt;div onClick&gt;</code> 実装は禁止。</p>
+  <div class="sb-page-meta">
+    <span class="sb-tag sb-tag-spec">spec: components/list-item.spec.md</span>
+    <span class="sb-tag sb-tag-todo">SidebarRow 抽象化待ち</span>
+  </div>
+</header>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Variants</h2>
+  <div class="sb-grid">
+    <div class="sb-card">
+      <div class="sb-card-label">Navigation</div>
+      <div class="sb-card-stage">
+        <div class="list">
+          <button class="row"><i data-lucide="map-pin" class="row-icon"></i><div class="row-text"><div class="row-label">よく使う停留所</div></div><span class="row-trailing"><i data-lucide="chevron-right"></i></span></button>
+          <button class="row"><i data-lucide="star" class="row-icon row-icon-brand"></i><div class="row-text"><div class="row-label">お気に入り路線</div><div class="row-desc">5 件</div></div><span class="row-trailing"><i data-lucide="chevron-right"></i></span></button>
+          <button class="row"><i data-lucide="bell" class="row-icon"></i><div class="row-text"><div class="row-label">通知設定</div></div><span class="row-trailing"><i data-lucide="chevron-right"></i></span></button>
+        </div>
+      </div>
+      <div class="sb-card-meta"><div class="sb-card-name">遷移用（ChevronRight）</div></div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">Selection</div>
+      <div class="sb-card-stage">
+        <div class="list" role="listbox">
+          <button class="row" role="option" aria-selected="true"><i data-lucide="map-pin" class="row-icon row-icon-brand"></i><div class="row-text"><div class="row-label">中央駅前</div></div><span class="row-trailing"><i data-lucide="check"></i></span></button>
+          <button class="row" role="option" aria-selected="false"><i data-lucide="map-pin" class="row-icon"></i><div class="row-text"><div class="row-label">市役所前</div></div></button>
+          <button class="row" role="option" aria-selected="false"><i data-lucide="map-pin" class="row-icon"></i><div class="row-text"><div class="row-label">市民病院</div></div></button>
+        </div>
+      </div>
+      <div class="sb-card-meta"><div class="sb-card-name">ラジオ / チェック型</div></div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">Action (destructive)</div>
+      <div class="sb-card-stage">
+        <div class="list">
+          <button class="row row--destructive"><i data-lucide="log-out" class="row-icon"></i><div class="row-text"><div class="row-label">ログアウトする</div></div></button>
+        </div>
+      </div>
+      <div class="sb-card-meta"><div class="sb-card-name">破壊的アクション</div></div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">Info</div>
+      <div class="sb-card-stage">
+        <div class="list">
+          <div class="row" style="cursor: default"><i data-lucide="info" class="row-icon"></i><div class="row-text"><div class="row-label">バージョン</div></div><span class="row-trailing"><code style="font-family: var(--font-mono); font-size: 12px">0.4.1</code></span></div>
+        </div>
+      </div>
+      <div class="sb-card-meta"><div class="sb-card-name">表示専用</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">States</h2>
+  <table class="sb-table">
+    <thead><tr><th>State</th><th>Visual</th><th>Token</th></tr></thead>
+    <tbody>
+      <tr><td>default</td>   <td>標準</td>                           <td>—</td></tr>
+      <tr><td>hover</td>     <td>bg fade to container-low</td>       <td><code>--color-surface-container-low</code></td></tr>
+      <tr><td>pressed</td>   <td>scale(0.99)</td>                    <td><code>--state-pressed-scale</code></td></tr>
+      <tr><td>focused</td>   <td>outline (inset)</td>                <td><code>--a11y-focus-ring</code></td></tr>
+      <tr><td>selected</td>  <td>bg brand-subtle + Check 表示</td>    <td><code>--color-surface-brand-subtle</code></td></tr>
+      <tr><td>disabled</td>  <td>opacity 0.40</td>                   <td><code>--state-disabled-opacity</code></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Spacing</h2>
+  <table class="sb-table">
+    <thead><tr><th>Property</th><th>Token</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>padding</td>           <td><code>--space-3</code></td>            <td>12px</td></tr>
+      <tr><td>gap (icon ↔ label)</td><td><code>--space-3</code></td>            <td>12px</td></tr>
+      <tr><td>gap (trailing)</td>    <td><code>--space-2</code></td>            <td>8px</td></tr>
+      <tr><td>min-height</td>        <td><code>--a11y-touch-target</code></td>  <td>44px</td></tr>
+      <tr><td>icon size</td>         <td>—</td>                                 <td>20×20</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Accessibility</h2>
+  <div class="sb-a11y-note">✅ <div><strong>必ず <code>&lt;button&gt;</code> / <code>&lt;a&gt;</code></strong> で実装。<code>&lt;div onClick&gt;</code> 禁止。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>Selection variant：</strong> 親 <code>role="listbox"</code>、各行 <code>role="option" aria-selected</code>。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>Destructive：</strong> <code>aria-label="ログアウトする"</code> 等で操作の影響を明示。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>Disabled：</strong> <code>aria-disabled="true"</code> 必須。</div></div>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Motion</h2>
+  <div class="sb-grid">
+    <div class="sb-card">
+      <div class="sb-card-label">Hover fade</div>
+      <div class="sb-card-stage"><div class="list" style="width:240px"><button class="row"><i data-lucide="map-pin" class="row-icon"></i><div class="row-text"><div class="row-label">Hover me</div></div><span class="row-trailing"><i data-lucide="chevron-right"></i></span></button></div></div>
+      <div class="sb-card-meta"><div class="sb-card-name">背景フェード</div><div class="sb-card-token">--motion-hover</div></div>
+    </div>
+  </div>
+</section>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

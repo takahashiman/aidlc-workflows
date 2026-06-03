@@ -1,0 +1,21 @@
+{
+  "$schema": "../../tokens/project-settings.schema.json",
+  "projectName": "your-project-name",
+  "displayName": "Your Project Display Name",
+  "description": "1行でプロジェクト概要（ポータルのサイドバーに表示）",
+  "designSystem": {
+    "coreVersion": "v1.2.0",
+    "profile": "Mobile-Consumer",
+    "lockedAt": "YYYY-MM-DD"
+  },
+  "signatureColor": {
+    "value": "#26B7BC",
+    "name": "Sample Turquoise",
+    "harmonization": "FIG Brand Primary 同色（差別化のため必ず自プロダクト固有色へ変更）"
+  },
+  "owners": [
+    "@github-handle-1",
+    "@github-handle-2"
+  ],
+  "createdAt": "YYYY-MM-DD"
+}

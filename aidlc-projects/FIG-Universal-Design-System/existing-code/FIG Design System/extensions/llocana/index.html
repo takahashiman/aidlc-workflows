@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>バス運行情報・通知機能</title>
+
+  <!-- ① 原子トークン（不変） -->
+  <link rel="stylesheet" href="../../primitives.css">
+  <!-- ② 役割トークン（不変） -->
+  <link rel="stylesheet" href="../../semantic.css">
+  <!-- ③ Signature 派生（--color-signature から *-light/-dark/-tint/-shadow を自動生成） -->
+  <link rel="stylesheet" href="../../tokens/signature.css">
+  <!-- ④ プロファイル可変層（base + 自プロファイル1つでOK） -->
+  <link rel="stylesheet" href="../../tokens/base.css">
+  <link rel="stylesheet" href="../../tokens/profile-consumer.css">
+  <!-- ⑤ 見本部品（必要に応じて） -->
+  <link rel="stylesheet" href="../../tokens/components.css">
+  <!-- ⑥ プロジェクト固有スタイル（--color-signature の上書きはここで） -->
+  <link rel="stylesheet" href="./styles/extensions.css">
+</head>
+
+<body class="fig-profile-consumer">
+  <main class="fig-container fig-stack">
+
+    <header class="fig-stack--tight">
+      <h1 class="fig-display">バス運行情報・通知機能</h1>
+      <p class="fig-body">Mobile-Consumer 向けバス運行情報アプリの UI 基盤。FIG Core の不変ルールを守り、プロジェクト固有の拡張だけをこのレイヤーで定義します。</p>
+    </header>
+
+    <article class="fig-card">
+      <h2 class="fig-card__title">FIG Core の土台</h2>
+      <p class="fig-card__body">
+        このページは Core のプリミティブとプロファイルを正しく読み込んだ状態を確認するための雛形です。
+        ここから独自の画面を構築してください。
+      </p>
+    </article>
+
+    <div class="fig-cluster">
+      <button class="fig-button">主要 CTA</button>
+      <button class="fig-button fig-button--secondary">セカンダリ</button>
+    </div>
+
+    <input class="fig-input" placeholder="検索キーワード…">
+
+    <ul class="fig-list">
+      <li class="fig-list-item">運行情報カード</li>
+      <li class="fig-list-item">通知一覧</li>
+      <li class="fig-list-item">設定メニュー</li>
+    </ul>
+
+  </main>
+</body>
+</html>

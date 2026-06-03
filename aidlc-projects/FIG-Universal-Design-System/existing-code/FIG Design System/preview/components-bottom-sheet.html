@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Components — Bottom Sheet</title>
+<link rel="stylesheet" href="../primitives.css">
+<link rel="stylesheet" href="../semantic.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  body { margin: 0; padding: var(--space-6, 24px); background: var(--bg-app, #F8FAFC); font-family: var(--font-sans); display: grid; place-items: center; }
+  .phone { width: min(390px, 100%); height: 560px; position: relative; background: var(--color-surface-default, #FFFFFF); border-radius: 32px; overflow: hidden; box-shadow: var(--surface-elevation-floating, 0 10px 30px rgba(0,0,0,0.10)); }
+  /* Profile-aware framing: on Admin (1280px frame) show a labeled mobile preview at natural size with breathing room. */
+  body.fig-profile-admin { padding: var(--space-8, 32px) var(--space-6, 24px); }
+  body.fig-profile-admin .phone { width: 390px; box-shadow: 0 20px 50px rgba(0,0,0,0.14); outline: 6px solid var(--color-border-subtle, #E2E8F0); outline-offset: 8px; }
+  body.fig-profile-admin::before { content: "Mobile-only component · 390px frame"; position: fixed; top: var(--space-3, 12px); left: 50%; transform: translateX(-50%); font-family: var(--font-mono); font-size: 11px; color: var(--color-text-muted, #64748B); background: var(--color-surface-default, #FFFFFF); padding: 4px 12px; border-radius: 999px; border: 1px solid var(--color-border-subtle, #E2E8F0); }
+  .phone__bg { position: absolute; inset: 0; background: linear-gradient(180deg, #E0F2FE 0%, #F8FAFC 100%); padding: var(--space-5, 20px); }
+  .phone__bg h1 { margin: var(--space-4, 16px) 0 var(--space-2, 8px); font-size: var(--text-2xl, 24px); font-weight: 700; color: var(--color-text-primary, #0F172A); }
+  .phone__bg p { color: var(--color-text-secondary, #475569); font-size: var(--text-sm, 14px); line-height: var(--lh-jp-body, 1.75); }
+
+  .scrim { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.35); }
+
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; background: var(--color-surface-default, #FFFFFF); border-radius: 28px 28px 0 0; box-shadow: 0 -8px 24px rgba(0,0,0,0.12); padding-bottom: var(--space-5, 20px); }
+  .sheet__handle { width: 36px; height: 4px; background: var(--color-border-strong, #CBD5E1); border-radius: 999px; margin: var(--space-3, 12px) auto var(--space-4, 16px); }
+  .sheet__title { margin: 0 var(--space-5, 20px) var(--space-2, 8px); font-size: var(--text-lg, 18px); font-weight: 700; color: var(--color-text-primary, #0F172A); }
+  .sheet__desc { margin: 0 var(--space-5, 20px) var(--space-4, 16px); font-size: var(--text-sm, 14px); color: var(--color-text-secondary, #475569); line-height: var(--lh-jp-body, 1.75); }
+
+  .actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-3, 12px); padding: 0 var(--space-5, 20px) var(--space-4, 16px); }
+  .action-tile { background: var(--color-surface-subtle, #F1F5F9); border: none; border-radius: 14px; padding: var(--space-4, 16px) var(--space-2, 8px); display: flex; flex-direction: column; align-items: center; gap: var(--space-2, 8px); cursor: pointer; font-family: inherit; }
+  .action-tile svg { width: 24px; height: 24px; color: var(--color-text-brand, #0E7C80); }
+  .action-tile span { font-size: var(--text-xs, 12px); color: var(--color-text-primary, #0F172A); font-weight: 600; }
+
+  .list { padding: 0 var(--space-5, 20px); }
+  .list__row { display: flex; align-items: center; gap: var(--space-3, 12px); padding: var(--space-3, 12px) 0; border-top: 1px solid var(--color-border-subtle, #E2E8F0); }
+  .list__row svg { width: 20px; height: 20px; color: var(--color-text-muted, #64748B); }
+  .list__row span { font-size: var(--text-sm, 14px); color: var(--color-text-primary, #0F172A); }
+</style>
+</head>
+<body>
+
+  <div class="phone">
+    <div class="phone__bg">
+      <div style="font-family: var(--font-mono); font-size: 11px; color: var(--color-text-tertiary, #94A3B8);">9:41 ・ 100%</div>
+      <h1>マップ</h1>
+      <p>停留所をタップして詳細表示。ボトムシートは画面下端から立ち上がり、主動線（マップ）の上に重なります。</p>
+    </div>
+    <div class="scrim"></div>
+    <section class="sheet" role="dialog" aria-labelledby="bs-title">
+      <div class="sheet__handle" role="button" aria-label="シートをドラッグ"></div>
+      <h2 class="sheet__title" id="bs-title">渋谷駅前 バス停</h2>
+      <p class="sheet__desc">次のバスまで <strong>あと 3 分</strong>。3 系統が停車します。</p>
+
+      <div class="actions">
+        <button class="action-tile">
+          <i data-lucide="navigation"></i>
+          <span>経路</span>
+        </button>
+        <button class="action-tile">
+          <i data-lucide="bookmark"></i>
+          <span>お気に入り</span>
+        </button>
+        <button class="action-tile">
+          <i data-lucide="share-2"></i>
+          <span>共有</span>
+        </button>
+      </div>
+
+      <div class="list">
+        <div class="list__row"><i data-lucide="clock"></i><span>始発 5:23 / 終バス 23:45</span></div>
+        <div class="list__row"><i data-lucide="map-pin"></i><span>東京都渋谷区道玄坂 1-2</span></div>
+        <div class="list__row"><i data-lucide="info"></i><span>ICカード対応・現金可</span></div>
+      </div>
+    </section>
+  </div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

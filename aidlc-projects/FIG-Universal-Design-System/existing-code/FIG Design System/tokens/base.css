@@ -1,0 +1,115 @@
+/* FIG Universal Design System — Device Profile Tokens (Base Layer)
+ * ─────────────────────────────────────────────────────────────
+ * 役割
+ *   - エンジニアが「何を使うか」を変えずに、「その値が何であるか」だけを
+ *     デバイス文脈（Profile）に応じて切り替えられるようにする中継層。
+ *   - primitives.css（不変の材料）/ semantic.css（普遍的な役割）には触れず、
+ *     その上に "デバイス可変層" として被せる。
+ *
+ * 読み込み順
+ *   1. primitives.css        … 全社共通の原子トークン
+ *   2. semantic.css          … 普遍的な役割トークン
+ *   3. tokens/base.css       … 本ファイル（--fig-* の既定値）
+ *   4. tokens/profile-*.css  … プロファイル上書き（Admin / Consumer / Terminal）
+ *   5. tokens/components.css … --fig-* を消費する部品サンプル
+ *
+ * デバイスプロファイルを適用するには <body> または最上位コンテナに
+ * クラスを付与する:
+ *   <body class="fig-profile-consumer">
+ *   <body class="fig-profile-admin">
+ *   <body class="fig-profile-terminal">
+ *
+ * 既定（クラス未指定時）は Consumer 相当。
+ * ───────────────────────────────────────────────────────────── */
+
+:root {
+  /* ════════════════════════════════════════════════
+     1 ・ Typography（プロファイル可変の本文・見出し・キャプション）
+     ════════════════════════════════════════════════
+     プロファイルが切り替わると「同じ役割」のサイズだけが変化する。
+     コンポーネント側は --fig-size-body 等を参照し、px を直書きしない。 */
+  --fig-size-caption:    12px;   /* キャプション・補助 */
+  --fig-size-body:       15px;   /* 本文 */
+  --fig-size-body-strong:15px;   /* 強調本文（重さで区別） */
+  --fig-size-title:      18px;   /* 中見出し */
+  --fig-size-headline:   24px;   /* 大見出し */
+  --fig-size-display:    32px;   /* ヒーロー */
+
+  --fig-line-height-body:    var(--lh-jp-body);        /* 1.75 */
+  --fig-line-height-tight:   var(--lh-jp-headline);    /* 1.40 */
+  --fig-line-height-loose:   var(--lh-jp-body-loose);  /* 1.85 */
+
+  /* ════════════════════════════════════════════════
+     2 ・ Spacing（プロファイル可変の余白）
+     ════════════════════════════════════════════════
+     "情報密度 vs 操作性" のトレードオフはここで吸収する。
+       Admin    : 詰める（密度優先）
+       Consumer : 広げる（誤操作防止）
+       Terminal : 中庸（固定端末ベゼル幅に最適化） */
+  --fig-spacing-xs:   6px;
+  --fig-spacing-s:    12px;
+  --fig-spacing-m:    20px;
+  --fig-spacing-l:    28px;
+  --fig-spacing-xl:   40px;
+
+  /* ════════════════════════════════════════════════
+     3 ・ Interactive target（タップ／クリック領域）
+     ════════════════════════════════════════════════
+     "慈愛" の実装。物理下限 44px（iOS HIG / Material 共通）を
+     Consumer で 48px に積み増し、Terminal でさらに 56px に拡張。 */
+  --fig-target-min:           48px;   /* 最小タップ領域 */
+  --fig-target-comfortable:   56px;   /* 推奨タップ領域 */
+  --fig-target-compact:       40px;   /* 密集 UI（チップ・小ボタン） */
+
+  --fig-control-padding-x:    var(--fig-spacing-m);   /* CTA 水平 padding */
+  --fig-control-padding-y:    var(--fig-spacing-s);   /* CTA 垂直 padding */
+
+  /* ════════════════════════════════════════════════
+     4 ・ Density（行・スタック密度）
+     ════════════════════════════════════════════════ */
+  --fig-density-row-height:    56px;   /* リスト1行の標準高さ */
+  --fig-density-row-padding-y: var(--fig-spacing-s);
+  --fig-density-stack-gap:     var(--fig-spacing-s);   /* 縦スタック間 */
+
+  /* ════════════════════════════════════════════════
+     5 ・ Radius / Shape（角丸）
+     ════════════════════════════════════════════════
+     視覚的な「やわらかさ」と「業務感」のトレードオフ。
+       Admin    : シャープ（情報量を尊重）
+       Consumer : やわらかく（慈愛）
+       Terminal : 中庸（指先操作だが業務） */
+  --fig-radius-control:  12px;   /* ボタン・入力 */
+  --fig-radius-card:     16px;   /* カード */
+  --fig-radius-hero:     20px;   /* ヒーロー・定期券 */
+
+  /* ════════════════════════════════════════════════
+     6 ・ Layout（最大幅・グリッド）
+     ════════════════════════════════════════════════ */
+  --fig-max-content-width:   640px;   /* 主要コンテンツ最大幅 */
+  --fig-grid-columns:        4;       /* グリッド列数 */
+  --fig-grid-gutter:         var(--fig-spacing-m);
+
+  /* ════════════════════════════════════════════════
+     7 ・ Typography family（フォント主家）
+     ════════════════════════════════════════════════
+     既定は primitives.css の和文サンセリフ。Terminal は視認性最優先で
+     角ゴシック寄りにし、Admin は等幅数字を強化（テーブル前提）。 */
+  --fig-font-family-base:    var(--font-sans);
+  --fig-font-family-numeric: var(--font-numeric);
+  --fig-font-variant-numeric:var(--font-variant-numeric);
+
+  /* ════════════════════════════════════════════════
+     8 ・ Elevation（影 — プロファイル差は微小）
+     ════════════════════════════════════════════════ */
+  --fig-elevation-card:    var(--elevation-sm);
+  --fig-elevation-floating:var(--elevation-md);
+
+  /* ════════════════════════════════════════════════
+     9 ・ Motion budget（プロファイル別の体感上限）
+     ════════════════════════════════════════════════
+     業務端末は「素早く反応する」ことが信頼に直結する。
+     Consumer は標準。Admin は中間（誤クリック防止のために
+     僅かに遅らせる余地）。 */
+  --fig-motion-duration-quick:  var(--motion-duration-fast);   /* 150ms */
+  --fig-motion-duration-base:   var(--motion-duration-base);   /* 250ms */
+}

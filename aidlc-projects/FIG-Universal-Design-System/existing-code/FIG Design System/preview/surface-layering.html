@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Surface Layering</title>
+<link rel="stylesheet" href="../primitives.css">
+<link rel="stylesheet" href="../semantic.css">
+<style>
+  body { margin: 0; padding: 32px 24px; }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  .eyebrow { display: inline-flex; gap: 8px; padding: 6px 12px; border-radius: 9999px; background: var(--color-surface-brand-subtle); color: var(--color-text-brand); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; }
+  h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; margin: 12px 0 8px; }
+  .lede { margin: 0 0 24px; font-size: 13px; color: var(--color-text-tertiary); line-height: 1.7; }
+
+  .stack-demo {
+    background: var(--color-surface-canvas);
+    border-radius: 24px;
+    padding: 28px;
+    border: 1px solid var(--color-border-default);
+  }
+  .layer-label { font-family: var(--font-mono); font-size: 10px; color: var(--color-text-muted); margin-bottom: 6px; letter-spacing: 0.04em; }
+  .layer-name { font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--color-text-primary); }
+  .layer-hint { font-size: 12px; color: var(--color-text-tertiary); margin-top: 4px; line-height: 1.5; }
+  .l-default {
+    background: var(--color-surface-default);
+    border: 1px solid var(--color-border-card);
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.03);
+  }
+  .l-container-low {
+    background: var(--color-surface-container-low);
+    border-radius: 12px;
+    padding: 14px;
+    margin-top: 12px;
+  }
+  .l-container {
+    background: var(--color-surface-container);
+    border-radius: 12px;
+    padding: 14px;
+    margin-top: 12px;
+  }
+  .l-container-high {
+    background: var(--color-surface-container-high);
+    border-radius: 10px;
+    padding: 12px;
+    margin-top: 12px;
+  }
+  .floating-card {
+    background: var(--color-surface-default);
+    border: 1px solid var(--color-border-card);
+    border-radius: 12px;
+    padding: 14px;
+    margin-top: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.10), 0 4px 6px -4px rgba(0,0,0,0.08);
+  }
+  .tinted { padding: 12px 14px; border-radius: 12px; margin-top: 8px; display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; }
+  .pill { display:inline-flex; padding: 4px 10px; border-radius: 9999px; font-family: var(--font-mono); font-size: 10px; font-weight: 700; }
+
+  .legend { margin-top: 24px; padding: 16px; background: var(--color-surface-default); border: 1px solid var(--color-border-card); border-radius: 12px; font-size: 12px; color: var(--color-text-tertiary); line-height: 1.7; }
+  .legend code { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-brand); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <span class="eyebrow">SURFACE LAYERING</span>
+    <h1>背景 ＞ カード ＞ 状態カード ＞ 浮きカード</h1>
+    <p class="lede">Surface 中心 UI の階層を可視化。プレーンな白カードの上にネストする内部ブロックや、ステータス・浮き要素の使い分けを示します。</p>
+
+    <div class="stack-demo">
+      <div class="layer-label">▽ color.surface.canvas — ページ最下層（このフレームの背景）</div>
+
+      <div class="l-default">
+        <div class="layer-name">surface.default</div>
+        <div class="layer-hint">標準カード（白）。ホームのバスカード、サイドバー、モーダル。</div>
+
+        <div class="l-container-low">
+          <div class="layer-name">surface.container-low <span class="pill" style="background:#fff;color:#475569">#F8FAFC</span></div>
+          <div class="layer-hint">カード内のサブ領域。リスト行ホバー塗り、入力グループ背景。</div>
+        </div>
+
+        <div class="l-container">
+          <div class="layer-name">surface.container <span class="pill" style="background:#fff;color:#475569">#F1F5F9</span></div>
+          <div class="layer-hint">状態カード。マッチ済み便のサマリー枠、「通過済」バッジ背景。</div>
+        </div>
+
+        <div class="l-container-high">
+          <div class="layer-name">surface.container-high <span class="pill" style="background:#fff;color:#475569">#E2E8F0</span></div>
+          <div class="layer-hint">タブバー非アクティブ背景。さらに一段奥の枠。</div>
+        </div>
+      </div>
+
+      <div class="floating-card">
+        <div class="layer-name">+ shadow → 浮きカード</div>
+        <div class="layer-hint"><code>surface.default</code> に <code>shadow-card-hover</code> を当てた状態。FAB、トースト、ドラッグ中。</div>
+      </div>
+
+      <div class="tinted" style="background: var(--color-surface-brand); color: var(--color-text-onBrand); margin-top: 14px;">
+        surface.brand · 決済タブアクティブ / PrimaryButton
+      </div>
+      <div class="tinted" style="background: var(--color-surface-success); color: var(--color-text-success);">
+        surface.success · 通常運行ピル
+      </div>
+      <div class="tinted" style="background: var(--color-surface-warning); color: var(--color-text-warning);">
+        surface.warning · 遅延の可能性 / 注意バナー
+      </div>
+      <div class="tinted" style="background: var(--color-surface-error); color: var(--color-text-error);">
+        surface.error · 遅延確定 / 運休 / NFC 失敗
+      </div>
+    </div>
+
+    <div class="legend">
+      <strong style="color:var(--color-text-primary)">使い分けのルール。</strong>
+      白カード（<code>surface.default</code>）にネストする内部ブロックは <code>container-low</code> から始め、強調が必要なら <code>container</code>、さらに奥なら <code>container-high</code> と段階的に濃くします。同じカード内で 3 段以上ネストしないこと。浮きカードは常に <code>surface.default + shadow</code> の組み合わせで、ティント済みサーフェス（brand / warning / error）上には浮かせません。
+    </div>
+  </div>
+</body>
+</html>

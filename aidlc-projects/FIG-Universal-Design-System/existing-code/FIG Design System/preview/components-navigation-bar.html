@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Components — Navigation Bar</title>
+<link rel="stylesheet" href="../primitives.css">
+<link rel="stylesheet" href="../semantic.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  body { margin: 0; padding: var(--space-6, 24px); background: var(--bg-app, #F8FAFC); font-family: var(--font-sans); display: flex; flex-direction: column; gap: var(--space-6, 24px); }
+  .phone { max-width: 390px; margin: 0 auto; background: var(--color-surface-default, #FFFFFF); border-radius: 32px; overflow: hidden; box-shadow: var(--surface-elevation-floating, 0 10px 30px rgba(0,0,0,0.10)); position: relative; }
+  /* Profile-aware framing: on Admin (1280px frame) keep mobile mock at natural size with a labeled bezel. */
+  body.fig-profile-admin { padding: var(--space-8, 32px) var(--space-6, 24px); }
+  body.fig-profile-admin .phone { box-shadow: 0 20px 50px rgba(0,0,0,0.14); outline: 6px solid var(--color-border-subtle, #E2E8F0); outline-offset: 8px; }
+  body.fig-profile-admin::before { content: "Mobile-only component · 390px frame"; position: fixed; top: var(--space-3, 12px); left: 50%; transform: translateX(-50%); font-family: var(--font-mono); font-size: 11px; color: var(--color-text-muted, #64748B); background: var(--color-surface-default, #FFFFFF); padding: 4px 12px; border-radius: 999px; border: 1px solid var(--color-border-subtle, #E2E8F0); z-index: 10; }
+  .phone__screen { min-height: 480px; padding: var(--space-5, 20px); padding-bottom: 96px; background: var(--bg-app, #F8FAFC); }
+  .phone__title { font-size: var(--text-2xl, 24px); font-weight: 700; color: var(--color-text-primary, #0F172A); margin: var(--space-4, 16px) 0 var(--space-2, 8px); }
+  .phone__desc { color: var(--color-text-secondary, #475569); font-size: var(--text-sm, 14px); line-height: var(--lh-jp-body, 1.75); }
+
+  /* Navigation Bar */
+  .navbar { position: absolute; left: 0; right: 0; bottom: 0; background: var(--color-surface-default, #FFFFFF); border-top: 1px solid var(--color-border-subtle, #E2E8F0); display: flex; padding: var(--space-2, 8px) var(--space-3, 12px); padding-bottom: var(--space-4, 16px); justify-content: space-around; }
+  .navbar__item { flex: 1; background: transparent; border: none; padding: var(--space-2, 8px) var(--space-1, 4px); display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; color: var(--color-text-tertiary, #94A3B8); font-family: inherit; font-size: 11px; text-decoration: none; min-height: 48px; }
+  .navbar__item svg { width: 22px; height: 22px; }
+  .navbar__item[aria-current="page"] { color: var(--color-text-brand, #0E7C80); font-weight: 600; }
+  .navbar__indicator { display: grid; place-items: center; padding: 4px 18px; border-radius: 16px; transition: background 160ms ease; }
+  .navbar__item[aria-current="page"] .navbar__indicator { background: var(--color-surface-brand-soft, #E0F5F5); }
+  .badge-dot { position: absolute; top: 6px; right: 12px; width: 8px; height: 8px; background: var(--color-feedback-error-strong, #DC2626); border-radius: 50%; }
+  .navbar__item { position: relative; }
+
+  .caption { text-align: center; font-family: var(--font-mono); font-size: var(--text-xs, 12px); color: var(--color-text-tertiary, #94A3B8); }
+</style>
+</head>
+<body>
+
+  <div class="phone">
+    <div class="phone__screen">
+      <div style="font-family: var(--font-mono); font-size: 11px; color: var(--color-text-tertiary, #94A3B8);">9:41 ・ 100%</div>
+      <h1 class="phone__title">マイバス</h1>
+      <p class="phone__desc">画面下端固定のグローバルナビ。3–5 アイテムが原則。選択中はインジケータピルで識別し、未読は右上のドットで示します（M3 Navigation Bar 準拠）。</p>
+    </div>
+    <nav class="navbar" aria-label="メイン">
+      <a href="#" class="navbar__item" aria-current="page">
+        <span class="navbar__indicator"><i data-lucide="home"></i></span>
+        <span>ホーム</span>
+      </a>
+      <a href="#" class="navbar__item">
+        <span class="navbar__indicator"><i data-lucide="route"></i></span>
+        <span>経路</span>
+      </a>
+      <a href="#" class="navbar__item">
+        <span class="navbar__indicator"><i data-lucide="bell"></i></span>
+        <span>通知</span>
+        <span class="badge-dot" aria-label="未読あり"></span>
+      </a>
+      <a href="#" class="navbar__item">
+        <span class="navbar__indicator"><i data-lucide="user"></i></span>
+        <span>マイ</span>
+      </a>
+    </nav>
+  </div>
+
+  <div class="caption">高さ: 約 64px + safe-area / タッチターゲット: 48×48 / インジケータ: --color-surface-brand-soft</div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

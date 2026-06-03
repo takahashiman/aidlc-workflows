@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Components — Pagination</title>
+<link rel="stylesheet" href="../primitives.css">
+<link rel="stylesheet" href="../semantic.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  body { margin: 0; padding: var(--space-6, 24px); background: var(--bg-app, #F8FAFC); font-family: var(--font-sans); display: flex; flex-direction: column; gap: var(--space-5, 20px); }
+  .stage { background: var(--color-surface-default, #FFFFFF); border: 1px solid var(--color-border-subtle, #E2E8F0); border-radius: var(--radius-lg, 16px); padding: var(--space-4, 16px) var(--space-5, 20px); }
+  .label { font-family: var(--font-mono); font-size: var(--text-xs, 12px); color: var(--color-text-tertiary, #94A3B8); margin-bottom: var(--space-3, 12px); }
+
+  .pager { display: flex; align-items: center; gap: var(--space-1, 4px); }
+  .pager__btn { min-width: 40px; height: 40px; padding: 0 var(--space-2, 8px); border-radius: 10px; border: 1px solid transparent; background: transparent; color: var(--color-text-secondary, #475569); font-family: inherit; font-size: var(--text-sm, 14px); font-weight: 600; cursor: pointer; display: grid; place-items: center; }
+  .pager__btn:hover:not([disabled]):not([aria-current]) { background: var(--color-surface-subtle, #F1F5F9); }
+  .pager__btn[aria-current="page"] { background: var(--color-surface-brand, #26B7BC); color: #fff; }
+  .pager__btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+  .pager__btn svg { width: 16px; height: 16px; }
+  .pager__ellipsis { padding: 0 var(--space-2, 8px); color: var(--color-text-tertiary, #94A3B8); }
+
+  .summary { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4, 16px); flex-wrap: wrap; }
+  .summary__meta { font-size: var(--text-sm, 14px); color: var(--color-text-secondary, #475569); }
+  .summary__meta strong { color: var(--color-text-primary, #0F172A); font-weight: 700; }
+
+  .pager--compact .pager__btn { min-width: 36px; height: 36px; }
+
+  @media (max-width: 600px) {
+    body { padding: var(--space-3, 12px); }
+    .pager { flex-wrap: wrap; }
+    .pager__btn { min-width: 36px; height: 36px; padding: 0 var(--space-1, 4px); }
+    .summary { flex-direction: column; align-items: stretch; gap: var(--space-3, 12px); }
+  }
+</style>
+</head>
+<body>
+
+  <div class="stage">
+    <div class="label">標準</div>
+    <nav class="pager" aria-label="ページ送り">
+      <button class="pager__btn" aria-label="前のページ" disabled><i data-lucide="chevron-left"></i></button>
+      <button class="pager__btn" aria-current="page">1</button>
+      <button class="pager__btn">2</button>
+      <button class="pager__btn">3</button>
+      <button class="pager__btn">4</button>
+      <button class="pager__btn">5</button>
+      <span class="pager__ellipsis">…</span>
+      <button class="pager__btn">24</button>
+      <button class="pager__btn" aria-label="次のページ"><i data-lucide="chevron-right"></i></button>
+    </nav>
+  </div>
+
+  <div class="stage">
+    <div class="label">サマリ併設</div>
+    <div class="summary">
+      <div class="summary__meta">全 <strong>1,248</strong> 件中 <strong>61–80</strong> 件を表示</div>
+      <nav class="pager pager--compact" aria-label="ページ送り">
+        <button class="pager__btn" aria-label="前のページ"><i data-lucide="chevron-left"></i></button>
+        <button class="pager__btn">3</button>
+        <button class="pager__btn" aria-current="page">4</button>
+        <button class="pager__btn">5</button>
+        <span class="pager__ellipsis">…</span>
+        <button class="pager__btn">63</button>
+        <button class="pager__btn" aria-label="次のページ"><i data-lucide="chevron-right"></i></button>
+      </nav>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="label">シンプル（モバイル向け）</div>
+    <nav class="pager" aria-label="ページ送り" style="justify-content: center; width: 100%;">
+      <button class="pager__btn" aria-label="前"><i data-lucide="chevron-left"></i></button>
+      <span style="font-size: var(--text-sm, 14px); padding: 0 var(--space-3, 12px); color: var(--color-text-primary, #0F172A);"><strong>4</strong> / 63</span>
+      <button class="pager__btn" aria-label="次"><i data-lucide="chevron-right"></i></button>
+    </nav>
+  </div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

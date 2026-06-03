@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Typography — Storybook</title>
+<link rel="stylesheet" href="../_chrome.css">
+</head>
+<body>
+
+<header class="sb-page-header">
+  <h1 class="sb-page-title">Typography</h1>
+  <p class="sb-page-subtitle">Primitive: <code>--font-sans</code> / <code>--font-numeric</code> / <code>--font-mono</code>。Semantic: 8 汎用ロール + 5 ドメイン特化ロール。</p>
+  <div class="sb-page-meta"><span class="sb-tag sb-tag-impl">primitives.css + semantic.css</span></div>
+</header>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Variants — Generic Roles</h2>
+  <table class="sb-table">
+    <thead><tr><th>Token</th><th>Sample</th><th>Spec</th></tr></thead>
+    <tbody>
+      <tr><td><code>--typography-display</code></td>  <td style="font: var(--typography-display); font-size: 40px; font-weight: 800;">市民バス</td><td>800 / 40 / tight</td></tr>
+      <tr><td><code>--typography-headline</code></td> <td style="font: var(--typography-headline); font-size: 24px; font-weight: 700;">本日の運行情報</td><td>700 / 24 / tight</td></tr>
+      <tr><td><code>--typography-title</code></td>    <td style="font: var(--typography-title); font-size: 18px; font-weight: 700;">市役所前ゆき</td><td>700 / 18</td></tr>
+      <tr><td><code>--typography-subtitle</code></td> <td style="font: var(--typography-subtitle); font-size: 15px; font-weight: 600;">14:23 発、所要 12 分</td><td>600 / 15</td></tr>
+      <tr><td><code>--typography-body</code></td>     <td style="font: var(--typography-body); font-size: 14px;">通常運行中です。</td><td>400 / 14 / normal</td></tr>
+      <tr><td><code>--typography-body-strong</code></td><td style="font: var(--typography-body-strong); font-size: 14px; font-weight: 600;">通常運行中です。</td><td>600 / 14</td></tr>
+      <tr><td><code>--typography-label</code></td>    <td style="font: var(--typography-label); font-size: 13px; font-weight: 500;">系統 205</td><td>500 / 13</td></tr>
+      <tr><td><code>--typography-caption</code></td>  <td style="font: var(--typography-caption); font-size: 12px; color: #64748B;">最終更新 30 秒前</td><td>400 / 12 / muted</td></tr>
+      <tr><td><code>--typography-eyebrow</code></td>  <td style="font: var(--typography-eyebrow); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">あと</td><td>700 / 11 / widest</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Variants — Transit Domain</h2>
+  <p class="sb-section-desc">交通ドメイン特化ロール。すべて <code>--font-numeric</code> + <code>font-variant-numeric: tabular-nums lining-nums</code> で桁が揃う。</p>
+  <div class="sb-grid">
+    <div class="sb-card">
+      <div class="sb-card-label">arrival-time</div>
+      <div class="sb-card-stage"><span style="font-family: 'Inter', monospace; font-weight: 700; font-size: 28px; font-variant-numeric: tabular-nums">あと 5 分</span></div>
+      <div class="sb-card-meta"><div class="sb-card-name">「次のバス」表示の主役</div><div class="sb-card-token">--typography-arrival-time</div></div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">route-number</div>
+      <div class="sb-card-stage"><span style="font-family: 'Inter', monospace; font-weight: 800; font-size: 22px; background: #26B7BC; color: #fff; padding: 8px 12px; border-radius: 8px; font-variant-numeric: tabular-nums">205</span></div>
+      <div class="sb-card-meta"><div class="sb-card-name">系統番号 Badge</div><div class="sb-card-token">--typography-route-number</div></div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">fare-amount</div>
+      <div class="sb-card-stage"><span style="font-family: 'Inter', monospace; font-weight: 800; font-size: 28px; font-variant-numeric: tabular-nums slashed-zero">¥210</span></div>
+      <div class="sb-card-meta"><div class="sb-card-name">運賃（slashed-zero で 0/O 区別）</div><div class="sb-card-token">--typography-fare-amount</div></div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">timetable-cell</div>
+      <div class="sb-card-stage">
+        <table style="border-collapse: collapse; font-family: 'Inter', monospace; font-variant-numeric: tabular-nums; font-weight: 600; font-size: 14px;">
+          <tr><td style="padding:4px 8px;border:1px solid #E2E8F0">06:15</td><td style="padding:4px 8px;border:1px solid #E2E8F0">06:35</td></tr>
+          <tr><td style="padding:4px 8px;border:1px solid #E2E8F0">07:05</td><td style="padding:4px 8px;border:1px solid #E2E8F0">07:25</td></tr>
+        </table>
+      </div>
+      <div class="sb-card-meta"><div class="sb-card-name">時刻表セル</div><div class="sb-card-token">--typography-timetable-cell</div></div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">status-pill</div>
+      <div class="sb-card-stage"><span style="font-weight: 700; font-size: 11px; letter-spacing: 0.05em; background: #ECFDF5; color: #047857; padding: 8px 16px; border-radius: 9999px;">通常運行</span></div>
+      <div class="sb-card-meta"><div class="sb-card-name">Status Pill 内のラベル</div><div class="sb-card-token">--typography-status-pill</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">States</h2>
+  <p class="sb-section-desc">タイポグラフィは状態を持たないが、組み合わさるコンテキスト（disabled / muted / strong）で <code>color</code> token のみが変化する。</p>
+  <table class="sb-table">
+    <thead><tr><th>Context</th><th>Color Token</th></tr></thead>
+    <tbody>
+      <tr><td>default</td><td><code>--color-text-default</code></td></tr>
+      <tr><td>strong</td><td><code>--color-text-strong</code></td></tr>
+      <tr><td>muted</td><td><code>--color-text-muted</code></td></tr>
+      <tr><td>disabled</td><td><code>--color-text-disabled</code></td></tr>
+      <tr><td>brand</td><td><code>--color-text-brand</code></td></tr>
+      <tr><td>error</td><td><code>--color-text-error</code></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Spacing — Line Heights</h2>
+  <table class="sb-table">
+    <thead><tr><th>Token</th><th>Value</th><th>用途</th></tr></thead>
+    <tbody>
+      <tr><td><code>--lh-none</code></td>    <td>1.00</td><td>数字バッジ、arrival-time</td></tr>
+      <tr><td><code>--lh-tight</code></td>   <td>1.15</td><td>display / headline</td></tr>
+      <tr><td><code>--lh-snug</code></td>    <td>1.30</td><td>title / subtitle</td></tr>
+      <tr><td><code>--lh-normal</code></td>  <td>1.50</td><td>body（既定）</td></tr>
+      <tr><td><code>--lh-relaxed</code></td> <td>1.65</td><td>説明文・長文</td></tr>
+      <tr><td><code>--lh-loose</code></td>   <td>1.80</td><td>注釈・補助テキスト</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Accessibility</h2>
+  <div class="sb-a11y-note">✅ <div><strong>最小サイズ：</strong> モバイル 12px、推奨 14px 以上。caption (12px) は補助情報のみ。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>Contrast：</strong> 全 text color token は背景に対し AA (4.5:1) 以上。<code>--color-text-muted</code> は 14px 以上で使用。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>等幅数字：</strong> 時刻 / 運賃 / 系統番号は <code>tabular-nums</code> で桁揃え、視線の上下移動だけで読める。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>言語属性：</strong> 日本語ページは <code>&lt;html lang="ja"&gt;</code>、数字混在時は <code>&lt;span lang="en"&gt;</code> でフォント切替が正しく働く。</div></div>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Motion</h2>
+  <p class="sb-section-desc">テキスト自体はモーションを持たない。テキストを含む要素（Pill / Card / Banner）の motion は親コンポーネント側の責務。</p>
+  <div class="sb-callout"><strong>禁止：</strong> 文字の text-shadow アニメ、color hue rotation、letter-spacing breathing。意味の不安定化を招く。</div>
+</section>
+
+</body>
+</html>

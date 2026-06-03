@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Components — Checkbox</title>
+<link rel="stylesheet" href="../primitives.css">
+<link rel="stylesheet" href="../semantic.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  body { margin: 0; padding: var(--space-6, 24px); background: var(--bg-app, #F8FAFC); font-family: var(--font-sans); display: flex; flex-direction: column; gap: var(--space-5, 20px); }
+  .stage { background: var(--color-surface-default, #FFFFFF); border: 1px solid var(--color-border-subtle, #E2E8F0); border-radius: var(--radius-lg, 16px); padding: var(--space-5, 20px); }
+  .label { font-family: var(--font-mono); font-size: var(--text-xs, 12px); color: var(--color-text-tertiary, #94A3B8); margin-bottom: var(--space-3, 12px); }
+
+  .check { display: inline-flex; align-items: center; gap: var(--space-3, 12px); cursor: pointer; min-height: 36px; }
+  .check__box { width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--color-border-strong, #CBD5E1); background: var(--color-surface-default, #FFFFFF); display: grid; place-items: center; flex-shrink: 0; transition: all 160ms ease; }
+  .check__box svg { width: 14px; height: 14px; color: #fff; opacity: 0; }
+  .check input { position: absolute; opacity: 0; pointer-events: none; }
+  .check input:checked + .check__box { background: var(--color-surface-brand, #26B7BC); border-color: var(--color-surface-brand, #26B7BC); }
+  .check input:checked + .check__box svg { opacity: 1; }
+  .check input:indeterminate + .check__box { background: var(--color-surface-brand, #26B7BC); border-color: var(--color-surface-brand, #26B7BC); }
+  .check input:indeterminate + .check__box::after { content: ""; width: 10px; height: 2px; background: #fff; border-radius: 2px; position: absolute; }
+  .check input:focus-visible + .check__box { outline: 2px solid var(--color-border-focus, #26B7BC); outline-offset: 2px; }
+  .check input:disabled + .check__box { opacity: 0.4; }
+  .check__box { position: relative; }
+  .check__label { font-size: var(--text-sm, 14px); color: var(--color-text-primary, #0F172A); }
+  .check[data-disabled="true"] { cursor: not-allowed; }
+  .check[data-disabled="true"] .check__label { opacity: 0.5; }
+
+  .demo-row { display: flex; flex-wrap: wrap; gap: var(--space-5, 20px); }
+  .demo-cell { display: flex; flex-direction: column; gap: var(--space-2, 8px); }
+  .demo-cell__name { font-family: var(--font-mono); font-size: var(--text-xs, 12px); color: var(--color-text-muted, #64748B); }
+
+  .group { display: flex; flex-direction: column; gap: var(--space-2, 8px); }
+  .group__parent { padding-bottom: var(--space-2, 8px); border-bottom: 1px solid var(--color-border-subtle, #E2E8F0); margin-bottom: var(--space-2, 8px); font-weight: 600; }
+  .group__child { padding-left: var(--space-6, 24px); }
+</style>
+</head>
+<body>
+
+  <div class="stage">
+    <div class="label">States</div>
+    <div class="demo-row">
+      <div class="demo-cell">
+        <label class="check"><input type="checkbox"><span class="check__box"><i data-lucide="check"></i></span></label>
+        <span class="demo-cell__name">Unchecked</span>
+      </div>
+      <div class="demo-cell">
+        <label class="check"><input type="checkbox" checked><span class="check__box"><i data-lucide="check"></i></span></label>
+        <span class="demo-cell__name">Checked</span>
+      </div>
+      <div class="demo-cell">
+        <label class="check"><input type="checkbox" id="indet"><span class="check__box"></span></label>
+        <span class="demo-cell__name">Indeterminate</span>
+      </div>
+      <div class="demo-cell">
+        <label class="check" data-disabled="true"><input type="checkbox" disabled><span class="check__box"></span></label>
+        <span class="demo-cell__name">Disabled</span>
+      </div>
+      <div class="demo-cell">
+        <label class="check" data-disabled="true"><input type="checkbox" checked disabled><span class="check__box"><i data-lucide="check"></i></span></label>
+        <span class="demo-cell__name">Disabled + Checked</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="label">ラベル付き（複数選択）</div>
+    <div class="group">
+      <label class="check"><input type="checkbox" checked><span class="check__box"><i data-lucide="check"></i></span><span class="check__label">利用規約に同意する</span></label>
+      <label class="check"><input type="checkbox"><span class="check__box"><i data-lucide="check"></i></span><span class="check__label">マーケティング情報を受け取る（任意）</span></label>
+      <label class="check"><input type="checkbox"><span class="check__box"><i data-lucide="check"></i></span><span class="check__label">第三者への情報提供を許可する</span></label>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="label">親子グループ（不確定状態あり）</div>
+    <div class="group">
+      <label class="check group__parent"><input type="checkbox" id="parent-cb"><span class="check__box"></span><span class="check__label">すべての路線</span></label>
+      <label class="check group__child"><input type="checkbox" checked class="child-cb"><span class="check__box"><i data-lucide="check"></i></span><span class="check__label">渋谷 — 新宿 線</span></label>
+      <label class="check group__child"><input type="checkbox" class="child-cb"><span class="check__box"><i data-lucide="check"></i></span><span class="check__label">渋谷 — 池袋 線</span></label>
+      <label class="check group__child"><input type="checkbox" checked class="child-cb"><span class="check__box"><i data-lucide="check"></i></span><span class="check__label">渋谷 — 品川 線</span></label>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    // indeterminate setup
+    document.getElementById('indet').indeterminate = true;
+    // parent-child sync
+    const parent = document.getElementById('parent-cb');
+    const childs = document.querySelectorAll('.child-cb');
+    function syncParent() {
+      const total = childs.length;
+      const checked = [...childs].filter(c => c.checked).length;
+      parent.checked = checked === total;
+      parent.indeterminate = checked > 0 && checked < total;
+    }
+    syncParent();
+    childs.forEach(c => c.addEventListener('change', syncParent));
+    parent.addEventListener('change', () => {
+      childs.forEach(c => c.checked = parent.checked);
+      parent.indeterminate = false;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Card Component Preview — FIG Universal Design System</title>
+  <link rel="stylesheet" href="../tokens/primitives.css">
+  <link rel="stylesheet" href="../tokens/semantic.css">
+  <script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-surface-canvas);
+      padding: var(--space-5);
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font: var(--typography-headline);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-3);
+    }
+
+    .preview-section {
+      margin-bottom: var(--space-5);
+    }
+
+    .preview-label {
+      font-size: var(--font-size-caption);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-2);
+      font-weight: 700;
+    }
+
+    /* ────── Card Base Styles (via Semantic tokens) ────── */
+    .card {
+      background-color: var(--color-surface-default);
+      border-radius: var(--radius-card);
+      padding: var(--layout-card-padding);
+      border: 1px solid var(--color-border-card);
+      box-shadow: var(--surface-elevation-card);
+      transition: all var(--motion-hover);
+    }
+
+    .card.card--interactive {
+      cursor: pointer;
+    }
+
+    /* Interactive hover state */
+    .card.card--interactive:hover {
+      box-shadow: var(--surface-elevation-raised);
+      background: linear-gradient(var(--state-hover-overlay), var(--state-hover-overlay)),
+                  var(--color-surface-default);
+    }
+
+    /* Interactive active/pressed state */
+    .card.card--interactive:active {
+      transform: scale(var(--state-pressed-scale));
+      transition: all var(--motion-press);
+    }
+
+    /* Floating variant */
+    .card.card--floating {
+      box-shadow: var(--surface-elevation-floating);
+    }
+
+    /* Hero variant */
+    .card.card--hero {
+      background-color: var(--color-surface-brand-vivid);
+      border-radius: var(--radius-card-hero);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: var(--surface-elevation-modal);
+      margin: var(--isolation-around);
+    }
+
+    /* Disabled state */
+    .card.card--disabled {
+      opacity: var(--state-disabled-opacity);
+      cursor: var(--state-disabled-cursor);
+    }
+
+    /* Error state (visual indicator) */
+    .card.card--error {
+      border-color: var(--color-border-error);
+      background: linear-gradient(var(--state-hover-error-overlay), var(--state-hover-error-overlay)),
+                  var(--color-surface-default);
+    }
+
+    /* ────── Card Content ────── */
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      margin-bottom: var(--space-3);
+    }
+
+    .card-icon {
+      background: var(--color-surface-accent-subtle);
+      color: var(--color-icon-accent);
+      padding: 10px;
+      border-radius: var(--radius-icon-tile);
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke-width: 2;
+    }
+
+    .card-title {
+      font: var(--typography-body-strong);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-1);
+    }
+
+    .card-subtitle {
+      font: var(--typography-caption);
+      color: var(--color-text-muted);
+      display: flex;
+      gap: var(--space-1);
+      align-items: flex-start;
+    }
+
+    .card-subtitle svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .card-content {
+      margin-bottom: var(--space-3);
+    }
+
+    .card-status {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: 8px 14px;
+      border-radius: 9999px;
+      background: var(--color-surface-warning);
+      color: var(--color-text-warning);
+      font: var(--typography-status-pill);
+      margin-bottom: var(--space-3);
+    }
+
+    .card-status svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .card-message {
+      background: var(--color-surface-container-low);
+      border-radius: var(--radius-card-compact);
+      padding: var(--space-3);
+      display: flex;
+      gap: var(--space-2);
+      align-items: flex-start;
+      font: var(--typography-caption);
+      color: var(--color-text-secondary);
+    }
+
+    .card-message svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      color: var(--color-icon-default);
+    }
+
+    .card-footer {
+      padding-top: var(--space-3);
+      margin-top: var(--space-3);
+      border-top: 1px solid var(--color-border-subtle);
+      font: var(--typography-caption);
+      color: var(--color-text-muted);
+    }
+
+    /* ────── Device Frames ────── */
+    .device-frame {
+      margin-bottom: var(--space-5);
+      padding: var(--space-3);
+      background: #000;
+      border-radius: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      position: relative;
+    }
+
+    .device-frame::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 30px;
+      background: #000;
+      border-radius: 0 0 20px 20px;
+      z-index: 10;
+    }
+
+    .device-screen {
+      background: var(--color-surface-canvas);
+      border-radius: 32px;
+      overflow: hidden;
+      aspect-ratio: 9 / 20;
+      padding: 50px 16px 16px 16px;
+      overflow-y: auto;
+    }
+
+    /* Focus state (keyboard navigation) */
+    .card.card--focused {
+      outline: var(--state-focused-outline);
+      outline-offset: var(--state-focused-offset);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Card Component Preview</h1>
+    <p style="color: var(--color-text-muted); margin-bottom: var(--space-5);">FIGブランド統一デザインシステム / Semantic トークンベース実装</p>
+
+    <!-- Default State -->
+    <div class="preview-section">
+      <div class="preview-label">State 1: Default</div>
+      <div class="device-frame">
+        <div class="device-screen">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon"><i data-lucide="bus"></i></div>
+              <div style="flex: 1;">
+                <div class="card-title">京都市営バス</div>
+                <div class="card-subtitle"><i data-lucide="map-pin"></i><span>京都駅前 → 清水寺</span></div>
+              </div>
+            </div>
+            <div class="card-status"><i data-lucide="check-circle"></i>通常運行</div>
+            <div class="card-footer">更新時刻: 2026/06/03 14:30</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hover State -->
+    <div class="preview-section">
+      <div class="preview-label">State 2: Hover (Interactive)</div>
+      <div class="device-frame">
+        <div class="device-screen">
+          <div class="card card--interactive" style="box-shadow: var(--surface-elevation-raised); background: linear-gradient(var(--state-hover-overlay), var(--state-hover-overlay)), var(--color-surface-default);">
+            <div class="card-header">
+              <div class="card-icon"><i data-lucide="bus"></i></div>
+              <div style="flex: 1;">
+                <div class="card-title">京都市営バス</div>
+                <div class="card-subtitle"><i data-lucide="map-pin"></i><span>京都駅前 → 清水寺</span></div>
+              </div>
+            </div>
+            <div class="card-status"><i data-lucide="check-circle"></i>通常運行</div>
+            <div class="card-footer">更新時刻: 2026/06/03 14:30</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Disabled State -->
+    <div class="preview-section">
+      <div class="preview-label">State 3: Disabled</div>
+      <div class="device-frame">
+        <div class="device-screen">
+          <div class="card card--disabled">
+            <div class="card-header">
+              <div class="card-icon"><i data-lucide="bus"></i></div>
+              <div style="flex: 1;">
+                <div class="card-title">京都市営バス</div>
+                <div class="card-subtitle"><i data-lucide="map-pin"></i><span>京都駅前 → 清水寺</span></div>
+              </div>
+            </div>
+            <div class="card-status"><i data-lucide="check-circle"></i>通常運行</div>
+            <div class="card-footer">更新時刻: 2026/06/03 14:30</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div class="preview-section">
+      <div class="preview-label">State 4: Error</div>
+      <div class="device-frame">
+        <div class="device-screen">
+          <div class="card card--error">
+            <div class="card-header">
+              <div class="card-icon" style="background: var(--color-surface-error); color: var(--color-icon-error);"><i data-lucide="alert-circle"></i></div>
+              <div style="flex: 1;">
+                <div class="card-title" style="color: var(--color-text-error);">エラーが発生しました</div>
+                <div class="card-subtitle"><i data-lucide="info"></i><span>バス情報の取得に失敗しました</span></div>
+              </div>
+            </div>
+            <div class="card-footer">再試行してください</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero Variant -->
+    <div class="preview-section">
+      <div class="preview-label">Variant: Hero (定期券カード)</div>
+      <div class="device-frame">
+        <div class="device-screen">
+          <div class="card card--hero">
+            <div style="text-align: center;">
+              <div style="font: var(--typography-caption); color: rgba(255,255,255,0.8); margin-bottom: var(--space-2);">デジタル定期券</div>
+              <div style="font: var(--typography-display); font-weight: 800; color: #FFFFFF; margin-bottom: var(--space-3);">有効</div>
+              <div style="font: var(--typography-body); color: #FFFFFF; margin-bottom: var(--space-2);">2026年6月30日まで</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Variant -->
+    <div class="preview-section">
+      <div class="preview-label">Variant: Floating</div>
+      <div class="device-frame">
+        <div class="device-screen">
+          <div class="card card--floating">
+            <div class="card-header">
+              <div class="card-icon" style="background: var(--color-surface-success); color: var(--color-icon-success);"><i data-lucide="check-circle"></i></div>
+              <div>
+                <div class="card-title" style="color: var(--color-text-success);">乗車確認完了</div>
+                <div class="card-subtitle"><span>NFC 読み取り成功</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

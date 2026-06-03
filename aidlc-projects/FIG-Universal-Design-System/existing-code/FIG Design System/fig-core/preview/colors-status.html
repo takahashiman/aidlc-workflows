@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Colors — Status</title>
+<link rel="stylesheet" href="../primitives.css">
+<style>
+  body { margin: 0; padding: 18px; background: #fff; display: flex; flex-direction: column; gap: 10px; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 9999px; font-size: 13px; font-weight: 600; }
+  .pair { display: grid; grid-template-columns: 160px 1fr; gap: 12px; align-items: center; }
+  .lab { font-size: 11px; color: var(--fg-5); font-family: var(--font-mono); }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .dot { width: 8px; height: 8px; border-radius: 99px; }
+</style>
+</head>
+<body>
+  <div class="pair">
+    <div class="lab">normal · 通常運行</div>
+    <div class="row">
+      <span class="pill" style="background:#ECFDF5;color:#047857"><span class="dot" style="background:#10B981"></span>正常運行</span>
+      <span class="lab" style="align-self:center">green-50 / green-700</span>
+    </div>
+  </div>
+  <div class="pair">
+    <div class="lab">delay · 遅延</div>
+    <div class="row">
+      <span class="pill" style="background:#FFFBEB;color:#B45309"><span class="dot" style="background:#F59E0B"></span>約15分遅延</span>
+      <span class="lab" style="align-self:center">amber-50 / amber-700</span>
+    </div>
+  </div>
+  <div class="pair">
+    <div class="lab">suspended · 運休</div>
+    <div class="row">
+      <span class="pill" style="background:#FEF2F2;color:#B91C1C"><span class="dot" style="background:#EF4444"></span>運休</span>
+      <span class="lab" style="align-self:center">red-50 / red-700</span>
+    </div>
+  </div>
+  <div class="pair">
+    <div class="lab">warn · 注意</div>
+    <div class="row">
+      <span class="pill" style="background:#FFFBEB;color:#92400E;border:1px solid #FDE68A">NFC設定を確認してください</span>
+      <span class="lab" style="align-self:center">amber-50/80 · amber-800</span>
+    </div>
+  </div>
+  <div class="pair">
+    <div class="lab">error retry · 再試行</div>
+    <div class="row">
+      <span class="pill" style="background:#F97316;color:#fff">もう一度試す</span>
+      <span class="lab" style="align-self:center">orange-500 / white</span>
+    </div>
+  </div>
+</body>
+</html>

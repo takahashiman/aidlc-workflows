@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Spacing — Radii</title>
+<link rel="stylesheet" href="../primitives.css">
+<style>
+  body { margin: 0; padding: 18px; background: #fff; display: flex; gap: 12px; flex-wrap: wrap; }
+  .swatch { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .box { width: 78px; height: 78px; background: #F0F4F4; border: 1px solid #26B7BC22; }
+  .name { font-size: 11px; font-weight: 700; color: #334155; }
+  .val { font-size: 10px; color: #94A3B8; font-family: var(--font-mono); }
+</style>
+</head>
+<body>
+  <div class="swatch"><div class="box" style="border-radius:6px"></div><div class="name">sm</div><div class="val">6px</div></div>
+  <div class="swatch"><div class="box" style="border-radius:12px"></div><div class="name">md · card</div><div class="val">12px</div></div>
+  <div class="swatch"><div class="box" style="border-radius:16px"></div><div class="name">lg · tabs</div><div class="val">16px</div></div>
+  <div class="swatch"><div class="box" style="border-radius:20px"></div><div class="name">xl · modal</div><div class="val">20px</div></div>
+  <div class="swatch"><div class="box" style="border-radius:28px"></div><div class="name">2xl · pass</div><div class="val">28px</div></div>
+  <div class="swatch"><div class="box" style="border-radius:9999px"></div><div class="name">pill</div><div class="val">∞</div></div>
+</body>
+</html>

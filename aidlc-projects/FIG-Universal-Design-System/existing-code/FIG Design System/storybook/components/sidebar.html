@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Sidebar Drawer — Storybook</title>
+<link rel="stylesheet" href="../_chrome.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  .frame {
+    position: relative;
+    width: 360px;
+    height: 560px;
+    border-radius: 18px;
+    overflow: hidden;
+    background:
+      linear-gradient(135deg, var(--bg-stop-1, #EFF9FA) 0%, var(--bg-stop-2, #F4F8FB) 50%, var(--bg-stop-3, #EBF4FB) 100%);
+    border: 1px solid var(--color-border-subtle, #E2E8F0);
+  }
+  .frame-scrim {
+    position: absolute; inset: 0;
+    background: rgba(15,23,42,0.40);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .drawer {
+    position: absolute; top: 0; bottom: 0; left: 0;
+    width: 288px;
+    background: var(--color-surface-default, #fff);
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    font: var(--typography-body);
+  }
+  .drawer-head {
+    padding: 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--color-border-subtle, #F1F5F9);
+  }
+  .avatar {
+    background: var(--color-surface-container-low, #F1F5F9);
+    color: var(--color-icon-default, #475569);
+    padding: 8px;
+    border-radius: var(--radius-pill, 9999px);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .avatar i { width: 24px; height: 24px; }
+  .who-name { font-weight: 700; font-size: 14px; color: var(--color-text-primary, #334155); margin: 0; }
+  .who-sub  { font-size: 11px; color: var(--color-text-muted, #64748B); margin: 0; }
+  .head-actions { display: flex; gap: 4px; }
+  .head-btn {
+    width: 36px; height: 36px;
+    border: none; background: transparent;
+    color: var(--color-icon-muted, #94A3B8);
+    cursor: pointer; border-radius: var(--radius-pill, 9999px);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .head-btn:hover { background: var(--state-hover-overlay, rgba(15,23,42,0.04)); }
+
+  .body { flex: 1; overflow-y: auto; padding: 8px 0; }
+  .group { padding: 8px 16px; }
+  .group-h {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-text-muted, #94A3B8);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider, 0.05em);
+    margin: 0 0 8px;
+  }
+  .row {
+    width: 100%;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px;
+    border-radius: var(--radius-md, 12px);
+    color: var(--color-text-primary, #334155);
+    background: transparent; border: none;
+    cursor: pointer;
+    transition: var(--motion-hover, background 150ms ease);
+    font: var(--typography-body);
+    font-weight: 500;
+    text-align: left;
+  }
+  .row:hover { background: var(--state-hover-overlay, #F8FAFC); }
+  .row:focus-visible { outline: var(--a11y-focus-ring); outline-offset: -2px; }
+  .row-l { display: inline-flex; align-items: center; gap: 12px; }
+  .row-l i { width: 20px; height: 20px; color: var(--color-icon-muted, #94A3B8); }
+  .row-r { display: inline-flex; align-items: center; gap: 6px; color: var(--color-icon-disabled, #CBD5E1); }
+  .row-r i { width: 16px; height: 16px; }
+
+  .region-tag {
+    background: var(--color-surface-brand-subtle, rgba(38, 183, 188,0.10));
+    color: var(--color-text-brand, #26B7BC);
+    padding: 2px 8px;
+    border-radius: var(--radius-pill, 9999px);
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .foot {
+    padding: 16px;
+    border-top: 1px solid var(--color-border-subtle, #F1F5F9);
+  }
+  .logout {
+    width: 100%;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md, 12px);
+    color: var(--color-text-error, #EF4444);
+    font: var(--typography-body);
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .logout:hover { background: var(--color-surface-error, #FEF2F2); }
+</style>
+</head>
+<body>
+
+<header class="sb-page-header">
+  <h1 class="sb-page-title">Sidebar Drawer</h1>
+  <p class="sb-page-subtitle">左から滑り込むメインナビゲーション。アカウント・サービス・設定の 3 セクションをこの順で固定。ハンバーガー or 背面スクリムタップで閉じる。</p>
+  <div class="sb-page-meta">
+    <span class="sb-tag sb-tag-spec">spec: components/sidebar (new)</span>
+    <span class="sb-tag sb-tag-impl">impl: &lt;Sidebar&gt; in BusappComponents.jsx</span>
+  </div>
+</header>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Open — Guest / 京都</h2>
+  <p class="sb-section-desc">画像と同形の標準オープン状態。京都府のみ「サービス → 定期券購入手続き」が出現する。</p>
+  <div class="sb-grid" style="grid-template-columns: 1fr">
+    <div class="sb-card" style="max-width:520px">
+      <div class="sb-card-label">drawer open + scrim</div>
+      <div class="sb-card-stage" style="padding: 16px">
+        <div class="frame">
+          <div class="frame-scrim"></div>
+          <aside class="drawer" role="dialog" aria-label="メインメニュー">
+            <div class="drawer-head">
+              <div style="display:flex;align-items:center;gap:12px">
+                <span class="avatar"><i data-lucide="user"></i></span>
+                <div>
+                  <p class="who-name">ゲストユーザー</p>
+                  <p class="who-sub">アカウント未登録</p>
+                </div>
+              </div>
+              <div class="head-actions">
+                <button class="head-btn" aria-label="閉じる"><i data-lucide="x" style="width:20px;height:20px"></i></button>
+              </div>
+            </div>
+            <div class="body">
+              <div class="group">
+                <h3 class="group-h">ACCOUNT</h3>
+                <button class="row">
+                  <span class="row-l"><i data-lucide="user"></i><span>プロフィール</span></span>
+                  <span class="row-r"><i data-lucide="chevron-right"></i></span>
+                </button>
+              </div>
+              <div class="group">
+                <h3 class="group-h">サービス</h3>
+                <button class="row">
+                  <span class="row-l"><i data-lucide="ticket"></i><span>定期券購入手続き</span></span>
+                  <span class="row-r"><i data-lucide="chevron-right"></i></span>
+                </button>
+              </div>
+              <div class="group">
+                <h3 class="group-h">設定</h3>
+                <button class="row">
+                  <span class="row-l"><i data-lucide="map-pin"></i><span>地域設定</span></span>
+                  <span class="row-r"><span class="region-tag">京都</span><i data-lucide="chevron-right"></i></span>
+                </button>
+                <button class="row">
+                  <span class="row-l"><i data-lucide="bell"></i><span>通知設定</span></span>
+                  <span class="row-r"><i data-lucide="chevron-right"></i></span>
+                </button>
+                <button class="row">
+                  <span class="row-l"><i data-lucide="settings"></i><span>アプリ設定</span></span>
+                  <span class="row-r"><i data-lucide="chevron-right"></i></span>
+                </button>
+              </div>
+            </div>
+            <div class="foot">
+              <button class="logout" type="button">
+                <i data-lucide="log-out" style="width:20px;height:20px"></i>
+                <span>ログアウト</span>
+              </button>
+            </div>
+          </aside>
+        </div>
+      </div>
+      <div class="sb-card-meta"><div class="sb-card-name">scrim: rgba(15,23,42,0.40) + blur(4px)</div><div class="sb-card-token">width: 288px (--layout-sidebar-width)</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Variants — Section Visibility</h2>
+  <p class="sb-section-desc">「サービス」セクションは地域が <strong>京都</strong> のときだけ出す。他地域では <code>showTicket = false</code> でグループごと非表示。空欄プレースホルダは置かない。</p>
+  <table class="sb-table">
+    <thead><tr><th>Region</th><th>ACCOUNT</th><th>サービス</th><th>設定</th></tr></thead>
+    <tbody>
+      <tr><td>京都府</td><td>プロフィール</td><td>定期券購入手続き</td><td>地域 / 通知 / アプリ</td></tr>
+      <tr><td>兵庫府 / 大分県 / 沖縄県</td><td>プロフィール</td><td><em>表示しない</em></td><td>地域 / 通知 / アプリ</td></tr>
+      <tr><td>未ログイン（ゲスト）</td><td>プロフィール → 「ログインへ」</td><td>京都のみ表示</td><td>同上</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Anatomy & Tokens</h2>
+  <table class="sb-table">
+    <thead><tr><th>Slot</th><th>Token</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>drawer width</td><td><code>--layout-sidebar-width</code></td><td>288px。<code>--layout-sidebar-width-narrow</code> (240px) はランドスケープのみ</td></tr>
+      <tr><td>drawer bg</td><td><code>--color-surface-default</code></td><td>透過させない（コンテンツに被さるため不透明）</td></tr>
+      <tr><td>scrim</td><td><code>--color-surface-scrim</code> + <code>--motion-dur-enter</code></td><td>blur(4px) で背景の視覚ノイズを抑える</td></tr>
+      <tr><td>section heading</td><td><code>--typography-eyebrow</code></td><td>セクション見出しは ACCOUNT 等の英大文字のみ。サービス・設定は日本語のまま許容</td></tr>
+      <tr><td>row label</td><td><code>--typography-body</code> weight 500</td><td>ピル右トレイル + chevron-right</td></tr>
+      <tr><td>row height</td><td><code>--interactive-list-item-height</code></td><td>44px 以上（touch-target 担保）</td></tr>
+      <tr><td>region tag</td><td><code>--color-surface-brand-subtle</code> / <code>--color-text-brand</code></td><td>地域 row のみのトレイル。他 row には付けない</td></tr>
+      <tr><td>logout color</td><td><code>--color-text-error</code></td><td>セパレータで囲い、誤タップ防止</td></tr>
+      <tr><td>elevation</td><td><code>--surface-elevation-modal</code></td><td>modal と同階層。z は <code>--z-drawer</code></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Motion</h2>
+  <table class="sb-table">
+    <thead><tr><th>Event</th><th>Token</th><th>Easing / Dur</th></tr></thead>
+    <tbody>
+      <tr><td>drawer enter</td><td><code>--motion-drawer</code></td><td>spring (200 / 25) — slide from <code>translateX(-100%)</code> → 0</td></tr>
+      <tr><td>scrim fade-in</td><td><code>--motion-modal-in</code></td><td>0.25s / standard</td></tr>
+      <tr><td>row hover</td><td><code>--motion-hover</code></td><td>150ms / standard</td></tr>
+      <tr><td>row press</td><td><code>--motion-press</code></td><td>scale 0.99 / 80ms</td></tr>
+      <tr><td>drawer exit</td><td><code>--motion-sheet-exit</code></td><td>0.25s / accelerate</td></tr>
+    </tbody>
+  </table>
+  <div class="sb-callout"><strong>禁止：</strong> 右からの slide-in（地域選択モーダルと衝突）、scrim 不在の overlay（背景がスクロール可能だとユーザーが drawer 外を誤操作する）、drawer 内独自スクロールバー UI。</div>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Accessibility</h2>
+  <div class="sb-a11y-note">✅ <div><strong><code>role="dialog"</code> + <code>aria-modal="true"</code> + <code>aria-label="メインメニュー"</code></strong>。フォーカスを drawer 内にトラップ。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>初期フォーカス：</strong> 閉じるボタンに移動。Esc / 背面タップで閉じる。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>セクション見出しは <code>&lt;h3&gt;</code></strong>。drawer 内の見出し階層は <code>h2 (アバター名) → h3 (グループ)</code>。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>Region tag：</strong> 視覚で省略している「府」を <code>aria-label="現在の地域: 京都府"</code> で補う。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>Logout：</strong> アクションは <code>&lt;button&gt;</code>。確認モーダルを必ず挟む（誤タップ防止）。</div></div>
+</section>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Device Profiles — Live Comparison</title>
+<link rel="stylesheet" href="../primitives.css">
+<link rel="stylesheet" href="../semantic.css">
+<link rel="stylesheet" href="../tokens/base.css">
+<link rel="stylesheet" href="../tokens/profile-admin.css">
+<link rel="stylesheet" href="../tokens/profile-consumer.css">
+<link rel="stylesheet" href="../tokens/profile-terminal.css">
+<link rel="stylesheet" href="../tokens/components.css">
+<style>
+  /* プレビュー固有: 親 iframe からの fig-profile-* クラスを継承するため、
+     html / body にプロファイルクラスが付与されたものとして描画する。
+     比較のため、3 カラムの中で各 .col に明示的にプロファイルクラスを与え、
+     親の body クラスとは独立に「3 プロファイルを同時表示」できる。 */
+  html, body { margin: 0; padding: 0; background: #F8FAFC; }
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-text-primary);
+    padding: 20px;
+  }
+  .legend {
+    font: var(--typography-caption);
+    color: var(--color-text-muted);
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.6);
+    border: 1px dashed var(--color-border-default);
+    border-radius: 8px;
+    line-height: 1.5;
+  }
+  .legend strong { color: var(--color-text-brand); }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 720px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  .col {
+    background: #FFFFFF;
+    border: 1px solid var(--color-border-card);
+    border-radius: 12px;
+    padding: 16px;
+    overflow: hidden;
+  }
+  .col__label {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+  .col--admin    .col__label { background: #DBEAFE; color: #1D4ED8; }
+  .col--consumer .col__label { background: var(--color-brand-primary-tint); color: var(--color-brand-primary-dark); }
+  .col--terminal .col__label { background: #FEF3C7; color: #92400E; }
+
+  .demo-block { margin-top: 14px; }
+  .demo-block__hint {
+    font-size: 10px;
+    color: var(--color-text-muted);
+    margin-bottom: 4px;
+    font-family: var(--font-mono);
+  }
+  .specs {
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--color-border-default);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+  }
+  .specs dt { display: inline; color: var(--color-text-tertiary); }
+  .specs dd { display: inline; margin: 0 8px 0 4px; color: var(--color-text-primary); }
+  .specs br + dt { margin-top: 2px; }
+</style>
+</head>
+<body>
+  <div class="legend">
+    <strong>Live Comparison</strong>: 同じマークアップが <code>.fig-profile-admin</code> / <code>.fig-profile-consumer</code> / <code>.fig-profile-terminal</code> でどう変化するかを並列表示。
+    マークアップは 3 カラム全て同一で、クラス1つだけが違います。
+  </div>
+
+  <div class="grid">
+
+    <!-- Admin -->
+    <div class="col col--admin fig-profile-admin">
+      <span class="col__label">Web-Admin</span>
+      <h2 class="fig-headline">運行管理ダッシュボード</h2>
+      <p class="fig-body">本日の遅延件数と平均遅延時間を表示します。情報密度を優先したレイアウトです。</p>
+
+      <div class="demo-block">
+        <div class="demo-block__hint">.fig-button</div>
+        <div class="fig-cluster">
+          <button class="fig-button">送信</button>
+          <button class="fig-button fig-button--secondary">キャンセル</button>
+        </div>
+      </div>
+
+      <div class="demo-block">
+        <div class="demo-block__hint">.fig-input</div>
+        <input class="fig-input" placeholder="検索キーワード…">
+      </div>
+
+      <div class="demo-block">
+        <div class="demo-block__hint">.fig-list-item</div>
+        <ul class="fig-list">
+          <li class="fig-list-item">路線A — 平均遅延 2分</li>
+          <li class="fig-list-item">路線B — 平均遅延 5分</li>
+        </ul>
+      </div>
+
+      <dl class="specs">
+        <dt>body</dt><dd>13px</dd><br>
+        <dt>spacing-m</dt><dd>12px</dd><br>
+        <dt>target-min</dt><dd>32px</dd><br>
+        <dt>radius</dt><dd>6px</dd>
+      </dl>
+    </div>
+
+    <!-- Consumer -->
+    <div class="col col--consumer fig-profile-consumer">
+      <span class="col__label">Mobile-Consumer</span>
+      <h2 class="fig-headline">バスを探す</h2>
+      <p class="fig-body">最寄りの停留所から、行きたい場所までのバスをやさしくご案内します。</p>
+
+      <div class="demo-block">
+        <div class="demo-block__hint">.fig-button</div>
+        <div class="fig-cluster">
+          <button class="fig-button">送信</button>
+          <button class="fig-button fig-button--secondary">キャンセル</button>
+        </div>
+      </div>
+
+      <div class="demo-block">
+        <div class="demo-block__hint">.fig-input</div>
+        <input class="fig-input" placeholder="駅・バス停を検索">
+      </div>
+
+      <div class="demo-block">
+        <div class="demo-block__hint">.fig-list-item</div>
+        <ul class="fig-list">
+          <li class="fig-list-item">京都駅前 行 — あと 4分</li>
+          <li class="fig-list-item">河原町 行 — あと 9分</li>
+        </ul>
+      </div>
+
+      <dl class="specs">
+        <dt>body</dt><dd>15px</dd><br>
+        <dt>spacing-m</dt><dd>20px</dd><br>
+        <dt>target-min</dt><dd>48px</dd><br>
+        <dt>radius</dt><dd>12px</dd>
+      </dl>
+    </div>
+
+    <!-- Terminal -->
+    <div class="col col--terminal fig-profile-terminal">
+      <span class="col__label">Mobile-Terminal</span>
+      <h2 class="fig-headline">業務端末</h2>
+      <p class="fig-body">手袋着用・揺れる車内でも判読できる、業務向けの固定視認性に最適化。</p>
+
+      <div class="demo-block">
+        <div class="demo-block__hint">.fig-button</div>
+        <div class="fig-cluster">
+          <button class="fig-button">送信</button>
+          <button class="fig-button fig-button--secondary">キャンセル</button>
+        </div>
+      </div>
+
+      <div class="demo-block">
+        <div class="demo-block__hint">.fig-input</div>
+        <input class="fig-input" placeholder="便番号を入力">
+      </div>
+
+      <div class="demo-block">
+        <div class="demo-block__hint">.fig-list-item</div>
+        <ul class="fig-list">
+          <li class="fig-list-item">便 1042 — 出発前</li>
+          <li class="fig-list-item">便 1056 — 運行中</li>
+        </ul>
+      </div>
+
+      <dl class="specs">
+        <dt>body</dt><dd>16px</dd><br>
+        <dt>spacing-m</dt><dd>16px</dd><br>
+        <dt>target-min</dt><dd>56px</dd><br>
+        <dt>radius</dt><dd>8px</dd>
+      </dl>
+    </div>
+
+  </div>
+</body>
+</html>

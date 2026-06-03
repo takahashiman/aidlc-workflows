@@ -1,0 +1,1222 @@
+/* FIG Design System — Semantic Tokens Layer
+ *
+ * The primitive palette lives in `primitives.css`.
+ * This file maps those primitives to *semantic* roles so that components
+ * never reference raw hex / primitive variables directly.
+ *
+ * Layering convention:
+ *   primitive  →  semantic role  →  component
+ *   #26B7BC    →  --color-surface-brand  →  PrimaryButton background
+ *
+ * Token naming follows the `category.role.modifier` pattern, expressed as
+ * CSS custom properties with `-` separators:
+ *   color.text.primary   →  --color-text-primary
+ *   color.surface.brand  →  --color-surface-brand
+ *
+ * 4 categories: text · surface · icon · border
+ * + State (interactive overlays)
+ * + Transport domain (project-specific semantics)
+ */
+
+:root {
+  /* ════════════════════════════════════════════════
+     1 ・ color.text.*
+     ════════════════════════════════════════════════ */
+  --color-text-primary:    #1E293B;   /* slate-800 — 主見出し、強調本文 */
+  --color-text-secondary:  #334155;   /* slate-700 — 本文標準 */
+  --color-text-tertiary:   #475569;   /* slate-600 — 二次見出し、補助本文 */
+  --color-text-muted:      #64748B;   /* slate-500 — マイクロコピー、補足 */
+  --color-text-disabled:   #94A3B8;   /* slate-400 — 無効テキスト、プレースホルダー */
+  --color-text-inverse:    #FFFFFF;   /* 濃色背景上のテキスト */
+
+  --color-text-brand:      var(--color-brand-primary-dark);   /* ブランドリンク / アクティブタブラベル。
+                                                                  コントラスト 4.5:1 確保のため primary-dark を使用 */
+  --color-text-onBrand:    #FFFFFF;   /* ブランド背景上のテキスト */
+  --color-text-onBrand-vivid: #FFFFFF;/* ビビッドブランド面上（primary）　—　大型テキストのみ */
+  --color-text-accent:     var(--color-brand-secondary-dark);   /* Secondary / 強調。同じくコントラストセーフ */
+
+  --color-text-success:    #047857;   /* 通常運行ラベル、完了文言 */
+  --color-text-warning:    #B45309;   /* 遅延の可能性、注意 */
+  --color-text-error:      #DC2626;   /* 遅延確定、運休、エラー */
+
+  --color-text-link:       var(--color-brand-secondary);   /* 一般リンク = FIGブルー */
+  --color-text-linkHover:  var(--color-brand-secondary-dark);
+
+  /* ════════════════════════════════════════════════
+     2 ・ color.surface.* (Surface Layering)
+     ════════════════════════════════════════════════
+     階層:  canvas  <  surface  <  containerLow < container < containerHigh
+     - canvas:           ページ最下層（グラデ背景）
+     - surface:          標準カード（白）
+     - container/low/high: ネストされたカード、状態カード、浮きカード
+     */
+  --color-surface-canvas:           linear-gradient(135deg, #EFF9FA 0%, #F4F8FB 50%, #EBF4FB 100%);
+  --color-surface-default:          #FFFFFF;     /* 標準カード */
+  --color-surface-container-low:    #F8FAFC;     /* slate-50 — カード内サブ領域 */
+  --color-surface-container:        #F1F5F9;     /* slate-100 — 状態カード、ホバー塗り */
+  --color-surface-container-high:   #E2E8F0;     /* slate-200 — タブ非アクティブ */
+
+  --color-surface-glass:            rgba(255, 255, 255, 0.70);   /* ヘッダー、フローティング */
+  --color-surface-overlay:          rgba(0, 0, 0, 0.30);          /* モーダル幕 */
+  --color-surface-scrim:            rgba(15, 23, 42, 0.40);        /* サイドバー幕 */
+  --color-surface-inverse:          #1E293B;                       /* FAB、ダーク CTA */
+
+  /* ── Tinted brand / status surfaces ──
+   * ブランド面は 2 ラック有り:
+   *   surface.brand        = primary-dark — 白抹き 4.5:1 保証の「読める」ブランド面
+   *                          (PrimaryButton / 主要 CTA / タブアクティブ)
+   *   surface.brand-vivid  = primary      — 装飾 / ヒーロー / 大型テキストとイメージ専用
+   *                          (本文テキストは規約上不可)
+   * ── */
+  --color-surface-brand:            var(--color-brand-primary-dark);     /* PrimaryButton、主要 CTA。白テキスト 4.5:1 */
+  --color-surface-brand-vivid:      var(--color-brand-primary);          /* 装飾 / ヒーロー / ロゴマーク面 */
+  --color-surface-brand-subtle:     var(--color-brand-primary-tint);     /* ブランド色のソフト塗り */
+  --color-surface-accent:           var(--color-brand-secondary-dark);   /* Secondary CTA。白テキスト 4.5:1 */
+  --color-surface-accent-vivid:     var(--color-brand-secondary);        /* Secondary 装飾面 */
+  --color-surface-accent-subtle:    var(--color-brand-secondary-tint);
+
+  --color-surface-success:          #ECFDF5;                       /* 通常運行ピル背景 */
+  --color-surface-success-strong:   #047857;
+  --color-surface-warning:          #FFFBEB;                       /* 遅延の可能性 / 注意バナー */
+  --color-surface-warning-strong:   #B45309;
+  --color-surface-error:            #FEF2F2;                       /* 遅延確定 / エラー */
+  --color-surface-error-strong:     #DC2626;
+
+  /* ════════════════════════════════════════════════
+     3 ・ color.icon.*
+     ════════════════════════════════════════════════ */
+  --color-icon-default:    #94A3B8;   /* lucide 既定色（サイドバー等） */
+  --color-icon-muted:      #CBD5E1;   /* ChevronRight 等の弱アイコン */
+  --color-icon-strong:     #475569;   /* ヘッダー戻る、メニュー */
+  --color-icon-inverse:    #FFFFFF;   /* 濃色背景上 */
+
+  --color-icon-brand:      var(--color-brand-primary-dark);   /* アイコンは読めるコントラストを優先 */
+  --color-icon-onBrand:    #FFFFFF;
+  --color-icon-accent:     var(--color-brand-secondary-dark);
+
+  --color-icon-success:    #047857;
+  --color-icon-warning:    #B45309;
+  --color-icon-error:      #DC2626;
+
+  /* ════════════════════════════════════════════════
+     4 ・ color.border.*
+     ════════════════════════════════════════════════ */
+  --color-border-subtle:   #F1F5F9;   /* slate-100 — サイドバー区切り */
+  --color-border-default:  #E2E8F0;   /* slate-200 — 入力、標準カード */
+  --color-border-strong:   #CBD5E1;   /* slate-300 — 補助ボーダー */
+  --color-border-card:     #E5E7EB;   /* gray-200 — 白カード輪郭 */
+
+  --color-border-brand:    var(--color-brand-primary-dark);   /* 選択中ラジオ、フォーカスブランド */
+  --color-border-focus:    var(--color-brand-secondary-dark); /* キーボードフォーカス。背景コントラスト 3:1 確保 */
+  --color-border-warning:  rgba(253, 230, 138, 0.60);
+  --color-border-error:    #FECACA;
+
+  /* ════════════════════════════════════════════════
+     5 ・ state.* (interactive overlays)
+     ════════════════════════════════════════════════
+     `state-*-overlay` は半透明オーバーレイ。元のサーフェスの上に
+     `background: linear-gradient(var(--state-hover-overlay), var(--state-hover-overlay))`
+     のように重ねて使う想定。`state-*-bg` はソリッド代替。
+     */
+  /* Hover */
+  --state-hover-overlay:        rgba(15, 23, 42, 0.04);     /* slate-900 / 4% */
+  --state-hover-overlay-strong: rgba(15, 23, 42, 0.06);
+  --state-hover-bg:             #F8FAFC;                      /* slate-50 ソリッド */
+  --state-hover-brand-overlay:  rgba(38, 183, 188, 0.08);
+  --state-hover-error-overlay:  rgba(220, 38, 38, 0.06);
+
+  /* Pressed (active) */
+  --state-pressed-overlay:        rgba(15, 23, 42, 0.10);
+  --state-pressed-brand-overlay:  rgba(38, 183, 188, 0.16);
+  --state-pressed-scale:          0.98;                        /* CTA 押下時 */
+  --state-pressed-scale-strong:   0.92;                        /* NFC 等 */
+
+  /* Focused (キーボードフォーカス) */
+  --state-focused-ring:         0 0 0 3px rgba(56, 161, 219, 0.40);
+  --state-focused-ring-brand:   0 0 0 3px rgba(38, 183, 188, 0.30);
+  --state-focused-ring-error:   0 0 0 3px rgba(220, 38, 38, 0.30);
+  --state-focused-outline:      2px solid var(--color-border-focus);
+  --state-focused-offset:       2px;
+
+  /* Disabled */
+  --state-disabled-opacity:     var(--opacity-disabled);
+  --state-disabled-bg:          #F1F5F9;
+  --state-disabled-fg:          #94A3B8;
+  --state-disabled-border:      #E2E8F0;
+  --state-disabled-cursor:      not-allowed;
+
+  /* ════════════════════════════════════════════════
+     5 ・ elevation.* (Semantic Elevation)
+     ────────────────────────────────────────────────
+     primitive の --elevation-{none/xs/sm/md/lg/xl} を、UI の役割に
+     束ねたセマンティック層。コンポーネントは生 shadow を直書きせず、
+     必ず --surface-elevation-* を参照する。
+     z-index も同階層でペアリング（--elevation-z-*）。
+     ════════════════════════════════════════════════ */
+
+  /* ── Semantic Elevation (role-based) ── */
+  --surface-elevation-flat:      var(--elevation-none);   /* 入力・セル・フラット面 */
+  --surface-elevation-card:      var(--elevation-sm);     /* 静止カード、リスト行 */
+  --surface-elevation-raised:    var(--elevation-md);     /* ホバー、プルダウン、ポップオーバー */
+  --surface-elevation-header:    var(--elevation-md);     /* sticky ヘッダー */
+  --surface-elevation-floating:  var(--elevation-lg);     /* FAB、スナックバー、通知 */
+  --surface-elevation-modal:     var(--elevation-xl);     /* ダイアログ、ボトムシート、定期券カード */
+  --surface-elevation-toast:     var(--elevation-xl);     /* トースト、最前面通知 */
+  --surface-elevation-dragged:   var(--elevation-xl);     /* ドラッグ中の浮遊 */
+
+  /* ── z-index pairing （surface-elevation と同じ階層ロール） ── */
+  --elevation-z-flat:      var(--z-base);
+  --elevation-z-card:      var(--z-raised);
+  --elevation-z-raised:    var(--z-dropdown);
+  --elevation-z-header:    var(--z-sticky);
+  --elevation-z-floating:  var(--z-fab);
+  --elevation-z-modal:     var(--z-modal);
+  --elevation-z-toast:     var(--z-toast);
+  --elevation-z-dragged:   var(--z-drawer);
+
+  /* ════════════════════════════════════════════════
+     6 ・ motion.*
+     ────────────────────────────────────────────────
+     duration × easing をロールに束ねたモーションセマンティック。
+     コンポーネントは生の cubic-bezier や ms 値を直書きせず、
+     必ず本トークンの transition / animation 経由で動かす。
+     ════════════════════════════════════════════════ */
+
+  /* 個別ロール（duration + easing） */
+  --motion-enter:          var(--dur-base)     var(--ease-out-expo);
+  --motion-exit:           var(--dur-fast)     var(--ease-in);
+  --motion-hover:          var(--dur-instant)  var(--ease-out);
+  --motion-press:          var(--dur-instant)  var(--ease-in-out);
+  --motion-focus:          var(--dur-fast)     var(--ease-out);
+  --motion-tab-switch:     var(--dur-base)     var(--ease-out-expo);
+  --motion-dropdown:       var(--dur-base)     var(--ease-out-expo);
+  --motion-drawer:         var(--dur-moderate) var(--ease-out-expo);
+  --motion-modal-in:       var(--dur-moderate) var(--ease-emphasized-decelerate);
+  --motion-modal-out:      var(--dur-fast)     var(--ease-emphasized-accelerate);
+  --motion-toast:          var(--dur-base)     var(--ease-out-expo);
+
+  /* アンビエント（ループ） — duration のみ。animation-timing-function は ease-in-out 既定 */
+  --motion-ambient-breathe: var(--dur-ambient-1) var(--ease-in-out);
+  --motion-ambient-pulse:   var(--dur-ambient-2) var(--ease-out);
+  --motion-ambient-shimmer: var(--dur-ambient-3) var(--ease-linear);
+
+  /* 単体取り出し（transition プロパティ複合時用） */
+  --motion-dur-enter:      var(--dur-base);
+  --motion-dur-exit:       var(--dur-fast);
+  --motion-dur-hover:      var(--dur-instant);
+  --motion-dur-modal-in:   var(--dur-moderate);
+  --motion-ease-enter:     var(--ease-out-expo);
+  --motion-ease-exit:      var(--ease-in);
+  --motion-ease-modal-in:  var(--ease-emphasized-decelerate);
+  --motion-ease-modal-out: var(--ease-emphasized-accelerate);
+
+  /* ════════════════════════════════════════════════
+     7 ・ opacity.*
+     ────────────────────────────────────────────────
+     ロール別に固定された不透明度。生の 0.4 等は直書きせず本トークンを使う。
+     state.disabled / .dragged 系はここを参照する（DRY）。
+     ════════════════════════════════════════════════ */
+  --opacity-disabled:         var(--opacity-40);    /* 無効状態の見え隠し */
+  --opacity-muted:            var(--opacity-60);    /* 補助情報、二次テキスト */
+  --opacity-subtle:           var(--opacity-80);    /* ほぼ不透明だが少し沈める */
+  --opacity-dragged:          var(--opacity-90);    /* ドラッグ中の浮遊感 */
+  --opacity-overlay-light:    var(--opacity-5);     /* hover overlay 既定 */
+  --opacity-overlay:          var(--opacity-10);    /* pressed overlay、ブランドティント */
+  --opacity-overlay-strong:   var(--opacity-30);    /* 強オーバーレイ */
+  --opacity-scrim:            var(--opacity-40);    /* モーダル/ドロワー背面 scrim */
+  --opacity-glass:            var(--opacity-70);    /* ガラスサーフェス */
+  --opacity-glass-strong:     var(--opacity-80);    /* warn-bg 等のティント面 */
+
+  /* Dragged */
+  --state-dragged-shadow:       0 12px 32px rgba(15, 23, 42, 0.18);
+  --state-dragged-scale:        1.02;
+  --state-dragged-opacity:      var(--opacity-dragged);
+  --state-dragged-rotate:       1deg;
+  --state-dragged-cursor:       grabbing;
+
+  /* Selected */
+  --state-selected-bg:          var(--color-brand-primary-tint);
+  --state-selected-border:      var(--color-brand-primary);
+  --state-selected-fg:          var(--color-brand-primary);
+  --state-selected-bg-strong:   var(--color-brand-primary);
+  --state-selected-fg-strong:   #FFFFFF;
+
+  /* ════════════════════════════════════════════════
+     6 ・ transport.* (Domain Semantics)
+     ════════════════════════════════════════════════
+     交通ドメイン固有の意味色。Status と Vehicle と Route の 3 系統。
+     */
+
+  /* ── color.status.* — 運行状態（配色のみ。ラベル文言・アイコン名はコード側で持つ） ── */
+  --color-status-onTime-fg:        #047857;
+  --color-status-onTime-bg:        #ECFDF5;
+
+  --color-status-delayRisk-fg:     #B45309;
+  --color-status-delayRisk-bg:     #FFFBEB;
+
+  --color-status-delayed-fg:       #B91C1C;
+  --color-status-delayed-bg:       #FEF2F2;
+
+  --color-status-suspended-fg:     #B91C1C;
+  --color-status-suspended-bg:     #FEF2F2;
+
+  --color-status-passed-fg:        #64748B;
+  --color-status-passed-bg:        #F1F5F9;
+
+  /* ── color.route.* — 路線種別（配色のみ） ── */
+  --color-route-local-fg:          var(--color-brand-primary);          /* 普通便。ブランド軸 */
+  --color-route-local-bg:          var(--color-brand-primary-tint);
+
+  --color-route-express-fg:        var(--color-brand-secondary);        /* 急行・特急。Secondary 軸 */
+  --color-route-express-bg:        var(--color-brand-secondary-tint);
+
+  --color-route-rapid-fg:          #1E40AF;   /* 快速。深い青 */
+  --color-route-rapid-bg:          rgba(30, 64, 175, 0.10);
+
+  --color-route-community-fg:      #B45309;   /* コミュニティバス。親しみの琥珀 */
+  --color-route-community-bg:      rgba(180, 83, 9, 0.10);
+
+  --color-route-night-fg:          #1E293B;   /* 深夜便。slate-800 */
+  --color-route-night-bg:          rgba(30, 41, 59, 0.10);
+
+  /* ── color.vehicle.* — 車両種別（配色のみ。アイコン名はコード側で持つ） ── */
+  --color-vehicle-bus-fg:          var(--color-brand-primary);
+  --color-vehicle-bus-bg:          var(--color-brand-primary-tint);
+
+  --color-vehicle-train-fg:        #1E40AF;   /* JR・私鉄汎用 */
+  --color-vehicle-train-bg:        rgba(30, 64, 175, 0.10);
+
+  --color-vehicle-subway-fg:       #6B21A8;   /* 地下鉄 */
+  --color-vehicle-subway-bg:       rgba(107, 33, 168, 0.10);
+
+  --color-vehicle-tram-fg:         #B45309;   /* 路面電車・LRT */
+  --color-vehicle-tram-bg:         rgba(180, 83, 9, 0.10);
+
+  --color-vehicle-taxi-fg:         #CA8A04;   /* タクシー = 黄系の慣習色 */
+  --color-vehicle-taxi-bg:         rgba(202, 138, 4, 0.10);
+
+  --color-vehicle-ferry-fg:        #0E7490;   /* フェリー・水上交通 */
+  --color-vehicle-ferry-bg:        rgba(14, 116, 144, 0.10);
+
+  /* ════════════════════════════════════════════════
+     8 ・ layout.* — Semantic Layout
+     ────────────────────────────────────────────────
+     コンポーネント固有の余白（--button-padding 等）を作らず、
+     役割に基づく統一トークンへ集約。16px 直書きを禁ずる正典。
+     ──── 命名規則 ────
+       layout.page.*     ページ全体（ルート）の余白
+       layout.section.*  セクション間の縦リズム
+       layout.card.*     カード/シート内側の余白
+       layout.list.*     リスト・スタックの隙間
+       layout.control.*  ボタン/入力/タブなど操作要素の余白
+     ════════════════════════════════════════════════ */
+
+  /* ── ページ余白（safe-area を考慮） ── */
+  --layout-page-padding-inline:        var(--space-4);   /* 16px — モバイル既定 */
+  --layout-page-padding-inline-wide:   var(--space-6);   /* 24px — タブレット以上 */
+  --layout-page-padding-block:         var(--space-5);   /* 20px — モバイル既定 */
+  --layout-page-padding-block-wide:    var(--space-8);   /* 32px — タブレット以上 */
+  --layout-page-padding-block-safe:    calc(var(--space-5) + var(--safe-area-top));
+
+  /* ── セクション間 ── */
+  --layout-section-gap:           var(--space-4);   /* 16px — 標準カード間 */
+  --layout-section-gap-large:     var(--space-6);   /* 24px — 大見出しブロック間 */
+  --layout-section-gap-xlarge:    var(--space-10);  /* 40px — 章を分ける区切り */
+
+  /* ── カード / シート内側 ── */
+  --layout-card-padding:          var(--space-4);   /* 16px — 標準カード */
+  --layout-card-padding-compact:  var(--space-3);   /* 12px — 密集カード */
+  --layout-card-padding-loose:    var(--space-6);   /* 24px — 定期券・ヒーロー */
+  --layout-card-gap:              var(--space-3);   /* 12px — カード内縦並びの隙間 */
+
+  /* ── リスト / スタック隙間 ── */
+  --layout-list-gap-tight:        var(--space-1);   /* 4px  — チップ同士 */
+  --layout-list-gap:              var(--space-2);   /* 8px  — リスト行間（密） */
+  --layout-list-gap-loose:        var(--space-3);   /* 12px — リスト行間（疎） */
+  --layout-stack-gap:             var(--space-4);   /* 16px — 縦スタック既定 */
+
+  /* ── コントロール（ボタン / 入力 / タブ）余白 ── */
+  --layout-control-padding-inline:           var(--space-5);   /* 20px — 標準 CTA */
+  --layout-control-padding-inline-compact:   var(--space-3);   /* 12px — チップ・小ボタン */
+  --layout-control-padding-inline-loose:     var(--space-6);   /* 24px — ヒーロー CTA */
+  --layout-control-padding-block:            var(--space-3);   /* 12px — 標準 CTA */
+  --layout-control-padding-block-compact:    var(--space-2);   /* 8px  — 小コントロール */
+  --layout-control-padding-block-loose:      var(--space-4);   /* 16px — 大型 CTA */
+  --layout-control-gap:                      var(--space-2);   /* 8px  — アイコン + ラベル */
+  --layout-control-gap-tight:                var(--space-1);   /* 4px  — 詰めた icon+label */
+
+  /* ════════════════════════════════════════════════
+     9 ・ layout responsive — Grid & 主要レイアウト寸法
+     ────────────────────────────────────────────────
+     画面全体のレイアウト寸法。Sidebar / BottomNav / Header / Content。
+     ════════════════════════════════════════════════ */
+  --layout-content-max-width:     var(--container-md);  /* 768px — 本文最大幅 */
+  --layout-content-max-width-wide:var(--container-lg);  /* 1024px — 管理画面 */
+  --layout-sidebar-width:         288px;                /* w-72 互換 */
+  --layout-sidebar-width-narrow:  240px;                /* 折りたたみ前 */
+  --layout-header-height:         52px;                 /* py-3 相当 */
+  --layout-header-height-safe:    calc(52px + var(--safe-area-top));
+  --layout-bottom-nav-height:     64px;                 /* タブバー本体 */
+  --layout-bottom-nav-height-safe:calc(64px + var(--safe-area-bottom));
+  --layout-grid-gutter:           var(--grid-gutter);   /* 16px — モバイル既定 */
+
+  /* §10 surface.elevation.* は §5 elevation.* に統合済み（重複定義を撤去） */
+
+  /* ════════════════════════════════════════════════
+     11 ・ typography.* — Typography Role
+     ────────────────────────────────────────────────
+     「役割」単位の型ロール。CSS `font` ショートハンドで一発適用できる
+     形式（weight size/line-height family）を正典とし、必要に応じ
+     個別プロパティも提供する。font ショートハンドは family が必須なため
+     必ず末尾に --font-sans か --font-numeric を含める。
+     交通ドメイン特化ロールを末尾に新設。
+     ════════════════════════════════════════════════ */
+
+  /* ── Typography Role Semantic (font shorthand) ──
+   * 行間は DADS 準拠の日本語最適値（--lh-jp-*）を採用。
+   * 本文 1.75 / 見出し 1.4 / display 1.3 — 「読みやすさ＝慈愛」の物理担保。
+   */
+  --typography-display:    var(--font-weight-extrabold) var(--font-size-3xl) / var(--lh-jp-display)  var(--font-sans);
+  --typography-headline:   var(--font-weight-extrabold) var(--font-size-2xl) / var(--lh-jp-headline) var(--font-sans);
+  --typography-title:      var(--font-weight-bold)      var(--font-size-xl)  / var(--lh-jp-title)    var(--font-sans);
+  --typography-subtitle:   var(--font-weight-bold)      var(--font-size-lg)  / var(--lh-jp-title)    var(--font-sans);
+  --typography-body:       var(--font-weight-regular)   var(--font-size-base)/ var(--lh-jp-body)     var(--font-sans);
+  --typography-body-loose: var(--font-weight-regular)   var(--font-size-base)/ var(--lh-jp-body-loose) var(--font-sans);
+  --typography-body-strong:var(--font-weight-semibold)  var(--font-size-base)/ var(--lh-jp-body)     var(--font-sans);
+  --typography-label:      var(--font-weight-semibold)  var(--font-size-sm)  / var(--lh-jp-label)    var(--font-sans);
+  --typography-caption:    var(--font-weight-medium)    var(--font-size-xs)  / var(--lh-jp-caption)  var(--font-sans);
+  --typography-eyebrow:    var(--font-weight-bold)      var(--font-size-xs)  / var(--lh-jp-label)    var(--font-sans);
+
+  /* ── Transport-specific Typography (交通ドメイン特化) ──
+   * 時刻 / 路線番号 / 運賃など「桁揃いと視認性」が命の場所に適用。
+   * font-numeric を経由して tabular-nums を効かせる前提。
+   * font ショートハンドに font-variant-numeric は含められないため、
+   * 利用側で `font-variant-numeric: var(--font-variant-numeric)` を併記する。
+   */
+  --typography-arrival-time: var(--font-weight-bold)      var(--font-size-2xl) / var(--lh-none) var(--font-numeric);
+  --typography-route-number: var(--font-weight-extrabold) var(--font-size-xl)  / var(--lh-none) var(--font-numeric);
+  --typography-status-pill:  var(--font-weight-bold)      var(--font-size-xs)  / var(--lh-none) var(--font-sans);
+  --typography-fare-amount:  var(--font-weight-extrabold) var(--font-size-2xl) / var(--lh-none) var(--font-numeric);
+  --typography-timetable-cell: var(--font-weight-semibold) var(--font-size-base)/ var(--lh-snug) var(--font-numeric);
+
+  /* ── 汎用ロール（size, weight, lh, tracking） ── */
+  --typography-display-size:         var(--text-3xl);
+  --typography-display-weight:       var(--fw-extrabold);
+  --typography-display-line-height:  var(--lh-jp-display);
+  --typography-display-tracking:     var(--tracking-jp-display);
+
+  --typography-headline-size:        var(--text-2xl);
+  --typography-headline-weight:      var(--fw-extrabold);
+  --typography-headline-line-height: var(--lh-jp-headline);
+  --typography-headline-tracking:    var(--tracking-jp-headline);
+
+  --typography-title-size:           var(--text-xl);
+  --typography-title-weight:         var(--fw-bold);
+  --typography-title-line-height:    var(--lh-jp-title);
+  --typography-title-tracking:       var(--tracking-jp-title);
+
+  --typography-subtitle-size:        var(--text-lg);
+  --typography-subtitle-weight:      var(--fw-bold);
+  --typography-subtitle-line-height: var(--lh-jp-title);
+  --typography-subtitle-tracking:    var(--tracking-jp-title);
+
+  --typography-body-size:            var(--text-base);
+  --typography-body-weight:          var(--fw-regular);
+  --typography-body-line-height:     var(--lh-jp-body);
+  --typography-body-tracking:        var(--tracking-jp-body);
+
+  --typography-body-strong-size:     var(--text-base);
+  --typography-body-strong-weight:   var(--fw-semibold);
+  --typography-body-strong-line-height: var(--lh-jp-body);
+
+  --typography-label-size:           var(--text-sm);
+  --typography-label-weight:         var(--fw-semibold);
+  --typography-label-line-height:    var(--lh-jp-label);
+  --typography-label-tracking:       var(--tracking-jp-label);
+
+  --typography-caption-size:         var(--text-xs);
+  --typography-caption-weight:       var(--fw-medium);
+  --typography-caption-line-height:  var(--lh-jp-caption);
+  --typography-caption-tracking:     var(--tracking-jp-caption);
+
+  --typography-eyebrow-size:         var(--text-xs);
+  --typography-eyebrow-weight:       var(--fw-bold);
+  --typography-eyebrow-line-height:  var(--lh-jp-label);
+  --typography-eyebrow-tracking:     var(--tracking-jp-eyebrow);
+  --typography-eyebrow-transform:    uppercase;
+
+  /* ── 交通ドメイン特化ロール ── */
+
+  /* arrival-time: 「あと◯分」「14:23」など。等幅必須、視認性最優先。 */
+  --typography-arrival-time-size:        var(--text-3xl);
+  --typography-arrival-time-weight:      var(--fw-extrabold);
+  --typography-arrival-time-line-height: 1.0;
+  --typography-arrival-time-tracking:    -0.02em;
+  --typography-arrival-time-family:      var(--font-numeric);
+  --typography-arrival-time-variant:     var(--font-variant-numeric);
+
+  /* route-number: 路線番号バッジ（「101」「H99」等）。短い英数の塊。 */
+  --typography-route-number-size:        var(--text-md);
+  --typography-route-number-weight:      var(--fw-bold);
+  --typography-route-number-line-height: 1.0;
+  --typography-route-number-tracking:    0.02em;
+  --typography-route-number-family:      var(--font-numeric);
+  --typography-route-number-variant:     var(--font-variant-numeric-slashed);
+
+  /* status-pill: 「通常運行」「約15分遅延」等。短文・全幅で潰れない密度。 */
+  --typography-status-pill-size:        var(--text-sm);
+  --typography-status-pill-weight:      var(--fw-semibold);
+  --typography-status-pill-line-height: 1.2;
+  --typography-status-pill-tracking:    0;
+
+  /* fare-amount: 運賃表示（「¥230」等）。数字に視線が止まるよう extrabold + 等幅。 */
+  --typography-fare-amount-size:        var(--text-2xl);
+  --typography-fare-amount-weight:      var(--fw-extrabold);
+  --typography-fare-amount-line-height: 1.0;
+  --typography-fare-amount-family:      var(--font-numeric);
+  --typography-fare-amount-variant:     var(--font-variant-numeric);
+
+  /* timetable-cell: 時刻表セル内の時刻数値。桁揃え必須。 */
+  --typography-timetable-cell-size:        var(--text-base);
+  --typography-timetable-cell-weight:      var(--fw-semibold);
+  --typography-timetable-cell-line-height: 1.2;
+  --typography-timetable-cell-family:      var(--font-numeric);
+  --typography-timetable-cell-variant:     var(--font-variant-numeric);
+
+  /* ════════════════════════════════════════════════
+     12 ・ motion.* — Motion Contract (behavior-oriented)
+     ────────────────────────────────────────────────
+     §6 の汎用ロールに加え、UI の「振る舞い」単位の意味的束。
+     コンポーネントの意図（ナビ遷移、シート、トースト等）から
+     duration × easing を引けるようにする。
+     ════════════════════════════════════════════════ */
+  --motion-navigation-transition: var(--motion-duration-base)    var(--motion-easing-emphasized);  /* 画面遷移 */
+  --motion-sheet:                 var(--motion-duration-moderate) var(--motion-easing-decelerate); /* ボトムシート登場 */
+  --motion-sheet-exit:            var(--motion-duration-fast)    var(--motion-easing-accelerate);  /* ボトムシート退場 */
+  --motion-toast-enter:           var(--motion-duration-base)    var(--motion-easing-decelerate);  /* トースト登場 */
+  --motion-toast-exit:            var(--motion-duration-fast)    var(--motion-easing-accelerate);  /* トースト退場 */
+  --motion-press-feedback:        var(--motion-duration-instant) var(--motion-easing-standard);    /* 押下フィードバック */
+  --motion-reveal:                var(--motion-duration-base)    var(--motion-easing-decelerate);  /* アコーディオン展開 */
+  --motion-collapse:              var(--motion-duration-fast)    var(--motion-easing-accelerate);  /* アコーディオン収縮 */
+
+  /* ════════════════════════════════════════════════
+     13 ・ interactive.* — Interaction Contract
+     ────────────────────────────────────────────────
+     インタラクティブ要素の最小サイズ。タップターゲットを下回らない。
+     視覚サイズが小さくても padding/hit area でこの値を確保する。
+     ════════════════════════════════════════════════ */
+  --interactive-primary-min-height:    48px;                       /* 主要 CTA */
+  --interactive-secondary-min-height:  44px;                       /* セカンダリ */
+  --interactive-compact-min-height:    36px;                       /* チップ・小ボタン（hit area は別途確保） */
+  --interactive-list-item-height:      56px;                       /* リスト行 */
+  --interactive-list-item-height-compact: 48px;
+  --interactive-tab-height:            44px;                       /* タブバーのタブ */
+  --interactive-bottom-nav-item-height:56px;                       /* ボトムナビ各タブ */
+  --interactive-fab-size:              56px;                       /* 標準 FAB */
+  --interactive-fab-size-mini:         40px;                       /* ミニ FAB（hit area は touch-target で拡張） */
+  --interactive-icon-button-size:      40px;                       /* アイコン単独ボタン */
+  --interactive-input-height:          48px;                       /* 入力フィールド */
+  --interactive-min-touch-target:      var(--touch-target-min);    /* 44px — 物理下限 */
+
+  /* インタラクション中のスケール / 変形（state.* と対をなす意味別名） */
+  --interactive-scale-pressed:         var(--interaction-scale-pressed);
+  --interactive-scale-pressed-strong:  var(--interaction-scale-pressed-strong);
+  --interactive-scale-dragged:         var(--interaction-scale-dragged);
+  --interactive-scale-zoom-in:         var(--interaction-scale-zoom-in);
+
+  /* ════════════════════════════════════════════════
+     14 ・ a11y.* — Accessibility Semantic
+     ────────────────────────────────────────────────
+     「誰でも使える」を保証するトークン。生数値の代わりにここを参照。
+     ════════════════════════════════════════════════ */
+
+  /* Focus ring — キーボードフォーカスの視認性 */
+  --a11y-focus-ring-width:    var(--focus-ring-width);              /* 3px */
+  --a11y-focus-ring-offset:   var(--focus-ring-offset);             /* 2px */
+  --a11y-focus-ring-color:    var(--color-border-focus);            /* = --color-brand-secondary */
+  --a11y-focus-ring:          var(--a11y-focus-ring-width) solid var(--a11y-focus-ring-color);
+  --a11y-focus-ring-brand:    var(--a11y-focus-ring-width) solid var(--color-border-brand);
+  --a11y-focus-ring-error:    var(--a11y-focus-ring-width) solid #DC2626;
+  --a11y-focus-ring-shadow:   var(--state-focused-ring);            /* halo 用 box-shadow */
+
+  /* Touch target — 物理的タップ可能領域の最小値 */
+  --a11y-touch-target:        var(--touch-target-min);              /* 44px */
+  --a11y-touch-target-comfortable: 48px;                            /* Material 互換 */
+
+  /* Contrast — WCAG 最低基準値（実装側のチェックスクリプトが参照） */
+  --a11y-contrast-min:         4.5;     /* WCAG AA 本文 */
+  --a11y-contrast-min-large:   3.0;     /* WCAG AA 大型テキスト (18pt / 14pt bold) */
+  --a11y-contrast-min-ui:      3.0;     /* WCAG AA 非テキスト UI */
+  --a11y-contrast-aaa:         7.0;     /* WCAG AAA 本文 */
+  /* コントラスト境界：UI 要素の輪郭が背景に対し最低限の差を持つことを保証する境界線色。
+     視覚的に弱い border-subtle ではなく、AA 基準を満たす border-strong を参照する。 */
+  --a11y-contrast-border:      var(--color-border-strong);
+
+  /* ────────────────────────────────────────────
+     白抜き（Knockout）規約 — FIGロゴマニュアル準拠
+     ────────────────────────────────────────────
+     「黒・濃色の背景では白抜きを使用」（ロゴマニュアル p.3/p.6）の原則を、
+     UIコンポーネント全体の白テキスト適用規約へ拡張する。
+
+     原則:
+       1. 白テキストは「コントラスト 4.5:1（大型なら 3.0:1）を満たす濃色面」だけに許容。
+       2. ビビッドな明色面（primary, secondary）上の白テキストは原則禁止。
+          例外: 18px 以上または 14px bold 以上、かつ装飾的役割の場合のみ。
+       3. 「読ませる UI」(CTA・本文・リンク) はコントラスト基準を満たす濃色面に限定。
+
+     許容される knockout 面（白テキスト 4.5:1 確保）:
+       - --color-surface-brand          (primary-dark   #1A8589) → 4.85:1
+       - --color-surface-accent         (secondary-dark #2378A8) → 4.79:1
+       - --color-surface-inverse        (slate-800      #1E293B) → 14.94:1
+       - --color-text-primary 面（ダーク UI 時）
+
+     白テキスト不可（条件付き許容）:
+       - --color-surface-brand-vivid    (#26B7BC) → 2.55:1  ✘ 本文不可
+       - --color-surface-accent-vivid   (#38A1DB) → 3.21:1  ✘ 本文不可
+   */
+  --a11y-knockout-min-contrast:        4.5;   /* 白テキストを置ける面の最低コントラスト */
+  --a11y-knockout-min-contrast-large:  3.0;   /* 大型テキスト（>=18px or >=14px bold） */
+  --a11y-knockout-large-text-min:      18px;
+  --a11y-knockout-large-text-bold-min: 14px;
+
+  /* Hit-area helper — 視覚サイズが小さくても hit area を拡張する余白量 */
+  --a11y-hit-area-expand:     var(--space-2);   /* 8px : 視覚 28px のアイコンに +16px → 44px 確保 */
+
+  /* ════════════════════════════════════════════════
+     15 ・ radius.* — Semantic Radius Roles（FIGセンス）
+     ────────────────────────────────────────────────
+     FIGブランドDNAは「Rounded-X M+」「源ノ角ゴシック」の丸さを核とする。
+     プリミティブの --radius-{sm,md,lg,xl,2xl,pill} をUIロールに束ね、
+     コンポーネント側は意味的な --radius-* を必ず経由する。
+
+     設計意図:
+       - 主要 CTA は Pill 形状 (radius-cta = pill)。FIG ロゴの円弧 DNA を継承。
+       - Secondary / 標準ボタンは radius-button (16px)。素早さと信頼の中庸。
+       - カードは radius-card (16px)。慈愛のやわらかさ。
+       - ヒーロー / 定期券は radius-card-hero (28px)。所有感の表現。
+       - 入力 / アイコンタイルは radius-md (12px)。情報密度を保つ。
+       - チップ / バッジ / 状態ピルは pill。粒度の最小単位。
+     ════════════════════════════════════════════════ */
+
+  /* Action surfaces */
+  --radius-cta:           var(--radius-pill);   /* 主要 CTA — Pill 形状（FIGセンスの核） */
+  --radius-button:        var(--radius-lg);     /* 16px — Secondary / 標準ボタン */
+  --radius-button-compact: var(--radius-md);    /* 12px — 小型ボタン・アイコンボタン */
+  --radius-icon-button:   var(--radius-pill);   /* アイコン単独ボタン — 円形 */
+
+  /* Container surfaces */
+  --radius-card:          var(--radius-lg);     /* 16px — 標準カード */
+  --radius-card-hero:     var(--radius-2xl);    /* 28px — ヒーロー、定期券、所有感のあるカード */
+  --radius-card-compact:  var(--radius-md);     /* 12px — 密集レイアウト */
+
+  /* Inputs */
+  --radius-input:         var(--radius-md);     /* 12px — text input, select */
+  --radius-input-compact: var(--radius-sm);     /* 6px  — テーブル内入力 */
+
+  /* Overlays */
+  --radius-modal:         var(--radius-2xl);    /* 28px — 確認・フォームダイアログ */
+  --radius-sheet:         var(--radius-xl);     /* 20px — ボトムシート（上端のみ） */
+  --radius-popover:       var(--radius-md);     /* 12px — ツールチップ、メニュー */
+
+  /* Granular */
+  --radius-chip:          var(--radius-pill);   /* チップ・タグ */
+  --radius-pill-status:   var(--radius-pill);   /* 状態ピル */
+  --radius-badge:         var(--radius-sm);     /* 数値バッジ・路線番号バッジ */
+  --radius-icon-tile:     var(--radius-md);     /* 12px — アイコンバブル（rounded square） */
+  --radius-avatar:        var(--radius-pill);   /* アバター */
+
+  /* ════════════════════════════════════════════════
+     16 ・ isolation.* — Isolation Zone（FIGロゴマニュアル準拠）
+     ────────────────────────────────────────────────
+     ロゴマニュアル: 上左右 0.3A / 下 0.25A の余白ゾーンを死守。
+     UI コンポーネントレベルでもブランド要素・主要 CTA・通知の周囲には
+     アイソレーション余白を確保する。
+
+     --isolation-A は primitives.css で定義（既定 48px）。コンポーネントが
+     ローカルに上書きすると --isolation-around / --isolation-bottom が
+     再計算される。
+     ════════════════════════════════════════════════ */
+  --isolation-cta:           var(--isolation-around);    /* CTA 周辺の最小余白 */
+  --isolation-banner:        var(--isolation-around);    /* バナー・告知の周辺余白 */
+  --isolation-brand-mark:    var(--isolation-around);    /* ブランドマーク周辺 */
+
+  /* ════════════════════════════════════════════════
+     17 ・ motion-experience.* — Experience Motion Contract
+     ────────────────────────────────────────────────
+     Step 4 の核：「スピード自体が大きな価値」を体感バジェットとして
+     システム全体に強制するロール束。§12 motion contract のリブランド版で、
+     200ms 以内 を契約値として明示する。
+
+     設計意図:
+       - press-result（押下 → 結果反映）は 150ms 上限。指の離れる前に応答。
+       - navigation（タブ・サブビュー切替）は 200ms バジェットの境界線。
+       - reveal-quick（ポップオーバー・メニュー）は 180ms 以内。
+       - sheet-rise / modal-rise は例外的に許容（240ms / 280ms）。
+         焦点遷移を伴う登場演出にだけ予算を割り当てる。
+
+     既存 §12 motion-* との関係:
+       §17 が「契約上位」、§12 は「振る舞い別名」。
+       新規参照は §17 を使い、既存 §12 は互換のため残置。
+     ════════════════════════════════════════════════ */
+  --motion-experience-press-result: var(--motion-duration-budget-press) var(--motion-easing-standard);    /* 150ms — press→result */
+  --motion-experience-navigation:   var(--motion-duration-budget-nav)   var(--motion-easing-emphasized);  /* 200ms — タブ/サブビュー */
+  --motion-experience-reveal-quick: var(--motion-duration-budget-quick) var(--motion-easing-decelerate);  /* 180ms — ポップオーバー */
+  --motion-experience-sheet-rise:   var(--motion-duration-budget-sheet) var(--motion-easing-decelerate);  /* 240ms — ボトムシート（例外） */
+  --motion-experience-modal-rise:   var(--motion-duration-budget-modal) var(--motion-easing-decelerate);  /* 280ms — モーダル（最大例外） */
+
+  /* 退場側はバジェットを更に絞る（去り際は即時性が UX を支える） */
+  --motion-experience-dismiss-quick: var(--motion-duration-budget-press) var(--motion-easing-accelerate); /* 150ms — シート/モーダル退場 */
+  --motion-experience-dismiss-press: var(--motion-duration-instant)      var(--motion-easing-standard);   /* 75ms — タップ離脱の最小残像 */
+
+  /* バジェット定数（数値のまま参照したいスクリプト向け） */
+  --motion-experience-budget-ms:       200;     /* 体感バジェット上限（ms） */
+  --motion-experience-budget-soft-ms:  280;     /* 例外許容の物理上限（ms） */
+
+  /* ════════════════════════════════════════════════
+     18 ・ haptic.* — Haptic Feedback Tokens
+     ────────────────────────────────────────────────
+     Web Vibration API 用の数値マップ。CSS 変数は文字列値として保持し、
+     JS 側で getComputedStyle().getPropertyValue() → navigator.vibrate() の
+     ヘルパー（assets/js/feedback.js）が消費する。
+
+     値の単位は ms。複合パターンは [pulse, gap, pulse, ...] のカンマ区切り。
+
+     設計意図:
+       - light/medium/heavy は「触覚の音量」階層。
+       - success/warning/error は意味的フィードバック（複合パターン）。
+       - 振動非対応端末では JS 側で no-op、視覚フィードバックのみにフォールバック。
+     ════════════════════════════════════════════════ */
+  --haptic-light:    10;            /* チェックボックス、トグル ON */
+  --haptic-medium:   20;            /* 標準 CTA 押下、選択確定 */
+  --haptic-heavy:    40;            /* NFC タッチ、大事な確定 */
+  --haptic-success:  10, 50, 20;    /* 確定 — 軽い 2 連打 */
+  --haptic-warning:  30, 40, 30;    /* 警告 — 中強度 2 連打 */
+  --haptic-error:    40, 30, 40, 30, 40;   /* エラー — 強い 3 連打 */
+
+  /* prefers-reduced-motion 時に 0 に上書きする「触覚減弱」フラグ */
+  --haptic-enabled:  1;             /* 0 = 全停止、1 = 通常 */
+
+  /* ════════════════════════════════════════════════
+     19 ・ audio-cue.* — Audio Cue Tokens
+     ────────────────────────────────────────────────
+     任意の音声フィードバック識別子。実音ファイルは assets/audio/ 配下。
+     CSS 変数は識別子（文字列）のみ保持し、JS ヘルパーが ID から音源を引く。
+
+     設計意図:
+       - 既定では音声 OFF（--audio-cue-enabled: 0）。
+         ユーザー設定 / OS 設定に応じて 1 に切替。
+       - 視覚 + 振動で十分な情報量を担保し、音声は補助的役割。
+       - 公共交通アプリの文脈：駅・車内など音声 OFF が必須の環境を想定。
+     ════════════════════════════════════════════════ */
+  --audio-cue-tap:        "ui-tap";        /* 軽い押下確認 */
+  --audio-cue-confirm:    "ui-confirm";    /* 確定 */
+  --audio-cue-success:    "ui-success";    /* 成功通知 */
+  --audio-cue-warning:    "ui-warning";    /* 警告 */
+  --audio-cue-error:      "ui-error";      /* エラー */
+  --audio-cue-nfc-touch:  "nfc-touch";     /* NFC かざし完了 */
+
+  --audio-cue-enabled:    0;        /* 既定 OFF。ユーザー設定で 1 に切替 */
+  --audio-cue-volume:     0.6;      /* 0.0〜1.0 */
+
+  /* ════════════════════════════════════════════════
+     20 ・ feedback-contract.* — Tripartite Feedback Contract
+     ────────────────────────────────────────────────
+     視覚 (motion) + 触覚 (haptic) + 聴覚 (audio) の三位一体規約。
+     1 つの「操作の意味」に対して 3 つの感覚チャネルを束ねる。
+
+     CSS 変数は単一スカラーしか持てないため、契約 1 つにつき 3 本セット
+     （-motion / -haptic / -audio）で提供。利用側は data-feedback="cta-fire" の
+     ような属性に対応する 3 本を一括取得する想定。
+
+     設計意図:
+       - cta-fire は「主要 CTA を押した瞬間」。スピード優先で軽い触覚 + 視覚スケール。
+       - cta-success は「処理完了」。中強度の触覚 + 視覚バウンス + 成功音。
+       - cta-error は「処理失敗」。強い触覚 + 視覚シェイク + エラー音。
+       - toggle は「ON/OFF」。軽い触覚のみ、音声なし（高頻度操作のため）。
+       - select は「リスト・タブ選択」。最小限の触覚 + 視覚ハイライト。
+
+     全フィードバックは「振動非対応・音声 OFF・prefers-reduced-motion」のいずれかで
+     対応チャネルだけが no-op になり、他のチャネルは生きる。
+     ════════════════════════════════════════════════ */
+
+  /* cta-fire — 押下の瞬間 */
+  --feedback-cta-fire-motion:  var(--motion-experience-press-result);
+  --feedback-cta-fire-haptic:  var(--haptic-medium);
+  --feedback-cta-fire-audio:   var(--audio-cue-tap);
+
+  /* cta-success — 処理完了 */
+  --feedback-cta-success-motion: var(--motion-experience-reveal-quick);
+  --feedback-cta-success-haptic: var(--haptic-success);
+  --feedback-cta-success-audio:  var(--audio-cue-success);
+
+  /* cta-error — 処理失敗 */
+  --feedback-cta-error-motion:  var(--motion-experience-press-result);
+  --feedback-cta-error-haptic:  var(--haptic-error);
+  --feedback-cta-error-audio:   var(--audio-cue-error);
+
+  /* toggle — ON/OFF 切替 */
+  --feedback-toggle-motion:  var(--motion-experience-press-result);
+  --feedback-toggle-haptic:  var(--haptic-light);
+  --feedback-toggle-audio:   none;     /* 高頻度操作のため音声 OFF */
+
+  /* select — リスト / タブ選択 */
+  --feedback-select-motion: var(--motion-experience-navigation);
+  --feedback-select-haptic: var(--haptic-light);
+  --feedback-select-audio:  none;
+
+  /* nfc-touch — タッチ決済の確定 */
+  --feedback-nfc-touch-motion: var(--motion-experience-press-result);
+  --feedback-nfc-touch-haptic: var(--haptic-heavy);
+  --feedback-nfc-touch-audio:  var(--audio-cue-nfc-touch);
+}
+
+/* ════════════════════════════════════════════════
+   Utility classes — semantic-only consumption
+   ════════════════════════════════════════════════
+   コンポーネントから直接プリミティブ（--color-brand-primary 等）を
+   参照しないこと。すべてセマンティックトークン経由で利用。
+*/
+
+.surface-default          { background: var(--color-surface-default); }
+.surface-container-low    { background: var(--color-surface-container-low); }
+.surface-container        { background: var(--color-surface-container); }
+.surface-container-high   { background: var(--color-surface-container-high); }
+.surface-brand            { background: var(--color-surface-brand); color: var(--color-text-onBrand); }
+.surface-brand-vivid      { background: var(--color-surface-brand-vivid); color: var(--color-text-onBrand-vivid); }
+.surface-accent           { background: var(--color-surface-accent); color: var(--color-text-onBrand); }
+.surface-accent-vivid     { background: var(--color-surface-accent-vivid); color: var(--color-text-onBrand-vivid); }
+.surface-warning          { background: var(--color-surface-warning); color: var(--color-text-warning); }
+.surface-error            { background: var(--color-surface-error); color: var(--color-text-error); }
+.surface-success          { background: var(--color-surface-success); color: var(--color-text-success); }
+
+.text-primary    { color: var(--color-text-primary); }
+.text-secondary  { color: var(--color-text-secondary); }
+.text-muted      { color: var(--color-text-muted); }
+.text-brand      { color: var(--color-text-brand); }
+.text-warning    { color: var(--color-text-warning); }
+.text-error      { color: var(--color-text-error); }
+
+.icon-default    { color: var(--color-icon-default); }
+.icon-brand      { color: var(--color-icon-brand); }
+
+.border-subtle   { border: 1px solid var(--color-border-subtle); }
+.border-default  { border: 1px solid var(--color-border-default); }
+.border-strong   { border: 1px solid var(--color-border-strong); }
+.border-brand    { border: 1px solid var(--color-border-brand); }
+
+/* ── Typography role classes (§11) ── */
+.t-display {
+  font-size: var(--typography-display-size);
+  font-weight: var(--typography-display-weight);
+  line-height: var(--typography-display-line-height);
+  letter-spacing: var(--typography-display-tracking);
+}
+.t-headline {
+  font-size: var(--typography-headline-size);
+  font-weight: var(--typography-headline-weight);
+  line-height: var(--typography-headline-line-height);
+  letter-spacing: var(--typography-headline-tracking);
+}
+.t-title {
+  font-size: var(--typography-title-size);
+  font-weight: var(--typography-title-weight);
+  line-height: var(--typography-title-line-height);
+  letter-spacing: var(--typography-title-tracking);
+}
+.t-subtitle {
+  font-size: var(--typography-subtitle-size);
+  font-weight: var(--typography-subtitle-weight);
+  line-height: var(--typography-subtitle-line-height);
+  letter-spacing: var(--typography-subtitle-tracking);
+}
+.t-body {
+  font-size: var(--typography-body-size);
+  font-weight: var(--typography-body-weight);
+  line-height: var(--typography-body-line-height);
+}
+.t-body-strong {
+  font-size: var(--typography-body-strong-size);
+  font-weight: var(--typography-body-strong-weight);
+  line-height: var(--typography-body-strong-line-height);
+}
+.t-label {
+  font-size: var(--typography-label-size);
+  font-weight: var(--typography-label-weight);
+  line-height: var(--typography-label-line-height);
+}
+.t-caption {
+  font-size: var(--typography-caption-size);
+  font-weight: var(--typography-caption-weight);
+  line-height: var(--typography-caption-line-height);
+}
+.t-eyebrow {
+  font-size: var(--typography-eyebrow-size);
+  font-weight: var(--typography-eyebrow-weight);
+  line-height: var(--typography-eyebrow-line-height);
+  letter-spacing: var(--typography-eyebrow-tracking);
+  text-transform: var(--typography-eyebrow-transform);
+}
+.t-arrival-time {
+  font-family: var(--typography-arrival-time-family);
+  font-variant-numeric: var(--typography-arrival-time-variant);
+  font-size: var(--typography-arrival-time-size);
+  font-weight: var(--typography-arrival-time-weight);
+  line-height: var(--typography-arrival-time-line-height);
+  letter-spacing: var(--typography-arrival-time-tracking);
+}
+.t-route-number {
+  font-family: var(--typography-route-number-family);
+  font-variant-numeric: var(--typography-route-number-variant);
+  font-size: var(--typography-route-number-size);
+  font-weight: var(--typography-route-number-weight);
+  line-height: var(--typography-route-number-line-height);
+  letter-spacing: var(--typography-route-number-tracking);
+}
+.t-status-pill {
+  font-size: var(--typography-status-pill-size);
+  font-weight: var(--typography-status-pill-weight);
+  line-height: var(--typography-status-pill-line-height);
+}
+.t-fare-amount {
+  font-family: var(--typography-fare-amount-family);
+  font-variant-numeric: var(--typography-fare-amount-variant);
+  font-size: var(--typography-fare-amount-size);
+  font-weight: var(--typography-fare-amount-weight);
+  line-height: var(--typography-fare-amount-line-height);
+}
+.t-timetable-cell {
+  font-family: var(--typography-timetable-cell-family);
+  font-variant-numeric: var(--typography-timetable-cell-variant);
+  font-size: var(--typography-timetable-cell-size);
+  font-weight: var(--typography-timetable-cell-weight);
+  line-height: var(--typography-timetable-cell-line-height);
+}
+
+/* ── Layout helpers (§8 / §9) ── */
+.layout-page {
+  padding-inline: var(--layout-page-padding-inline);
+  padding-block:  var(--layout-page-padding-block);
+  max-width: var(--layout-content-max-width);
+  margin-inline: auto;
+}
+.layout-stack         { display: flex; flex-direction: column; gap: var(--layout-stack-gap); }
+.layout-section-gap   { display: flex; flex-direction: column; gap: var(--layout-section-gap); }
+.layout-section-gap-large { display: flex; flex-direction: column; gap: var(--layout-section-gap-large); }
+.layout-list          { display: flex; flex-direction: column; gap: var(--layout-list-gap); }
+.layout-card {
+  padding: var(--layout-card-padding);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-default);
+  box-shadow: var(--surface-elevation-card);
+}
+.layout-control {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--layout-control-gap);
+  padding-inline: var(--layout-control-padding-inline);
+  padding-block:  var(--layout-control-padding-block);
+  min-height: var(--interactive-primary-min-height);
+}
+
+/* ── Elevation surfaces (§10) ── */
+.elev-card     { box-shadow: var(--surface-elevation-card); }
+.elev-raised   { box-shadow: var(--surface-elevation-raised); }
+.elev-floating { box-shadow: var(--surface-elevation-floating); }
+.elev-modal    { box-shadow: var(--surface-elevation-modal); }
+.elev-toast    { box-shadow: var(--surface-elevation-toast); }
+
+/* ── Accessibility helpers (§14) ── */
+.a11y-focus-ring:focus-visible {
+  outline: var(--a11y-focus-ring);
+  outline-offset: var(--a11y-focus-ring-offset);
+}
+.a11y-touch-target {
+  min-width:  var(--a11y-touch-target);
+  min-height: var(--a11y-touch-target);
+}
+.a11y-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ────────────────────────────────────────────
+   日本語最適化ユーティリティ — DADS準拠の禁則・分断対策
+   ────────────────────────────────────────────
+   .jp-text       : 本文標準。英単語の途中改行を禁止、句読点禁則を厳格化、
+                    末尾孤立行を回避。長いURL等は anywhere で逃がす。
+   .jp-headline   : 見出し向け。balance で均等改行・短い行末を許容。
+   .jp-prose      : 案内文・長文。line-height をさらに広げる（1.85）。
+*/
+.jp-text {
+  word-break:    var(--word-break-jp);
+  line-break:    var(--line-break-jp);
+  overflow-wrap: var(--overflow-wrap-jp);
+  text-wrap:     var(--text-wrap-default);
+}
+.jp-headline {
+  word-break:    var(--word-break-jp);
+  line-break:    var(--line-break-jp);
+  overflow-wrap: var(--overflow-wrap-jp);
+  text-wrap:     var(--text-wrap-headline);
+}
+.jp-prose {
+  word-break:    var(--word-break-jp);
+  line-break:    var(--line-break-jp);
+  overflow-wrap: var(--overflow-wrap-jp);
+  text-wrap:     var(--text-wrap-default);
+  line-height:   var(--lh-jp-body-loose);
+}
+
+/* ────────────────────────────────────────────
+   Knockout（白抜き）— FIGロゴマニュアル準拠
+   ────────────────────────────────────────────
+   濃色ブランド面上での白テキストを安全に置くためのクラス。
+   背景は contrast-safe な --color-surface-brand / accent を使用。
+   ビビッド面 (vivid) は装飾専用クラスを分離。
+*/
+.knockout {
+  background: var(--color-surface-brand);
+  color:      var(--color-text-onBrand);
+}
+.knockout--accent {
+  background: var(--color-surface-accent);
+  color:      var(--color-text-onBrand);
+}
+.knockout--inverse {
+  background: var(--color-surface-inverse);
+  color:      var(--color-text-inverse);
+}
+/* vivid surface = 装飾・ヒーロー専用。テキストを直接置く場合は >=18px もしくは
+   >=14px bold に制限すること（contrast 3:1 のため）。
+   本文・リンク・小さなラベルを置いてはならない。 */
+.knockout--vivid {
+  background: var(--color-surface-brand-vivid);
+  color:      var(--color-text-onBrand-vivid);
+}
+.knockout--vivid > * {
+  /* 子要素の最小サイズに対する開発時警告：意図的にコントラスト規約を破ったコンポーネントは
+     直接スタイルしないこと。Lint側で別途検査する想定。 */
+}
+
+/* State helpers — apply to any interactive element */
+.is-hoverable:hover    { background-image: linear-gradient(var(--state-hover-overlay), var(--state-hover-overlay)); }
+.is-pressable:active   { transform: scale(var(--state-pressed-scale)); }
+.is-focusable:focus-visible { outline: var(--a11y-focus-ring); outline-offset: var(--a11y-focus-ring-offset); }
+.is-disabled,
+[aria-disabled="true"] { opacity: var(--state-disabled-opacity); cursor: var(--state-disabled-cursor); pointer-events: none; }
+
+/* ── Accessibility: prefers-reduced-motion ──
+ * OS で「動きを減らす」が有効な場合、すべての motion トークンを実質ゼロに上書き。
+ * これによりコンポーネント側の改修なしで全アニメが静止する。
+ * 完全停止ではなく 0.01ms を採用し、onTransitionEnd ハンドラの発火は保つ。
+ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-enter:           0.01ms linear;
+    --motion-exit:            0.01ms linear;
+    --motion-hover:           0.01ms linear;
+    --motion-press:           0.01ms linear;
+    --motion-focus:           0.01ms linear;
+    --motion-tab-switch:      0.01ms linear;
+    --motion-dropdown:        0.01ms linear;
+    --motion-drawer:          0.01ms linear;
+    --motion-modal-in:        0.01ms linear;
+    --motion-modal-out:       0.01ms linear;
+    --motion-toast:           0.01ms linear;
+    /* アンビエントループは完全停止。CSS 側で animation-play-state: paused を当てる前提 */
+    --motion-ambient-breathe: 0.01ms linear;
+    --motion-ambient-pulse:   0.01ms linear;
+    --motion-ambient-shimmer: 0.01ms linear;
+    /* §12 behavior-oriented motion contract */
+    --motion-navigation-transition: 0.01ms linear;
+    --motion-sheet:                 0.01ms linear;
+    --motion-sheet-exit:            0.01ms linear;
+    --motion-toast-enter:           0.01ms linear;
+    --motion-toast-exit:            0.01ms linear;
+    --motion-press-feedback:        0.01ms linear;
+    --motion-reveal:                0.01ms linear;
+    --motion-collapse:              0.01ms linear;
+    /* §17 motion-experience.* — 体感バジェット契約も全停止 */
+    --motion-experience-press-result:  0.01ms linear;
+    --motion-experience-navigation:    0.01ms linear;
+    --motion-experience-reveal-quick:  0.01ms linear;
+    --motion-experience-sheet-rise:    0.01ms linear;
+    --motion-experience-modal-rise:    0.01ms linear;
+    --motion-experience-dismiss-quick: 0.01ms linear;
+    --motion-experience-dismiss-press: 0.01ms linear;
+    /* §18 haptic.* — reduced-motion は触覚も止める（前庭系障害への配慮）。
+       OS が「動きを減らす」を要求している＝刺激全般を最小化したい意思。 */
+    --haptic-enabled: 0;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+.is-selected           { background: var(--state-selected-bg); border-color: var(--state-selected-border); color: var(--state-selected-fg); }
+.is-dragged            { box-shadow: var(--state-dragged-shadow); transform: scale(var(--state-dragged-scale)) rotate(var(--state-dragged-rotate)); opacity: var(--state-dragged-opacity); cursor: var(--state-dragged-cursor); }
+
+/* ════════════════════════════════════════════════
+   FIG Sense Utilities — ブランドDNAをUI部品に直接適用するクラス
+   ────────────────────────────────────────────────
+   §15 radius.* と §16 isolation.* に基づく既定スタイル束。
+   コンポーネント側で都度トークンを並べる代わりに、これらの
+   ユーティリティを利用することで「FIGらしさ」を一発で適用できる。
+
+   設計意図:
+     - .btn / .btn--primary / .btn--secondary
+         主要CTA Pill / Secondary 16px の角丸を強制。
+         FIGロゴの円弧DNAをUI部品に継承する最上位ロール。
+     - .card-fig
+         「慈愛のやわらかさ」16px 角丸 + 標準パディング + card 影。
+         アプリ全体のカードはこれを基底にする。
+     - .card-fig--hero
+         定期券・ヒーロー向け 28px 角丸 + 大型パディング。
+         ブランドティント影で所有感を演出。
+     - .isolation-zone
+         ロゴマニュアル準拠の余白ゾーン。
+         ブランド要素・主要CTA・通知の周囲に他要素を寄せない。
+   ════════════════════════════════════════════════ */
+
+/* ── Button (FIG Sense) ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--layout-control-gap);
+  padding-inline: var(--layout-control-padding-inline);
+  padding-block:  var(--layout-control-padding-block);
+  min-height:     var(--interactive-primary-min-height);
+  font:           var(--typography-body-strong);
+  letter-spacing: var(--tracking-jp-label);
+  border:         none;
+  cursor:         pointer;
+  transition:     transform var(--motion-press),
+                  box-shadow var(--motion-hover),
+                  background-color var(--motion-hover);
+  text-wrap:      var(--text-wrap-default);
+}
+.btn:focus-visible {
+  outline:        var(--a11y-focus-ring);
+  outline-offset: var(--a11y-focus-ring-offset);
+}
+.btn:active:not(:disabled) {
+  transform:      scale(var(--state-pressed-scale));
+}
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity:        var(--state-disabled-opacity);
+  cursor:         var(--state-disabled-cursor);
+  pointer-events: none;
+}
+
+/* Primary — FIGセンスの核：Pill 形状 */
+.btn--primary {
+  background:    var(--color-surface-brand);
+  color:         var(--color-text-onBrand);
+  border-radius: var(--radius-cta);
+  box-shadow:    var(--surface-elevation-floating);
+}
+.btn--primary:hover:not(:disabled) {
+  background-image: linear-gradient(var(--state-hover-overlay), var(--state-hover-overlay));
+}
+
+/* Secondary — 16px の中庸 */
+.btn--secondary {
+  background:    var(--color-surface-inverse);
+  color:         var(--color-text-inverse);
+  border-radius: var(--radius-button);
+  box-shadow:    var(--surface-elevation-card);
+}
+.btn--secondary:hover:not(:disabled) {
+  background-image: linear-gradient(var(--state-hover-overlay-strong), var(--state-hover-overlay-strong));
+}
+
+/* Compact / Icon-only */
+.btn--compact {
+  min-height:     var(--interactive-compact-min-height);
+  padding-inline: var(--layout-control-padding-inline-compact);
+  padding-block:  var(--layout-control-padding-block-compact);
+  border-radius:  var(--radius-button-compact);
+}
+.btn--icon {
+  width:          var(--interactive-icon-button-size);
+  height:         var(--interactive-icon-button-size);
+  min-height:     var(--interactive-icon-button-size);
+  padding:        0;
+  border-radius:  var(--radius-icon-button);
+}
+
+/* ── Card (FIG Sense) ── */
+.card-fig {
+  background:     var(--color-surface-default);
+  border:         1px solid var(--color-border-card);
+  border-radius:  var(--radius-card);
+  padding:        var(--layout-card-padding);
+  box-shadow:     var(--surface-elevation-card);
+}
+.card-fig--compact {
+  border-radius:  var(--radius-card-compact);
+  padding:        var(--layout-card-padding-compact);
+}
+.card-fig--hero {
+  background:     var(--color-surface-brand-vivid);
+  color:          var(--color-text-onBrand-vivid);
+  border:         1px solid rgba(255, 255, 255, 0.15);
+  border-radius:  var(--radius-card-hero);
+  padding:        var(--layout-card-padding-loose);
+  box-shadow:     var(--surface-elevation-modal);
+}
+.card-fig--interactive {
+  cursor:         pointer;
+  transition:     transform var(--motion-press),
+                  box-shadow var(--motion-hover);
+}
+.card-fig--interactive:hover {
+  box-shadow:     var(--surface-elevation-raised);
+}
+.card-fig--interactive:active {
+  transform:      scale(var(--state-pressed-scale));
+}
+.card-fig--interactive:focus-visible {
+  outline:        var(--a11y-focus-ring);
+  outline-offset: var(--a11y-focus-ring-offset);
+}
+
+/* ── Isolation Zone — ロゴマニュアル準拠の余白規約 ──
+ * 上左右 0.3A / 下 0.25A の余白を要素の外側に確保する。
+ * --isolation-A を上書きすると比率に従って再計算される。
+ *
+ *   <div class="isolation-zone" style="--isolation-A: 64px">
+ *     <PrimaryButton />
+ *   </div>
+ */
+.isolation-zone {
+  padding-top:    var(--isolation-around);
+  padding-right:  var(--isolation-around);
+  padding-left:   var(--isolation-around);
+  padding-bottom: var(--isolation-bottom);
+}
+.isolation-zone--sm { --isolation-A: var(--isolation-A-sm); }
+.isolation-zone--md { --isolation-A: var(--isolation-A-md); }
+.isolation-zone--lg { --isolation-A: var(--isolation-A-lg); }
+
+/* CTA / Banner / Brand-mark 周辺のマージン版（外側余白） */
+.isolation-cta {
+  margin:         var(--isolation-cta);
+}
+.isolation-banner {
+  margin-block:   var(--isolation-banner);
+}
+.isolation-brand-mark {
+  margin:         var(--isolation-brand-mark);
+}

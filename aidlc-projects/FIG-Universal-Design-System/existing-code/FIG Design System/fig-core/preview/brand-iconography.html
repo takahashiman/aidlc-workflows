@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Brand — Iconography</title>
+<link rel="stylesheet" href="../primitives.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  body { margin: 0; padding: 18px; background: #fff; }
+  .grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 10px; }
+  .ic { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 4px; border-radius: 8px; }
+  .ic svg { width: 22px; height: 22px; color: #334155; stroke-width: 2; }
+  .name { font-size: 9px; color: #94A3B8; font-family: var(--font-mono); }
+  .note { font-size: 11px; color: #64748B; margin-top: 12px; line-height: 1.5; }
+</style>
+</head>
+<body>
+  <div class="grid">
+    <div class="ic"><i data-lucide="bus"></i><div class="name">bus</div></div>
+    <div class="ic"><i data-lucide="map-pin"></i><div class="name">map-pin</div></div>
+    <div class="ic"><i data-lucide="clock"></i><div class="name">clock</div></div>
+    <div class="ic"><i data-lucide="check-circle"></i><div class="name">check-circle</div></div>
+    <div class="ic"><i data-lucide="x-circle"></i><div class="name">x-circle</div></div>
+    <div class="ic"><i data-lucide="info"></i><div class="name">info</div></div>
+    <div class="ic"><i data-lucide="alert-triangle"></i><div class="name">alert</div></div>
+    <div class="ic"><i data-lucide="bell"></i><div class="name">bell</div></div>
+    <div class="ic"><i data-lucide="user"></i><div class="name">user</div></div>
+    <div class="ic"><i data-lucide="settings"></i><div class="name">settings</div></div>
+    <div class="ic"><i data-lucide="menu"></i><div class="name">menu</div></div>
+    <div class="ic"><i data-lucide="ticket"></i><div class="name">ticket</div></div>
+    <div class="ic"><i data-lucide="credit-card"></i><div class="name">credit-card</div></div>
+    <div class="ic"><i data-lucide="route"></i><div class="name">route</div></div>
+    <div class="ic"><i data-lucide="nfc"></i><div class="name">nfc</div></div>
+    <div class="ic"><i data-lucide="smartphone"></i><div class="name">smartphone</div></div>
+    <div class="ic"><i data-lucide="shield-check"></i><div class="name">shield-check</div></div>
+    <div class="ic"><i data-lucide="chevron-right"></i><div class="name">chevron-r</div></div>
+    <div class="ic"><i data-lucide="chevron-down"></i><div class="name">chevron-d</div></div>
+    <div class="ic"><i data-lucide="x"></i><div class="name">x</div></div>
+    <div class="ic"><i data-lucide="log-out"></i><div class="name">log-out</div></div>
+    <div class="ic"><i data-lucide="arrow-left-right"></i><div class="name">arrows</div></div>
+    <div class="ic"><i data-lucide="hash"></i><div class="name">hash</div></div>
+    <div class="ic"><i data-lucide="rotate-ccw"></i><div class="name">retry</div></div>
+  </div>
+  <div class="note">lucide-react v0.487 · stroke-width 2 · sizes 14/16/20/24/48 · paired with tinted bubble backgrounds</div>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

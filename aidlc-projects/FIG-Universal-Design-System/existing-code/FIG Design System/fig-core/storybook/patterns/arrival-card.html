@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Arrival Card — Storybook</title>
+<link rel="stylesheet" href="../_chrome.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  .ac { width: 320px; background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; box-shadow: var(--surface-elevation-card); display: flex; flex-direction: column; gap: 12px; }
+  .ac-top { display: flex; align-items: center; gap: 12px; }
+  .ac-badge { background: #26B7BC; color: #fff; padding: 8px 12px; border-radius: 8px; font-family: 'Inter', monospace; font-weight: 800; font-size: 22px; font-variant-numeric: tabular-nums; }
+  .ac-name { flex: 1; }
+  .ac-title { font-weight: 700; font-size: 16px; }
+  .ac-dest { font-size: 12px; color: #64748B; }
+  .ac-divider { border-top: 1px solid #E2E8F0; }
+  .ac-eta { font-family: 'Inter', monospace; font-weight: 700; font-size: 28px; font-variant-numeric: tabular-nums; }
+  .ac-eta-label { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #64748B; }
+  .ac-bottom { display: flex; align-items: center; justify-content: space-between; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 9999px; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; }
+  .pill svg { width: 14px; height: 14px; }
+  .p-normal { background: #ECFDF5; color: #047857; }
+  .p-delay  { background: #FEF3C7; color: #92400E; }
+  .p-passed { background: #F1F5F9; color: #64748B; }
+  .ac-clock { font-size: 12px; color: #64748B; font-variant-numeric: tabular-nums; }
+  .ac--passed { opacity: 0.5; }
+  .ac--arriving .ac-eta { animation: breath 2s ease-in-out infinite; }
+  @keyframes breath { 0%,100%{opacity:1} 50%{opacity:0.7} }
+  .strike { text-decoration: line-through; color: #94A3B8; font-size: 18px; margin-right: 8px; }
+</style>
+</head>
+<body>
+
+<header class="sb-page-header">
+  <h1 class="sb-page-title">Arrival Card</h1>
+  <p class="sb-page-subtitle">「次に来るバスがいつ来るのか」を伝える、本アプリ最大の情報単位。</p>
+  <div class="sb-page-meta">
+    <span class="sb-tag sb-tag-spec">pattern: patterns/arrival-card.md</span>
+    <span class="sb-tag sb-tag-impl">impl: &lt;RouteCard&gt;</span>
+  </div>
+</header>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Variants — State Mapping</h2>
+  <div class="sb-grid">
+    <div class="sb-card">
+      <div class="sb-card-label">normal</div>
+      <div class="sb-card-stage">
+        <div class="ac">
+          <div class="ac-top"><div class="ac-badge">205</div><div class="ac-name"><div class="ac-title">市役所前ゆき</div><div class="ac-dest">中央駅 → 市民病院</div></div><i data-lucide="chevron-right" style="color: #94A3B8"></i></div>
+          <div class="ac-divider"></div>
+          <div class="ac-bottom"><div><span class="ac-eta-label">あと</span> <span class="ac-eta">5</span><span class="ac-eta-label"> 分</span> <span class="ac-clock">· 14:23 発</span></div><span class="pill p-normal"><i data-lucide="check-circle"></i>通常運行</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">delayed</div>
+      <div class="sb-card-stage">
+        <div class="ac">
+          <div class="ac-top"><div class="ac-badge">B-7</div><div class="ac-name"><div class="ac-title">病院前ゆき</div></div><i data-lucide="chevron-right" style="color: #94A3B8"></i></div>
+          <div class="ac-divider"></div>
+          <div class="ac-bottom"><div><span class="ac-eta-label">あと</span> <span class="strike">8</span><span class="ac-eta">15</span><span class="ac-eta-label"> 分</span></div><span class="pill p-delay"><i data-lucide="clock"></i>約7分遅延</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">arriving (breathing)</div>
+      <div class="sb-card-stage">
+        <div class="ac ac--arriving">
+          <div class="ac-top"><div class="ac-badge">301</div><div class="ac-name"><div class="ac-title">駅前ゆき</div></div><i data-lucide="chevron-right" style="color: #94A3B8"></i></div>
+          <div class="ac-divider"></div>
+          <div class="ac-bottom"><div><span class="ac-eta">まもなく</span></div><span class="pill p-normal"><i data-lucide="bus"></i>到着</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">passed</div>
+      <div class="sb-card-stage">
+        <div class="ac ac--passed">
+          <div class="ac-top"><div class="ac-badge">205</div><div class="ac-name"><div class="ac-title">市役所前ゆき</div></div><i data-lucide="chevron-right" style="color: #94A3B8"></i></div>
+          <div class="ac-divider"></div>
+          <div class="ac-bottom"><div><span class="ac-eta-label">14:08 発</span></div><span class="pill p-passed"><i data-lucide="check"></i>通過済</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">States</h2>
+  <table class="sb-table"><thead><tr><th>State</th><th>Pill</th><th>Visual</th></tr></thead><tbody>
+    <tr><td>normal</td>         <td>onTime</td>       <td>標準</td></tr>
+    <tr><td>possible-delay</td> <td>delayRisk</td>    <td>amber pill</td></tr>
+    <tr><td>delayed</td>        <td>delayed</td>      <td>旧 ETA に取消線、新 ETA 強調</td></tr>
+    <tr><td>arriving</td>       <td>onTime</td>       <td>breathing animation</td></tr>
+    <tr><td>passed</td>         <td>passed</td>       <td>opacity 0.5</td></tr>
+    <tr><td>suspended</td>      <td>suspended</td>    <td>ETA "—"</td></tr>
+    <tr><td>stale-data</td>     <td>(unchanged)</td>  <td>右上 ⚠ + 「最終更新 N 分前」</td></tr>
+    <tr><td>loading</td>        <td>(skeleton)</td>   <td>3 ブロックの矩形 skeleton</td></tr>
+  </tbody></table>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Spacing</h2>
+  <table class="sb-table"><thead><tr><th>Property</th><th>Token</th></tr></thead><tbody>
+    <tr><td>card padding</td>      <td><code>--space-4</code></td></tr>
+    <tr><td>row gap</td>           <td><code>--space-3</code></td></tr>
+    <tr><td>radius</td>            <td><code>--radius-md</code></td></tr>
+    <tr><td>ETA typography</td>    <td><code>--typography-arrival-time</code></td></tr>
+    <tr><td>Route Badge typo</td>  <td><code>--typography-route-number</code></td></tr>
+  </tbody></table>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Accessibility</h2>
+  <div class="sb-a11y-note">✅ <div><strong>集約 aria-label：</strong> 「205系統 市役所前ゆき、あと5分、14時23分発、通常運行」を行全体で 1 つの読み上げに。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>状態変化：</strong> <code>aria-live="polite"</code>、arriving は <code>assertive</code> も可。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>取消線は色だけに頼らない：</strong> <code>&lt;s&gt;</code> + 「変更前」aria-label。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>等幅数字：</strong> tabular-nums で桁が揃い、視線移動だけで読める。</div></div>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Motion</h2>
+  <table class="sb-table"><thead><tr><th>Event</th><th>Token</th></tr></thead><tbody>
+    <tr><td>カード初回登場</td>          <td><code>--motion-enter</code> (240ms / decelerate)</td></tr>
+    <tr><td>ETA 数値更新</td>            <td><code>--motion-enter</code> でクロスフェード (160ms)</td></tr>
+    <tr><td>Status Pill 色変化</td>     <td><code>--motion-tab-switch</code> (200ms)</td></tr>
+    <tr><td>arriving breathing</td>     <td>2s loop / standard、<code>prefers-reduced-motion</code> で停止</td></tr>
+    <tr><td>passed fade</td>            <td>400ms / decelerate</td></tr>
+  </tbody></table>
+  <div class="sb-callout"><strong>禁止：</strong> スライドイン（並び替えと混同）、Bounce / Spring、色 hue 回転アニメ。</div>
+</section>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

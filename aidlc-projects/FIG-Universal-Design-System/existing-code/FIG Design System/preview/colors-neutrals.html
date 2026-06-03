@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Colors — Neutrals</title>
+<link rel="stylesheet" href="../primitives.css">
+<style>
+  body { margin: 0; padding: 16px; background: #fff; }
+  .row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .sw { border-radius: 8px; overflow: hidden; border: 1px solid var(--border-soft); }
+  .chip { height: 60px; }
+  .meta { padding: 6px 8px; }
+  .name { font-size: 10px; font-weight: 700; color: var(--fg-2); }
+  .hex { font-size: 9px; color: var(--fg-5); font-family: var(--font-mono); }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="sw"><div class="chip" style="background:#1E293B"></div><div class="meta"><div class="name">fg-1 / 800</div><div class="hex">#1E293B</div></div></div>
+    <div class="sw"><div class="chip" style="background:#334155"></div><div class="meta"><div class="name">fg-2 / 700</div><div class="hex">#334155</div></div></div>
+    <div class="sw"><div class="chip" style="background:#475569"></div><div class="meta"><div class="name">fg-3 / 600</div><div class="hex">#475569</div></div></div>
+    <div class="sw"><div class="chip" style="background:#64748B"></div><div class="meta"><div class="name">fg-4 / 500</div><div class="hex">#64748B</div></div></div>
+    <div class="sw"><div class="chip" style="background:#94A3B8"></div><div class="meta"><div class="name">fg-5 / 400</div><div class="hex">#94A3B8</div></div></div>
+    <div class="sw"><div class="chip" style="background:#CBD5E1"></div><div class="meta"><div class="name">fg-6 / 300</div><div class="hex">#CBD5E1</div></div></div>
+    <div class="sw"><div class="chip" style="background:#E2E8F0"></div><div class="meta"><div class="name">200</div><div class="hex">#E2E8F0</div></div></div>
+    <div class="sw"><div class="chip" style="background:#F1F5F9"></div><div class="meta"><div class="name">100</div><div class="hex">#F1F5F9</div></div></div>
+    <div class="sw"><div class="chip" style="background:#F8FAFC;border:1px solid var(--border-default)"></div><div class="meta"><div class="name">50</div><div class="hex">#F8FAFC</div></div></div>
+    <div class="sw"><div class="chip" style="background:#fff;border:1px solid var(--border-default)"></div><div class="meta"><div class="name">white</div><div class="hex">#FFFFFF</div></div></div>
+    <div class="sw"><div class="chip" style="background:rgba(255,255,255,0.7);backdrop-filter:blur(8px);background-image:linear-gradient(45deg,#26B7BC22 25%,transparent 25%,transparent 50%,#26B7BC22 50%,#26B7BC22 75%,transparent 75%);background-size:10px 10px"></div><div class="meta"><div class="name">glass-70</div><div class="hex">white/70</div></div></div>
+    <div class="sw"><div class="chip" style="background:rgba(226,232,240,0.5);background-image:linear-gradient(45deg,#0001 25%,transparent 25%,transparent 50%,#0001 50%,#0001 75%,transparent 75%);background-size:10px 10px"></div><div class="meta"><div class="name">tabs-bg</div><div class="hex">slate200/50</div></div></div>
+    <div class="sw"><div class="chip" style="background:rgba(15,23,42,0.4)"></div><div class="meta"><div class="name">scrim</div><div class="hex">slate900/40</div></div></div>
+    <div class="sw"><div class="chip" style="background:#26B7BC1A"></div><div class="meta"><div class="name">brand-tint</div><div class="hex">brand/10</div></div></div>
+  </div>
+</body>
+</html>

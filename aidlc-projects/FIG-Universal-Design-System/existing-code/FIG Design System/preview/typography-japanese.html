@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Typography — Japanese Optimization</title>
+<link rel="stylesheet" href="../primitives.css">
+<link rel="stylesheet" href="../semantic.css">
+<style>
+  body { margin: 0; padding: 24px; background: #FFFFFF; }
+  h2 { margin: 0 0 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: var(--color-neutral-dark); }
+  .group { margin-bottom: 24px; }
+  .row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 16px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--color-border-subtle);
+    align-items: baseline;
+  }
+  .row:last-child { border-bottom: none; }
+  .meta { font-size: 11px; color: var(--color-text-muted); font-family: var(--font-mono); }
+  .meta b { display: block; font-family: var(--font-sans); color: var(--color-text-primary); font-weight: 700; font-size: 12px; margin-bottom: 4px; }
+  .sample { color: var(--color-text-primary); }
+  .container { max-width: 360px; padding: 12px; background: var(--color-surface-container-low); border-radius: 12px; }
+  .narrow { max-width: 240px; }
+  .label { font-size: 11px; color: var(--color-text-muted); margin-top: 4px; font-family: var(--font-mono); }
+</style>
+</head>
+<body>
+
+<div class="group">
+  <h2>Line Height — DADS 推奨 (日本語本文 1.75)</h2>
+  <div class="row">
+    <div class="meta"><b>body</b>--lh-jp-body<br>1.75</div>
+    <div class="sample" style="font: var(--typography-body); max-width: 480px;">
+      公共交通は移動の自由を支えるインフラです。誰一人取り残さないよう、私たちは行間を広げ、視線の移動を物理的に楽にすることから始めます。
+    </div>
+  </div>
+  <div class="row">
+    <div class="meta"><b>body-loose</b>--lh-jp-body-loose<br>1.85</div>
+    <div class="sample" style="font: var(--typography-body-loose); max-width: 480px;">
+      長い説明文や案内文、補足情報などには、より広い行間を使います。読み手が「読まされている」と感じない、ゆとりのある密度を選びます。
+    </div>
+  </div>
+  <div class="row">
+    <div class="meta"><b>title</b>--lh-jp-title<br>1.50</div>
+    <div class="sample" style="font: var(--typography-title); max-width: 480px;">中見出しは行間を中庸にとり、密度と読みやすさを両立します</div>
+  </div>
+  <div class="row">
+    <div class="meta"><b>headline</b>--lh-jp-headline<br>1.40</div>
+    <div class="sample" style="font: var(--typography-headline); max-width: 480px;">見出しは少し詰めて凝縮感を出す</div>
+  </div>
+  <div class="row">
+    <div class="meta"><b>display</b>--lh-jp-display<br>1.30</div>
+    <div class="sample" style="font: var(--typography-display); max-width: 480px;">慈愛と共感</div>
+  </div>
+</div>
+
+<div class="group">
+  <h2>Word-break · 禁則 (英単語 + 長文)</h2>
+  <div class="row">
+    <div class="meta"><b>ng</b>標準のword-break<br>英単語が途中で改行</div>
+    <div class="container narrow" style="word-break: normal; line-break: auto; font: var(--typography-body); color: var(--color-text-primary);">
+      ETA「Estimated Time of Arrival」とは到着予定時刻のこと。Wi-Fi接続が必要です。
+    </div>
+  </div>
+  <div class="row">
+    <div class="meta"><b>jp-text</b>--word-break-jp<br>--line-break-jp<br>(既定で有効)</div>
+    <div class="container narrow jp-text" style="font: var(--typography-body); color: var(--color-text-primary);">
+      ETA「Estimated Time of Arrival」とは到着予定時刻のこと。Wi-Fi接続が必要です。
+    </div>
+  </div>
+  <div class="row">
+    <div class="meta"><b>jp-headline</b>text-wrap: balance<br>見出しを均等改行</div>
+    <div class="container jp-headline" style="font: var(--typography-headline); color: var(--color-text-primary);">
+      FIG が大切にしている三つの原則
+    </div>
+  </div>
+</div>
+
+<div class="group">
+  <h2>Letter-spacing · 字詰め (和文)</h2>
+  <div class="row">
+    <div class="meta"><b>display</b>-0.02em<br>凝縮感</div>
+    <div class="sample" style="font: var(--typography-display); letter-spacing: var(--tracking-jp-display);">スピードと慈愛</div>
+  </div>
+  <div class="row">
+    <div class="meta"><b>body</b>0<br>本文の正典</div>
+    <div class="sample" style="font: var(--typography-body); letter-spacing: var(--tracking-jp-body);">本文は字間を詰めません。詰めすぎると「閉じ括弧」や「促音っ」の判読性が下がります。</div>
+  </div>
+  <div class="row">
+    <div class="meta"><b>label</b>+0.02em<br>強調・補助</div>
+    <div class="sample" style="font: var(--typography-label); letter-spacing: var(--tracking-jp-label);">ご利用の前にお読みください</div>
+  </div>
+  <div class="row">
+    <div class="meta"><b>eyebrow</b>+0.10em<br>カテゴリ表示</div>
+    <div class="sample" style="font: var(--typography-eyebrow); letter-spacing: var(--tracking-jp-eyebrow); color: var(--color-text-muted);">FOUNDATIONS</div>
+  </div>
+</div>
+
+</body>
+</html>

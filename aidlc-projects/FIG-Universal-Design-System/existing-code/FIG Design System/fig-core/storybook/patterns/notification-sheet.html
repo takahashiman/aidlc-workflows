@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Notification Sheet — Storybook</title>
+<link rel="stylesheet" href="../_chrome.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  .sheet { width: 320px; background: #fff; border-radius: 16px 16px 0 0; box-shadow: var(--surface-elevation-modal); overflow: hidden; }
+  .sheet-handle { width: 36px; height: 4px; background: #CBD5E1; border-radius: 2px; margin: 8px auto 4px; }
+  .sheet-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 12px; border-bottom: 1px solid #E2E8F0; }
+  .sheet-title { font-weight: 700; font-size: 16px; }
+  .sheet-mark-all { background: transparent; border: none; color: #26B7BC; font-weight: 600; font-size: 12px; cursor: pointer; }
+  .sec-h { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #94A3B8; padding: 12px 16px 4px; font-weight: 700; }
+  .nrow { display: flex; gap: 12px; padding: 12px 16px; align-items: flex-start; cursor: pointer; min-height: 60px; position: relative; }
+  .nrow:hover { background: #F8FAFC; }
+  .nrow + .nrow { border-top: 1px solid #F1F5F9; }
+  .nrow.unread { background: #ECFDF5; }
+  .nrow.unread::before { content: ''; position: absolute; left: 6px; top: 22px; width: 6px; height: 6px; border-radius: 50%; background: #26B7BC; }
+  .nicon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .nicon svg { width: 18px; height: 18px; }
+  .ni-warn { background: #FEF3C7; color: #92400E; }
+  .ni-rem  { background: #ECFDF5; color: #047857; }
+  .ni-ok   { background: #DCFCE7; color: #15803D; }
+  .nbody { flex: 1; min-width: 0; }
+  .ntitle { font-weight: 600; font-size: 13px; }
+  .ndesc { font-size: 12px; color: #64748B; margin-top: 2px; }
+  .ntime { font-size: 10px; color: #94A3B8; font-family: 'Inter', monospace; font-variant-numeric: tabular-nums; margin-top: 4px; }
+  .empty { padding: 40px 16px; text-align: center; color: #64748B; }
+  .empty svg { width: 32px; height: 32px; color: #CBD5E1; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<header class="sb-page-header">
+  <h1 class="sb-page-title">Notification Sheet</h1>
+  <p class="sb-page-subtitle">個別ユーザー宛ての通知履歴を時系列で表示する Bottom Sheet。delay-banner（全員向け）とは責務が異なる。</p>
+  <div class="sb-page-meta">
+    <span class="sb-tag sb-tag-spec">pattern: patterns/notification-sheet.md</span>
+    <span class="sb-tag sb-tag-todo">未実装</span>
+  </div>
+</header>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Variants</h2>
+  <div class="sb-grid">
+    <div class="sb-card">
+      <div class="sb-card-label">Opened (with content)</div>
+      <div class="sb-card-stage" style="background: #94A3B8; padding: 24px 16px 0; align-items: flex-end">
+        <div class="sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-header"><div class="sheet-title">通知</div><button class="sheet-mark-all">すべて既読</button></div>
+          <div class="sec-h">今日</div>
+          <div class="nrow unread">
+            <div class="nicon ni-warn"><i data-lucide="alert-triangle"></i></div>
+            <div class="nbody">
+              <div class="ntitle">205系統が遅延しています</div>
+              <div class="ndesc">市民病院前で約7分遅れ</div>
+              <div class="ntime">5分前</div>
+            </div>
+          </div>
+          <div class="nrow unread">
+            <div class="nicon ni-rem"><i data-lucide="credit-card"></i></div>
+            <div class="nbody">
+              <div class="ntitle">定期券の更新期限が近づいています</div>
+              <div class="ndesc">残り3日</div>
+              <div class="ntime">13:00</div>
+            </div>
+          </div>
+          <div class="sec-h">昨日</div>
+          <div class="nrow">
+            <div class="nicon ni-ok"><i data-lucide="check-circle-2"></i></div>
+            <div class="nbody">
+              <div class="ntitle">B-7系統の運行が再開しました</div>
+              <div class="ntime">昨日 18:42</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sb-card-meta"><div class="sb-card-name">既定: 70% viewport 高</div></div>
+    </div>
+
+    <div class="sb-card">
+      <div class="sb-card-label">Empty State</div>
+      <div class="sb-card-stage" style="background: #94A3B8; padding: 24px 16px 0; align-items: flex-end">
+        <div class="sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-header"><div class="sheet-title">通知</div></div>
+          <div class="empty">
+            <i data-lucide="bell-off"></i>
+            <div style="font-weight: 600; font-size: 14px; color: #0F172A">新しい通知はありません</div>
+            <div style="font-size: 12px; margin-top: 4px">お気に入り路線の遅延や、定期券の更新時にお知らせします</div>
+          </div>
+        </div>
+      </div>
+      <div class="sb-card-meta"><div class="sb-card-name">0 件時</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">States</h2>
+  <table class="sb-table"><thead><tr><th>State</th><th>Behavior</th></tr></thead><tbody>
+    <tr><td>closed</td>          <td>非表示（既定）</td></tr>
+    <tr><td>opened</td>          <td>70% viewport 高で表示</td></tr>
+    <tr><td>fullscreen</td>      <td>上端までドラッグで全画面</td></tr>
+    <tr><td>unread</td>          <td>行頭ドット + brand-subtle 背景</td></tr>
+    <tr><td>read</td>            <td>標準</td></tr>
+    <tr><td>swipe-revealed</td>  <td>左スワイプで「既読」「削除」</td></tr>
+    <tr><td>deleted</td>         <td>3 秒間「元に戻す」inline toast</td></tr>
+    <tr><td>empty</td>           <td>Bell-off アイコン + ガイド文</td></tr>
+    <tr><td>offline</td>         <td>「最新ではない可能性」notice</td></tr>
+  </tbody></table>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Spacing</h2>
+  <table class="sb-table"><thead><tr><th>Property</th><th>Token</th></tr></thead><tbody>
+    <tr><td>row padding</td>     <td><code>--space-3 / --space-4</code></td></tr>
+    <tr><td>row min-height</td>  <td>60px（44px だと密集時に誤タップ）</td></tr>
+    <tr><td>sheet radius</td>    <td><code>--radius-lg</code> (top corners)</td></tr>
+    <tr><td>icon size</td>       <td>36×36 px (container) / 18×18 (glyph)</td></tr>
+    <tr><td>elevation</td>       <td><code>--surface-elevation-modal</code></td></tr>
+    <tr><td>z-index</td>         <td><code>--z-modal</code></td></tr>
+  </tbody></table>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Accessibility</h2>
+  <div class="sb-a11y-note">✅ <div><strong>Sheet：</strong> <code>role="dialog"</code> + <code>aria-modal="true"</code> + <code>aria-labelledby</code>。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>集約 aria-label：</strong> 「未読、警告、205系統が遅延しています、14時23分発、5分前」を 1 行に統合。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>既読化は IntersectionObserver で 2 秒観測</strong>（誤タップでの全消失防止）。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>フォーカストラップ：</strong> Sheet 内に閉じ込め、閉じた瞬間に Bell へ戻す。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>Drag Handle 視覚 32×4 / 操作領域 44×44。</strong></div></div>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Motion</h2>
+  <table class="sb-table"><thead><tr><th>Event</th><th>Token</th></tr></thead><tbody>
+    <tr><td>Sheet 出現</td>          <td><code>--motion-modal-enter</code> (280ms / decelerate)</td></tr>
+    <tr><td>Sheet 消滅</td>          <td><code>--motion-modal-exit</code> (240ms / accelerate)</td></tr>
+    <tr><td>新着行 出現</td>         <td><code>--motion-enter</code> + 下から slide</td></tr>
+    <tr><td>既読化</td>              <td><code>--motion-tab-switch</code> bg crossfade</td></tr>
+    <tr><td>削除 swipe</td>          <td>右 slide-out + max-height: 0 同時</td></tr>
+    <tr><td>Bell badge 増加</td>     <td>scale 1.0→1.3→1.0 200ms（増加時のみ）</td></tr>
+  </tbody></table>
+  <div class="sb-callout"><strong>禁止：</strong> 自動スクロール（ユーザー操作を奪う）、color flash、Bell badge 無限振動。</div>
+</section>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

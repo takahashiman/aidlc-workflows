@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Header — Storybook</title>
+<link rel="stylesheet" href="../_chrome.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  /* ── App Header (sticky frosted) ─────────────────── */
+  .hdr {
+    width: 360px;
+    background: rgba(255,255,255,0.70);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255,255,255,0.60);
+    box-shadow: 0 4px 30px rgba(0,0,0,0.03);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    border-radius: var(--radius-md, 12px);
+  }
+  .hdr-side  { flex: 1; display: flex; }
+  .hdr-side--end { justify-content: flex-end; }
+  .hdr-title {
+    font: var(--typography-subtitle);
+    font-size: 18px;
+    margin: 0;
+    color: var(--color-text-primary, #334155);
+    letter-spacing: var(--tracking-tight);
+    white-space: nowrap;
+  }
+
+  /* ── Hamburger / icon button ─────────────────────── */
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-pill, 9999px);
+    background: transparent;
+    border: none;
+    color: var(--color-icon-muted, #94A3B8);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--motion-hover, all 150ms ease);
+  }
+  .icon-btn:hover { background: var(--state-hover-overlay, rgba(15,23,42,0.04)); color: var(--color-icon-default, #475569); }
+  .icon-btn:active { transform: scale(var(--state-pressed-scale, 0.96)); }
+  .icon-btn:focus-visible { outline: var(--a11y-focus-ring); outline-offset: 2px; }
+
+  /* ── Region chip ─────────────────────────────────── */
+  .region {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: var(--radius-pill, 9999px);
+    background: transparent;
+    color: var(--color-text-brand, #26B7BC);
+    border: none;
+    cursor: pointer;
+    font: var(--typography-label);
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .region:hover { background: var(--color-surface-brand-subtle, rgba(38, 183, 188,0.08)); }
+  .region:active { transform: scale(var(--state-pressed-scale, 0.96)); }
+  .region:focus-visible { outline: var(--a11y-focus-ring-brand); outline-offset: 2px; }
+  .region--solid {
+    background: var(--color-surface-brand-subtle, rgba(38, 183, 188,0.10));
+    padding: 6px 12px;
+  }
+
+  .stage-bg {
+    background:
+      linear-gradient(135deg, var(--bg-stop-1, #E6EEED) 0%, var(--bg-stop-2, #F0F4F4) 50%, var(--bg-stop-3, #E9F0EF) 100%);
+    padding: 20px;
+    border-radius: var(--radius-md, 12px);
+  }
+</style>
+</head>
+<body>
+
+<header class="sb-page-header">
+  <h1 class="sb-page-title">Header</h1>
+  <p class="sb-page-subtitle">アプリ最上部のスティッキー・フロステッド領域。3 スロット固定（左: メニュー / 中央: タイトル / 右: 地域チップ）。Sidebar trigger と Region indicator もここで仕様化する。</p>
+  <div class="sb-page-meta">
+    <span class="sb-tag sb-tag-spec">spec: components/header (new)</span>
+    <span class="sb-tag sb-tag-impl">impl: &lt;Header&gt; in BusappComponents.jsx</span>
+  </div>
+</header>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Anatomy</h2>
+  <p class="sb-section-desc">左右スロットは <code>flex: 1</code> で対称配置。タイトルは中央寄せ。スティッキー時は背景の山並みが透ける半透明 + blur。</p>
+  <div class="sb-grid">
+    <div class="sb-card">
+      <div class="sb-card-label">Default — 京都</div>
+      <div class="sb-card-stage stage-bg">
+        <div class="hdr">
+          <div class="hdr-side"><button class="icon-btn" aria-label="メニューを開く"><i data-lucide="menu"></i></button></div>
+          <h1 class="hdr-title">バスアプリ</h1>
+          <div class="hdr-side hdr-side--end">
+            <button class="region" aria-label="地域を切替（現在: 京都）">
+              <i data-lucide="map-pin" style="width:14px;height:14px"></i><span>京都</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="sb-card-meta"><div class="sb-card-name">スティッキー + frosted glass</div><div class="sb-card-token">bg: rgba(255,255,255,0.70) + blur(16px)</div></div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">Region chip — solid（強調時）</div>
+      <div class="sb-card-stage stage-bg">
+        <div class="hdr">
+          <div class="hdr-side"><button class="icon-btn"><i data-lucide="menu"></i></button></div>
+          <h1 class="hdr-title">バスアプリ</h1>
+          <div class="hdr-side hdr-side--end">
+            <button class="region region--solid">
+              <i data-lucide="map-pin" style="width:14px;height:14px"></i><span>沖縄</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="sb-card-meta"><div class="sb-card-name">未確定地域・誘導時</div><div class="sb-card-token">--color-surface-brand-subtle</div></div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">Detail header（戻る + 画面名）</div>
+      <div class="sb-card-stage stage-bg">
+        <div class="hdr">
+          <div class="hdr-side"><button class="icon-btn"><i data-lucide="chevron-left"></i></button></div>
+          <h1 class="hdr-title" style="text-align:left;flex:0;margin-left:4px">路線詳細</h1>
+          <div class="hdr-side hdr-side--end"></div>
+        </div>
+      </div>
+      <div class="sb-card-meta"><div class="sb-card-name">下層画面（地域チップは出さない）</div><div class="sb-card-token">left slot = back, right slot = empty</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Sidebar Trigger（ハンバーガー）</h2>
+  <p class="sb-section-desc">単独で <em>独立 IconButton</em> として再利用可。Region chip と同じヒット領域 40×40 を担保し、ヘッダー以外（モーダル等）でも同形を使う。</p>
+  <div class="sb-grid">
+    <div class="sb-card">
+      <div class="sb-card-label">default / hover / pressed</div>
+      <div class="sb-card-stage">
+        <div style="display:flex;gap:16px;align-items:center">
+          <button class="icon-btn"><i data-lucide="menu"></i></button>
+          <button class="icon-btn" style="background:rgba(15,23,42,0.04);color:#475569"><i data-lucide="menu"></i></button>
+          <button class="icon-btn" style="transform:scale(0.96)"><i data-lucide="menu"></i></button>
+        </div>
+      </div>
+      <div class="sb-card-meta"><div class="sb-card-name">3 段階（idle / hover / press）</div><div class="sb-card-token">--interactive-icon-button-size: 40px</div></div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">使い回し: detail back / close</div>
+      <div class="sb-card-stage">
+        <div style="display:flex;gap:16px;align-items:center">
+          <button class="icon-btn"><i data-lucide="chevron-left"></i></button>
+          <button class="icon-btn"><i data-lucide="x"></i></button>
+        </div>
+      </div>
+      <div class="sb-card-meta"><div class="sb-card-name">同一ボタン、glyph 差し替え</div><div class="sb-card-token">stroke-width: 2 (lucide default)</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Region Indicator（地域名チップ）</h2>
+  <p class="sb-section-desc">「いま見ている地域」を常時表示する状態インジケータ。タップで地域設定へ遷移。<strong>切替コントロールではなく <em>表示</em></strong> として設計（深い遷移を要求する）。</p>
+  <div class="sb-grid">
+    <div class="sb-card">
+      <div class="sb-card-label">京都 / 兵庫 / 大分 / 沖縄</div>
+      <div class="sb-card-stage stage-bg">
+        <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
+          <button class="region"><i data-lucide="map-pin" style="width:14px;height:14px"></i>京都</button>
+          <button class="region"><i data-lucide="map-pin" style="width:14px;height:14px"></i>兵庫</button>
+          <button class="region"><i data-lucide="map-pin" style="width:14px;height:14px"></i>大分</button>
+          <button class="region"><i data-lucide="map-pin" style="width:14px;height:14px"></i>沖縄</button>
+        </div>
+      </div>
+      <div class="sb-card-meta"><div class="sb-card-name">略称 1–2 文字（県は付けない）</div><div class="sb-card-token">font: var(--typography-label) / weight 700</div></div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">未設定 — 「地域を選択」誘導</div>
+      <div class="sb-card-stage stage-bg">
+        <button class="region region--solid" style="color:var(--color-text-muted,#64748B);background:rgba(15,23,42,0.04)">
+          <i data-lucide="map-pin" style="width:14px;height:14px"></i><span>地域を選択</span>
+        </button>
+      </div>
+      <div class="sb-card-meta"><div class="sb-card-name">onboarding skip 経路</div><div class="sb-card-token">brand tint を外し muted 色</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Spacing & Tokens</h2>
+  <table class="sb-table">
+    <thead><tr><th>Property</th><th>Token</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>header padding (block)</td><td><code>--space-3</code></td><td>12px</td></tr>
+      <tr><td>header padding (inline)</td><td><code>--layout-page-padding-inline</code></td><td>16px</td></tr>
+      <tr><td>icon button size</td><td><code>--interactive-icon-button-size</code></td><td>40px</td></tr>
+      <tr><td>icon glyph size</td><td>—</td><td>24px (menu) / 14px (region pin)</td></tr>
+      <tr><td>region chip radius</td><td><code>--radius-pill</code></td><td>9999px</td></tr>
+      <tr><td>border</td><td><code>--surface-glass-border</code></td><td>rgba(255,255,255,0.60)</td></tr>
+      <tr><td>shadow</td><td><code>--surface-elevation-header</code></td><td>0 4px 30px rgba(0,0,0,0.03)</td></tr>
+      <tr><td>z-index</td><td><code>--z-sticky</code></td><td>20</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Accessibility</h2>
+  <div class="sb-a11y-note">✅ <div><strong>左右スロットは Landmark で囲わない</strong>。<code>&lt;header role="banner"&gt;</code> 1 つだけ。中の button は単なる <code>&lt;button&gt;</code>。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>Hamburger:</strong> <code>aria-label="メニューを開く"</code> + <code>aria-expanded</code> + <code>aria-controls={drawerId}</code>。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>Region:</strong> <code>aria-label="地域を切替（現在: 京都）"</code> ── 視覚で省略している「県」を読み上げで補う。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>Title:</strong> <code>&lt;h1&gt;</code> はページ全体で 1 つに保つ（下層では非表示の sr-only に切替えるか、別文言にする）。</div></div>
+  <div class="sb-a11y-note">⚠ <div><strong>frosted bg のコントラスト：</strong> 背景がティール寄りでも文字 <code>#334155</code> は AA を維持。背景がさらに暗い画面では `bg: rgba(255,255,255,0.85)` に上げる。</div></div>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Behavior</h2>
+  <table class="sb-table">
+    <thead><tr><th>Event</th><th>Behavior</th></tr></thead>
+    <tbody>
+      <tr><td>scroll</td><td>常時 position: sticky、影は段階的に出さない（最初から薄影）</td></tr>
+      <tr><td>hamburger tap</td><td>Sidebar drawer を open（slide-in 0.35s expo-out）</td></tr>
+      <tr><td>region tap</td><td>地域設定スクリーンへ push 遷移</td></tr>
+      <tr><td>title tap</td><td>反応しない（情報表示のみ）</td></tr>
+    </tbody>
+  </table>
+  <div class="sb-callout"><strong>禁止：</strong> ロゴをアイコン化（テキストワードマーク「バスアプリ」が brand identity の中心）／3 スロット以外の構成／<code>position: fixed</code>（safe-area との二重補正で破綻）。</div>
+</section>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

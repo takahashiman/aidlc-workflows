@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Components — Status Pills</title>
+<link rel="stylesheet" href="../primitives.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  body { margin: 0; padding: 18px; background: #fff; display: flex; flex-direction: column; gap: 12px; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 9999px; font-size: 13px; font-weight: 600; width: fit-content; }
+  .pill svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .normal { background: #ECFDF5; color: #047857; }
+  .delay { background: #FFFBEB; color: #B45309; }
+  .suspend { background: #FEF2F2; color: #B91C1C; }
+  .lab { font-size: 10px; color: #94A3B8; font-family: var(--font-mono); margin-left: 8px; }
+  .row { display: flex; align-items: center; gap: 4px; }
+</style>
+</head>
+<body>
+  <div class="row"><span class="pill normal"><i data-lucide="check-circle"></i>正常運行</span><span class="lab">status: normal</span></div>
+  <div class="row"><span class="pill delay"><i data-lucide="clock"></i>約15分遅延</span><span class="lab">status: delay</span></div>
+  <div class="row"><span class="pill delay"><i data-lucide="clock"></i>遅延の可能性</span><span class="lab">status: possible_delay</span></div>
+  <div class="row"><span class="pill suspend"><i data-lucide="x-circle"></i>運休</span><span class="lab">status: suspended</span></div>
+  <div class="row"><span class="pill" style="background:#F1F5F9;color:#64748B"><i data-lucide="check"></i>通過済</span><span class="lab">status: passed</span></div>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

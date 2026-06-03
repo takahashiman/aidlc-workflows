@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Status Pill — Storybook</title>
+<link rel="stylesheet" href="../_chrome.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill, 9999px);
+    font: var(--typography-status-pill);
+    letter-spacing: var(--tracking-wide);
+    width: fit-content;
+  }
+  .pill svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .pill--normal     { background: #ECFDF5; color: #047857; }
+  .pill--possible   { background: #FFFBEB; color: #B45309; }
+  .pill--delay      { background: #FEF3C7; color: #92400E; }
+  .pill--suspended  { background: #FEF2F2; color: #B91C1C; }
+  .pill--passed     { background: #F1F5F9; color: #64748B; }
+</style>
+</head>
+<body>
+
+<header class="sb-page-header">
+  <h1 class="sb-page-title">Status Pill</h1>
+  <p class="sb-page-subtitle">バス便の運行状態を一目で伝える。色だけで判断させず、必ず Icon + Label のペアで構成。</p>
+  <div class="sb-page-meta">
+    <span class="sb-tag sb-tag-spec">spec: components/status-pill.spec.md</span>
+    <span class="sb-tag sb-tag-impl">impl: &lt;StatusPill&gt;</span>
+  </div>
+</header>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Variants</h2>
+  <p class="sb-section-desc">5 つの運行状態。<code>--color-status-{state}-bg/fg</code> ペアで配色、Semantic 層でコントラスト 4.5:1 以上を保証。</p>
+  <div class="sb-grid">
+    <div class="sb-card">
+      <div class="sb-card-label">normal</div>
+      <div class="sb-card-stage"><span class="pill pill--normal"><i data-lucide="check-circle"></i>通常運行</span></div>
+      <div class="sb-card-meta"><div class="sb-card-name">定刻通り</div><div class="sb-card-token">--color-status-onTime</div></div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">possible-delay</div>
+      <div class="sb-card-stage"><span class="pill pill--possible"><i data-lucide="alert-triangle"></i>遅延の可能性</span></div>
+      <div class="sb-card-meta"><div class="sb-card-name">他便で遅延発生中</div><div class="sb-card-token">--color-status-delayRisk</div></div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">delayed</div>
+      <div class="sb-card-stage"><span class="pill pill--delay"><i data-lucide="clock"></i>約15分遅延</span></div>
+      <div class="sb-card-meta"><div class="sb-card-name">確定遅延（数値必須）</div><div class="sb-card-token">--color-status-delayed</div></div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">suspended</div>
+      <div class="sb-card-stage"><span class="pill pill--suspended"><i data-lucide="x-circle"></i>運休</span></div>
+      <div class="sb-card-meta"><div class="sb-card-name">運行中止</div><div class="sb-card-token">--color-status-suspended</div></div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">passed</div>
+      <div class="sb-card-stage"><span class="pill pill--passed"><i data-lucide="check"></i>通過済</span></div>
+      <div class="sb-card-meta"><div class="sb-card-name">過去便</div><div class="sb-card-token">--color-status-passed</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">States</h2>
+  <p class="sb-section-desc">Pill は表示専用（非インタラクティブ）。状態は data 駆動でのみ変化する。</p>
+  <table class="sb-table">
+    <thead><tr><th>Trigger</th><th>Behavior</th></tr></thead>
+    <tbody>
+      <tr><td>ETA &gt; 定刻 +3 分</td><td>normal → delayed、旧 ETA に取消線</td></tr>
+      <tr><td>他便で遅延発生</td><td>normal → possible-delay</td></tr>
+      <tr><td>運休フラグ</td><td>delayed / normal → suspended</td></tr>
+      <tr><td>状態クロスフェード</td><td><code>--motion-tab-switch</code> (200ms)、色 hue ジャンプ禁止</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Spacing</h2>
+  <table class="sb-table">
+    <thead><tr><th>Property</th><th>Token</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>padding</td>          <td><code>--space-2 / --space-4</code></td>   <td>8px / 16px</td></tr>
+      <tr><td>gap (icon ↔ label)</td><td><code>--space-1</code></td>                <td>6px</td></tr>
+      <tr><td>radius</td>            <td><code>--radius-pill</code></td>            <td>9999px</td></tr>
+      <tr><td>icon size</td>         <td>—</td>                                     <td>16×16</td></tr>
+      <tr><td>typography</td>        <td><code>--typography-status-pill</code></td> <td>700 11px / 1</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Accessibility</h2>
+  <div class="sb-a11y-note">✅ <div><strong>Icon + Label 必須：</strong> 色覚多様性 + 走査速度の両立。アイコン単独 / 文字単独は禁止。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong><code>role="status" aria-live="polite"</code></strong> を付与し、状態変化を SR で再アナウンス。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>Contrast 検証済：</strong> 全 5 状態で fg/bg コントラスト 4.5:1 以上（AA 合格）。</div></div>
+  <div class="sb-a11y-note">⚠ <div><strong>Possible-delay vs Delayed：</strong> amber と orange の hue は色覚多様性で識別が難しいため、Icon shape（triangle vs clock）で明示的に区別。</div></div>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Motion</h2>
+  <p class="sb-section-desc">状態変化のみ motion を持つ。常時アニメーションは禁止（情報の意味が変わって見える）。</p>
+  <div class="sb-grid">
+    <div class="sb-card">
+      <div class="sb-card-label">Status crossfade</div>
+      <div class="sb-card-stage" id="pill-demo"><span class="pill pill--normal"><i data-lucide="check-circle"></i>通常運行</span></div>
+      <div class="sb-card-meta"><div class="sb-card-name">クリックで状態切替</div><div class="sb-card-token">--motion-tab-switch (200ms)</div></div>
+    </div>
+  </div>
+  <div class="sb-callout"><strong>禁止：</strong> Pill の breathing / pulse / 無限点滅。情報の真剣味を損なう。</div>
+</section>
+
+<script>
+lucide.createIcons();
+const demo = document.getElementById('pill-demo');
+const states = [
+  ['normal',    'check-circle',   '通常運行'],
+  ['possible',  'alert-triangle', '遅延の可能性'],
+  ['delay',     'clock',          '約15分遅延'],
+  ['suspended', 'x-circle',       '運休'],
+  ['passed',    'check',          '通過済'],
+];
+let i = 0;
+demo.addEventListener('click', () => {
+  i = (i + 1) % states.length;
+  const [s, ico, lbl] = states[i];
+  demo.innerHTML = `<span class="pill pill--${s}" style="transition: var(--motion-tab-switch, all 200ms ease)"><i data-lucide="${ico}"></i>${lbl}</span>`;
+  lucide.createIcons();
+});
+</script>
+</body>
+</html>

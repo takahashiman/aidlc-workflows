@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Components — Side Sheet</title>
+<link rel="stylesheet" href="../primitives.css">
+<link rel="stylesheet" href="../semantic.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  body { margin: 0; padding: var(--space-6, 24px); background: var(--bg-app, #F8FAFC); font-family: var(--font-sans); }
+  .frame { position: relative; height: 480px; background: var(--color-surface-subtle, #F1F5F9); border-radius: var(--radius-lg, 16px); overflow: hidden; border: 1px solid var(--color-border-subtle, #E2E8F0); }
+  .frame__content { padding: var(--space-5, 20px); color: var(--color-text-secondary, #475569); font-size: var(--text-sm, 14px); line-height: var(--lh-jp-body, 1.75); }
+
+  .scrim { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.45); }
+
+  .sheet { position: absolute; top: 0; right: 0; bottom: 0; width: 360px; background: var(--color-surface-default, #FFFFFF); box-shadow: -8px 0 24px rgba(0,0,0,0.12); display: flex; flex-direction: column; }
+  .sheet__header { padding: var(--space-5, 20px); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--color-border-subtle, #E2E8F0); }
+  .sheet__title { margin: 0; font-size: var(--text-lg, 18px); font-weight: 700; color: var(--color-text-primary, #0F172A); }
+  .icon-btn { width: 40px; height: 40px; border-radius: 10px; background: transparent; border: none; color: var(--color-text-secondary, #475569); display: grid; place-items: center; cursor: pointer; }
+  .icon-btn:hover { background: var(--color-surface-subtle, #F1F5F9); }
+  .icon-btn svg { width: 18px; height: 18px; }
+
+  .sheet__body { flex: 1; padding: var(--space-5, 20px); overflow-y: auto; color: var(--color-text-secondary, #475569); font-size: var(--text-sm, 14px); line-height: var(--lh-jp-body, 1.75); }
+  .sheet__group { margin-bottom: var(--space-5, 20px); }
+  .sheet__label { font-size: var(--text-xs, 12px); text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--color-text-muted, #64748B); font-weight: 700; margin-bottom: var(--space-2, 8px); }
+  .sheet__row { display: flex; justify-content: space-between; padding: var(--space-3, 12px) 0; border-bottom: 1px solid var(--color-border-subtle, #E2E8F0); }
+  .sheet__row:last-child { border-bottom: none; }
+  .sheet__row strong { color: var(--color-text-primary, #0F172A); font-weight: 600; }
+
+  .sheet__footer { padding: var(--space-4, 16px) var(--space-5, 20px); border-top: 1px solid var(--color-border-subtle, #E2E8F0); display: flex; gap: var(--space-3, 12px); justify-content: flex-end; }
+  .btn { padding: var(--space-3, 12px) var(--space-5, 20px); border-radius: 14px; border: none; font-weight: 600; font-family: inherit; cursor: pointer; font-size: var(--text-sm, 14px); }
+  .btn--secondary { background: transparent; color: var(--color-text-secondary, #475569); }
+  .btn--primary { background: var(--color-surface-brand, #26B7BC); color: #fff; }
+</style>
+</head>
+<body>
+
+  <div class="frame">
+    <div class="frame__content">
+      <p><strong>Side Sheet（モーダル形態）</strong></p>
+      <p>主画面の補助領域として、横からスライドインする領域。フィルタ・詳細表示・補助設定など、主動線を中断せずに参照したい操作向け。スクリム付き = モーダル、スクリムなし = 永続（コラプス可能）。</p>
+    </div>
+    <div class="scrim"></div>
+    <aside class="sheet" role="dialog" aria-labelledby="ss-title" aria-modal="true">
+      <header class="sheet__header">
+        <h2 class="sheet__title" id="ss-title">フィルタ</h2>
+        <button class="icon-btn" aria-label="閉じる"><i data-lucide="x"></i></button>
+      </header>
+      <div class="sheet__body">
+        <div class="sheet__group">
+          <div class="sheet__label">運行区分</div>
+          <div class="sheet__row"><span>急行</span><strong>12</strong></div>
+          <div class="sheet__row"><span>各停</span><strong>34</strong></div>
+          <div class="sheet__row"><span>深夜</span><strong>3</strong></div>
+        </div>
+        <div class="sheet__group">
+          <div class="sheet__label">時間帯</div>
+          <div class="sheet__row"><span>朝（5–10時）</span><strong>選択中</strong></div>
+          <div class="sheet__row"><span>昼（10–16時）</span><strong>—</strong></div>
+          <div class="sheet__row"><span>夜（16–23時）</span><strong>—</strong></div>
+        </div>
+      </div>
+      <footer class="sheet__footer">
+        <button class="btn btn--secondary">クリア</button>
+        <button class="btn btn--primary">適用</button>
+      </footer>
+    </aside>
+  </div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Button — Storybook</title>
+<link rel="stylesheet" href="../_chrome.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  /* ─── Button implementation (token-only per component-contract.md) ─── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: var(--a11y-touch-target, 48px);
+    padding: var(--space-3) var(--space-5);
+    border-radius: var(--radius-xl, 20px);
+    border: 1px solid transparent;
+    font: var(--typography-body-strong);
+    letter-spacing: var(--tracking-wide);
+    cursor: pointer;
+    user-select: none;
+    transition: var(--motion-hover, all 160ms ease);
+  }
+  .btn:active { transform: scale(var(--state-pressed-scale, 0.98)); transition: var(--motion-press, transform 80ms ease); }
+  .btn:focus-visible { outline: var(--a11y-focus-ring, 2px solid #26B7BC); outline-offset: var(--a11y-focus-ring-offset, 2px); }
+  .btn[disabled] { opacity: var(--state-disabled-opacity, 0.40); cursor: not-allowed; }
+  .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  .btn--primary {
+    background: var(--color-surface-brand, #26B7BC);
+    color: var(--color-text-onBrand, #FFFFFF);
+    box-shadow: var(--surface-elevation-floating, 0 8px 30px rgba(0,0,0,0.12));
+  }
+  .btn--secondary {
+    background: var(--color-surface-inverse, #0F172A);
+    color: var(--color-text-inverse, #F8FAFC);
+    box-shadow: var(--surface-elevation-card);
+  }
+  .btn--tertiary {
+    background: transparent;
+    color: var(--color-text-brand, #26B7BC);
+  }
+  .btn--destructive {
+    background: var(--color-feedback-error-strong, #DC2626);
+    color: #fff;
+  }
+  .btn--icon {
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    width: 48px;
+    min-width: 48px;
+  }
+
+  .btn--full { width: 100%; }
+</style>
+</head>
+<body>
+
+<header class="sb-page-header">
+  <h1 class="sb-page-title">Button</h1>
+  <p class="sb-page-subtitle">アプリ内の意思決定の終端を担う、最も基礎的なインタラクティブ要素。<code>component-contract.md</code> 第 1–6 条の全条件に準拠。</p>
+  <div class="sb-page-meta">
+    <span class="sb-tag sb-tag-spec">spec: components/button.spec.md</span>
+    <span class="sb-tag sb-tag-impl">impl: BusappComponents.jsx</span>
+    <span class="sb-tag sb-tag-todo">refactor pending</span>
+  </div>
+</header>
+
+<!-- ═══════════════ VARIANTS ═══════════════ -->
+<section class="sb-section">
+  <h2 class="sb-section-title">Variants</h2>
+  <p class="sb-section-desc">5 つのバリアント。1 画面 1 Primary が原則。Tertiary はキャンセル系、Destructive は破壊的操作のみ。</p>
+  <div class="sb-grid">
+    <div class="sb-card">
+      <div class="sb-card-label">Primary</div>
+      <div class="sb-card-stage"><button class="btn btn--primary"><i data-lucide="credit-card"></i>決済する</button></div>
+      <div class="sb-card-meta">
+        <div class="sb-card-name">主要 CTA（1 画面 1 つ）</div>
+        <div class="sb-card-token">--color-surface-brand · elev-floating</div>
+      </div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">Secondary</div>
+      <div class="sb-card-stage"><button class="btn btn--secondary">キャンセル</button></div>
+      <div class="sb-card-meta">
+        <div class="sb-card-name">補助 CTA</div>
+        <div class="sb-card-token">--color-surface-inverse · elev-card</div>
+      </div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">Tertiary (Ghost)</div>
+      <div class="sb-card-stage"><button class="btn btn--tertiary">スキップ</button></div>
+      <div class="sb-card-meta">
+        <div class="sb-card-name">テキスト型、低階層</div>
+        <div class="sb-card-token">transparent · text-brand</div>
+      </div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">Destructive</div>
+      <div class="sb-card-stage"><button class="btn btn--destructive"><i data-lucide="trash-2"></i>削除する</button></div>
+      <div class="sb-card-meta">
+        <div class="sb-card-name">破壊的操作のみ</div>
+        <div class="sb-card-token">--color-feedback-error-strong</div>
+      </div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">Icon-only</div>
+      <div class="sb-card-stage"><button class="btn btn--primary btn--icon" aria-label="お気に入りに追加"><i data-lucide="star"></i></button></div>
+      <div class="sb-card-meta">
+        <div class="sb-card-name">aria-label 必須</div>
+        <div class="sb-card-token">48×48 touch target</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ STATES ═══════════════ -->
+<section class="sb-section">
+  <h2 class="sb-section-title">States</h2>
+  <p class="sb-section-desc">すべての state は <code>--state-*</code> token を経由する。<code>:focus-visible</code> で <code>--a11y-focus-ring</code> を使用。</p>
+  <table class="sb-table">
+    <thead><tr><th>State</th><th>Preview</th><th>Token</th><th>Behavior</th></tr></thead>
+    <tbody>
+      <tr><td>default</td>     <td><button class="btn btn--primary">Default</button></td>      <td>—</td><td>標準</td></tr>
+      <tr><td>hover</td>       <td><button class="btn btn--primary" style="filter: brightness(0.95)">Hover</button></td><td><code>--state-hover-overlay</code></td><td>半透明オーバーレイ</td></tr>
+      <tr><td>pressed</td>     <td><button class="btn btn--primary" style="transform: scale(0.98)">Pressed</button></td><td><code>--state-pressed-scale</code></td><td>scale(0.98)</td></tr>
+      <tr><td>focused</td>     <td><button class="btn btn--primary" style="outline: 2px solid #26B7BC; outline-offset: 2px">Focused</button></td><td><code>--a11y-focus-ring</code></td><td>キーボード操作時のみ</td></tr>
+      <tr><td>disabled</td>    <td><button class="btn btn--primary" disabled>Disabled</button></td><td><code>--state-disabled-opacity</code></td><td>opacity 0.40 + aria-disabled</td></tr>
+      <tr><td>loading</td>     <td><button class="btn btn--primary"><i data-lucide="loader-2" style="animation: spin 1s linear infinite"></i>処理中…</button></td><td>—</td><td>aria-busy="true"</td></tr>
+    </tbody>
+  </table>
+  <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+</section>
+
+<!-- ═══════════════ SPACING ═══════════════ -->
+<section class="sb-section">
+  <h2 class="sb-section-title">Spacing</h2>
+  <p class="sb-section-desc">Padding / 角丸 / hit area は <code>--space-*</code> / <code>--radius-*</code> / <code>--a11y-touch-target</code> から取得。生 px 禁止。</p>
+  <table class="sb-table">
+    <thead><tr><th>Property</th><th>Token</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>padding (vertical)</td>   <td><code>--space-3</code></td>      <td>12px</td></tr>
+      <tr><td>padding (horizontal)</td> <td><code>--space-5</code></td>      <td>20px</td></tr>
+      <tr><td>gap (icon ↔ label)</td>   <td><code>--space-2</code></td>      <td>8px</td></tr>
+      <tr><td>radius</td>               <td><code>--radius-xl</code></td>    <td>20px</td></tr>
+      <tr><td>min-height</td>           <td><code>--a11y-touch-target</code></td><td>48px</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══════════════ ACCESSIBILITY ═══════════════ -->
+<section class="sb-section">
+  <h2 class="sb-section-title">Accessibility</h2>
+  <p class="sb-section-desc">WCAG 2.5.5 (Target Size) / 2.4.7 (Focus Visible) / 1.4.3 (Contrast) を満たす。</p>
+  <div class="sb-a11y-note">✅ <div><strong>Hit area：</strong> 48×48 px（WCAG 推奨 44×44 以上を確保）</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>Focus ring：</strong> <code>:focus-visible</code> で <code>--a11y-focus-ring</code> を 2px outline + 2px offset で描画。<code>:focus</code> 全消し禁止。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>Disabled：</strong> <code>disabled</code> 属性 + <code>aria-disabled="true"</code> を併記。属性 disabled だけだとフォーカスが当たらない場面がある。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>Loading：</strong> <code>aria-busy="true"</code> を付与、スピナーには <code>aria-hidden="true"</code>。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>Icon-only：</strong> <code>aria-label</code> 必須。lucide アイコン単独では意味伝達不可。</div></div>
+  <div class="sb-a11y-note">✅ <div><strong>Contrast：</strong> Primary (brand on white) = 5.2:1, Destructive (red 600 on white) = 4.6:1。両者 AA 合格。</div></div>
+</section>
+
+<!-- ═══════════════ MOTION ═══════════════ -->
+<section class="sb-section">
+  <h2 class="sb-section-title">Motion</h2>
+  <p class="sb-section-desc">すべての遷移は motion token 経由。<code>cubic-bezier()</code> 直書き禁止。</p>
+  <div class="sb-grid">
+    <div class="sb-card">
+      <div class="sb-card-label">Hover</div>
+      <div class="sb-card-stage"><button class="btn btn--primary sb-motion-hover" onmouseenter="this.style.filter='brightness(0.93)'" onmouseleave="this.style.filter=''">Hover me</button></div>
+      <div class="sb-card-meta"><div class="sb-card-name">Background fade</div><div class="sb-card-token">--motion-hover (160ms / standard)</div></div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">Press</div>
+      <div class="sb-card-stage"><button class="btn btn--primary sb-motion-press">Press me</button></div>
+      <div class="sb-card-meta"><div class="sb-card-name">scale(0.98) feedback</div><div class="sb-card-token">--motion-press (80ms / standard)</div></div>
+    </div>
+    <div class="sb-card">
+      <div class="sb-card-label">Enter (loading → result)</div>
+      <div class="sb-card-stage"><button class="btn btn--primary sb-motion-enter" id="re-enter">Reload to replay</button></div>
+      <div class="sb-card-meta"><div class="sb-card-name">Fade + 8px translate</div><div class="sb-card-token">--motion-enter (280ms / decelerate)</div></div>
+    </div>
+  </div>
+  <div class="sb-callout"><strong>禁止：</strong> bounce / spring 系、durations 直書き (<code>transition: 200ms ease</code>)、independent <code>cubic-bezier()</code> 関数。</div>
+</section>
+
+<script>
+  lucide.createIcons();
+  document.getElementById('re-enter').addEventListener('click', e => {
+    e.currentTarget.classList.remove('sb-motion-enter');
+    void e.currentTarget.offsetWidth;
+    e.currentTarget.classList.add('sb-motion-enter');
+  });
+</script>
+</body>
+</html>

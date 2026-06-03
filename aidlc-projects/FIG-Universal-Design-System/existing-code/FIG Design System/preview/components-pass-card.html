@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Components — Pass Card</title>
+<link rel="stylesheet" href="../primitives.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  body { margin: 0; padding: 20px; background: linear-gradient(135deg,#E6EEED,#F0F4F4,#E9F0EF); }
+  .pass { position: relative; overflow: hidden; padding: 24px; border-radius: 28px; color: #fff; max-width: 440px; background: linear-gradient(135deg,#26B7BC,#5CCED2,#1A8589); box-shadow: 0 20px 50px rgba(38, 183, 188,0.25); border: 1px solid rgba(255,255,255,0.15); }
+  .blob1 { position: absolute; top: -48px; right: -48px; width: 192px; height: 192px; background: rgba(255,255,255,0.08); border-radius: 9999px; filter: blur(40px); }
+  .blob2 { position: absolute; bottom: -32px; left: -32px; width: 144px; height: 144px; background: rgba(255,255,255,0.05); border-radius: 9999px; filter: blur(40px); }
+  .inner { position: relative; z-index: 1; }
+  .label { display: flex; align-items: center; gap: 6px; color: rgba(255,255,255,0.7); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
+  .label svg { width: 14px; height: 14px; }
+  .hero { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; margin-top: 8px; }
+  .hero .arrow { color: rgba(255,255,255,0.6); margin: 0 6px; }
+  .meta { display: flex; gap: 18px; margin-top: 14px; flex-wrap: wrap; align-items: center; font-size: 13px; color: rgba(255,255,255,0.9); font-weight: 600; }
+  .meta svg { width: 14px; height: 14px; opacity: 0.7; vertical-align: -2px; margin-right: 4px; }
+  .id { font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 500; }
+</style>
+</head>
+<body>
+  <div class="pass">
+    <div class="blob1"></div><div class="blob2"></div>
+    <div class="inner">
+      <div class="label"><i data-lucide="arrow-left-right"></i>区間</div>
+      <div class="hero">渋谷駅<span class="arrow">↔</span>六本木駅</div>
+      <div class="meta">
+        <span><i data-lucide="calendar-days"></i>2026.05.30 まで</span>
+        <span class="id"><i data-lucide="hash"></i>ID: 12345678</span>
+      </div>
+    </div>
+  </div>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

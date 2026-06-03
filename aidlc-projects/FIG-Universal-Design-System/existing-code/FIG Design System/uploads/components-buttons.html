@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Components — Buttons (FIG Sense)</title>
+<link rel="stylesheet" href="../primitives.css">
+<link rel="stylesheet" href="../semantic.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  body {
+    margin: 0;
+    padding: var(--space-6);
+    background: var(--bg-app);
+    font-family: var(--font-sans);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3) var(--space-5);
+    align-items: center;
+  }
+  .lab {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    line-height: var(--lh-jp-caption);
+  }
+  .row-note {
+    grid-column: 1 / -1;
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+    padding: var(--space-3) 0 var(--space-1);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+  /* Ghost / Destructive はまだ正典ユーティリティが無いため、ここでセマンティック参照のみで暫定表現 */
+  .btn--ghost {
+    background:    transparent;
+    color:         var(--color-text-brand);
+    border-radius: var(--radius-cta);
+    min-height:    var(--interactive-compact-min-height);
+    padding-inline:var(--layout-control-padding-inline-compact);
+    padding-block: var(--layout-control-padding-block-compact);
+    font-size:     var(--text-sm);
+  }
+  .btn--ghost:hover { background: var(--state-hover-brand-overlay); }
+  .btn--destructive-link {
+    background:    transparent;
+    color:         var(--color-text-error);
+    border-radius: var(--radius-button);
+  }
+  .btn--destructive-link:hover { background: var(--color-surface-error); }
+  .btn--retry {
+    background:    #F97316;
+    color:         var(--color-text-inverse);
+    border-radius: var(--radius-cta);
+  }
+  .btn--retry:hover { filter: brightness(0.95); }
+  /* leading icon size */
+  .btn i[data-lucide] { width: 18px; height: 18px; }
+</style>
+</head>
+<body>
+  <div class="row-note">FIGセンス：主要 CTA は <code>--radius-cta</code>（Pill）。Secondary は <code>--radius-button</code>（16px）の中庸。</div>
+
+  <button class="btn btn--primary">継続購入する</button>
+  <div class="lab">.btn.btn--primary · radius-cta (pill)</div>
+
+  <button class="btn btn--primary"><i data-lucide="credit-card"></i>定期券を発行する</button>
+  <div class="lab">primary + leading icon</div>
+
+  <button class="btn btn--secondary">閉じる</button>
+  <div class="lab">.btn.btn--secondary · radius-button (16px)</div>
+
+  <button class="btn btn--retry"><i data-lucide="rotate-cw"></i>もう一度試す</button>
+  <div class="lab">retry · pill / orange accent</div>
+
+  <button class="btn btn--destructive-link">ログアウト</button>
+  <div class="lab">destructive link</div>
+
+  <button class="btn btn--ghost"><i data-lucide="map-pin"></i>京都</button>
+  <div class="lab">ghost / region pill (compact)</div>
+
+  <button class="btn btn--compact btn--secondary">キャンセル</button>
+  <div class="lab">.btn--compact · radius-button-compact (12px)</div>
+
+  <button class="btn btn--icon btn--primary" aria-label="メニュー"><i data-lucide="menu"></i></button>
+  <div class="lab">.btn--icon · radius-icon-button (円形)</div>
+
+  <button class="btn btn--primary" disabled>無効化</button>
+  <div class="lab">disabled · opacity 40%</div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

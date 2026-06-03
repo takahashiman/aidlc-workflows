@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Feedback Patterns — 視覚・触覚・聴覚の三位一体</title>
+<link rel="stylesheet" href="../primitives.css">
+<link rel="stylesheet" href="../semantic.css">
+<script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root { --doc-max: 1000px; }
+  body {
+    margin: 0;
+    padding: var(--space-8) var(--space-6);
+    background: var(--bg-app);
+    font-family: var(--font-sans);
+    color: var(--color-text-primary);
+    line-height: var(--lh-jp-body);
+  }
+  main {
+    max-width: var(--doc-max);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+  }
+  header h1 {
+    font: var(--typography-display);
+    letter-spacing: var(--tracking-jp-display);
+    margin: 0 0 var(--space-2);
+  }
+  header p {
+    font: var(--typography-body-loose);
+    color: var(--color-text-tertiary);
+    margin: 0;
+    max-width: 64ch;
+  }
+  section h2 {
+    font: var(--typography-headline);
+    letter-spacing: var(--tracking-jp-headline);
+    margin: 0 0 var(--space-2);
+  }
+  section .lead {
+    font: var(--typography-body);
+    color: var(--color-text-tertiary);
+    margin: 0 0 var(--space-5);
+    max-width: 62ch;
+  }
+  .panel {
+    background: var(--color-surface-default);
+    border: 1px solid var(--color-border-card);
+    border-radius: var(--radius-card);
+    box-shadow: var(--surface-elevation-card);
+    padding: var(--space-6);
+  }
+
+  .env-row { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-5); }
+  .env-chip {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    font: var(--typography-caption);
+    font-family: var(--font-mono);
+  }
+  .env-chip[data-state="on"] {
+    background: color-mix(in oklab, var(--color-surface-brand-vivid) 16%, transparent);
+    color: var(--color-text-brand);
+    border: 1px solid var(--color-border-brand);
+  }
+  .env-chip[data-state="off"] {
+    background: var(--color-surface-container-low);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border-subtle);
+  }
+  .env-chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-text-muted); }
+  .env-chip[data-state="on"] .dot { background: var(--color-text-brand); }
+
+  .fb-table {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto auto;
+    gap: var(--space-3) var(--space-4);
+    align-items: center;
+  }
+  .fb-table > .h {
+    font: var(--typography-caption);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--color-border-subtle);
+    padding-bottom: var(--space-2);
+  }
+  .fb-table .name { display: flex; flex-direction: column; gap: var(--space-0-5); }
+  .fb-table .name strong { font: var(--typography-body-strong); }
+  .fb-table .name code { font: var(--typography-caption); font-family: var(--font-mono); color: var(--color-text-muted); }
+  .ch-cell {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    min-width: 96px;
+  }
+  .ch-cell.muted { color: var(--color-text-disabled); }
+
+  .fire-row { display: flex; flex-direction: column; gap: var(--space-3); margin-top: var(--space-5); }
+  .fire-item {
+    display: grid;
+    grid-template-columns: 240px 1fr 320px;
+    gap: var(--space-4);
+    align-items: center;
+    padding: var(--space-4);
+    background: var(--color-surface-container-low);
+    border-radius: var(--radius-card);
+  }
+  .fire-item .label { display: flex; flex-direction: column; gap: var(--space-0-5); }
+  .fire-item .label strong { font: var(--typography-body-strong); }
+  .fire-item .label code { font: var(--typography-caption); font-family: var(--font-mono); color: var(--color-text-muted); }
+  .fire-item .target { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+  .fire-item .log {
+    font: var(--typography-caption);
+    font-family: var(--font-mono);
+    color: var(--color-text-tertiary);
+    background: var(--color-surface-default);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-sm);
+    padding: var(--space-2) var(--space-3);
+    min-height: 60px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  .visual-tick   { animation: tick 200ms ease-out; }
+  .visual-bounce { animation: bounce 240ms cubic-bezier(0.22, 1, 0.36, 1); }
+  .visual-shake  { animation: shake 300ms ease-in-out; }
+  @keyframes tick   { 0% { transform: scale(1); } 50% { transform: scale(0.92); } 100% { transform: scale(1); } }
+  @keyframes bounce { 0% { transform: scale(1); } 40% { transform: scale(1.06); } 100% { transform: scale(1); } }
+  @keyframes shake  { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
+
+  .note {
+    margin-top: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-surface-container-low);
+    border-left: 4px solid var(--color-border-brand);
+    border-radius: var(--radius-sm);
+    font: var(--typography-body);
+    color: var(--color-text-secondary);
+  }
+  .note strong { color: var(--color-text-primary); }
+
+  .toggle-row {
+    display: flex; flex-wrap: wrap; gap: var(--space-3);
+    margin-top: var(--space-5); padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+  .toggle-row label {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-surface-default);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-pill);
+    font: var(--typography-caption);
+    font-family: var(--font-mono);
+    cursor: pointer;
+  }
+  .toggle-row input { accent-color: var(--color-surface-brand-vivid); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Feedback Patterns</h1>
+    <p>視覚 (motion) + 触覚 (haptic) + 聴覚 (audio) の三位一体規約を <code>semantic.css §20</code> から呼び出して実演する。振動非対応・音声 OFF・<code>prefers-reduced-motion</code> いずれも各チャネルが個別に no-op するフォールバックを確認できる。</p>
+  </header>
+
+  <section>
+    <h2>1. 現在の環境</h2>
+    <p class="lead">ブラウザ / OS の機能検出と CSS 変数の現在値を表示。緑＝有効、灰＝無効 / 未対応。</p>
+    <div class="panel">
+      <div class="env-row" id="env-row"></div>
+      <div class="toggle-row">
+        <label><input type="checkbox" id="toggle-haptic" checked> haptic を有効化（既定 ON）</label>
+        <label><input type="checkbox" id="toggle-audio"> audio を有効化（既定 OFF）</label>
+      </div>
+      <div class="note">
+        <strong>確認方法</strong>：モバイル端末で開くと <code>navigator.vibrate</code> が「対応」になり、各 Feedback ボタンを押すと振動する。OS で「動きを減らす」を ON にすると <code>--haptic-enabled: 0</code> が立ち、視覚も振動も即時停止に切替わる。
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>2. Feedback Contract 一覧</h2>
+    <p class="lead">各 ID に対応する 3 本セット（motion / haptic / audio）の値を <code>semantic.css</code> から取得して表示。</p>
+    <div class="panel">
+      <div class="fb-table">
+        <div class="h">Feedback ID</div>
+        <div class="h">motion</div>
+        <div class="h">haptic (ms)</div>
+        <div class="h">audio</div>
+        <div class="h">用途</div>
+
+        <div class="name"><strong>cta-fire</strong><code>--feedback-cta-fire-*</code></div>
+        <div class="ch-cell" data-token="--feedback-cta-fire-motion"></div>
+        <div class="ch-cell" data-token="--feedback-cta-fire-haptic"></div>
+        <div class="ch-cell" data-token="--feedback-cta-fire-audio"></div>
+        <div class="ch-cell">CTA 押下の瞬間</div>
+
+        <div class="name"><strong>cta-success</strong><code>--feedback-cta-success-*</code></div>
+        <div class="ch-cell" data-token="--feedback-cta-success-motion"></div>
+        <div class="ch-cell" data-token="--feedback-cta-success-haptic"></div>
+        <div class="ch-cell" data-token="--feedback-cta-success-audio"></div>
+        <div class="ch-cell">処理完了</div>
+
+        <div class="name"><strong>cta-error</strong><code>--feedback-cta-error-*</code></div>
+        <div class="ch-cell" data-token="--feedback-cta-error-motion"></div>
+        <div class="ch-cell" data-token="--feedback-cta-error-haptic"></div>
+        <div class="ch-cell" data-token="--feedback-cta-error-audio"></div>
+        <div class="ch-cell">処理失敗</div>
+
+        <div class="name"><strong>toggle</strong><code>--feedback-toggle-*</code></div>
+        <div class="ch-cell" data-token="--feedback-toggle-motion"></div>
+        <div class="ch-cell" data-token="--feedback-toggle-haptic"></div>
+        <div class="ch-cell" data-token="--feedback-toggle-audio"></div>
+        <div class="ch-cell">ON/OFF 切替（高頻度）</div>
+
+        <div class="name"><strong>select</strong><code>--feedback-select-*</code></div>
+        <div class="ch-cell" data-token="--feedback-select-motion"></div>
+        <div class="ch-cell" data-token="--feedback-select-haptic"></div>
+        <div class="ch-cell" data-token="--feedback-select-audio"></div>
+        <div class="ch-cell">リスト / タブ選択</div>
+
+        <div class="name"><strong>nfc-touch</strong><code>--feedback-nfc-touch-*</code></div>
+        <div class="ch-cell" data-token="--feedback-nfc-touch-motion"></div>
+        <div class="ch-cell" data-token="--feedback-nfc-touch-haptic"></div>
+        <div class="ch-cell" data-token="--feedback-nfc-touch-audio"></div>
+        <div class="ch-cell">NFC タッチ決済の確定</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>3. ライブ実演</h2>
+    <p class="lead">ボタンを押すと、対応する Feedback ID を <code>fireFeedback()</code> で発火。視覚は keyframes、触覚は <code>navigator.vibrate()</code>、音声は <code>--audio-cue-enabled: 1</code> のときだけ鳴る。</p>
+    <div class="panel">
+      <div class="fire-row" id="fire-row">
+
+        <div class="fire-item">
+          <div class="label"><strong>cta-fire</strong><code>medium haptic + ui-tap</code></div>
+          <div class="target"><button class="btn btn--primary" data-feedback="cta-fire" data-visual="tick">継続購入する</button></div>
+          <div class="log" data-log>—</div>
+        </div>
+
+        <div class="fire-item">
+          <div class="label"><strong>cta-success</strong><code>success haptic + ui-success</code></div>
+          <div class="target"><button class="btn btn--primary" data-feedback="cta-success" data-visual="bounce">処理完了</button></div>
+          <div class="log" data-log>—</div>
+        </div>
+
+        <div class="fire-item">
+          <div class="label"><strong>cta-error</strong><code>error haptic + ui-error</code></div>
+          <div class="target"><button class="btn btn--secondary" data-feedback="cta-error" data-visual="shake">エラー発生</button></div>
+          <div class="log" data-log>—</div>
+        </div>
+
+        <div class="fire-item">
+          <div class="label"><strong>toggle</strong><code>light haptic / 音なし</code></div>
+          <div class="target"><button class="btn btn--secondary btn--compact" data-feedback="toggle" data-visual="tick"><i data-lucide="bell"></i>通知を有効化</button></div>
+          <div class="log" data-log>—</div>
+        </div>
+
+        <div class="fire-item">
+          <div class="label"><strong>select</strong><code>light haptic / 音なし</code></div>
+          <div class="target"><button class="btn btn--secondary btn--compact" data-feedback="select" data-visual="tick">系統 32 を選択</button></div>
+          <div class="log" data-log>—</div>
+        </div>
+
+        <div class="fire-item">
+          <div class="label"><strong>nfc-touch</strong><code>heavy haptic + nfc-touch</code></div>
+          <div class="target"><button class="btn btn--primary" data-feedback="nfc-touch" data-visual="bounce"><i data-lucide="credit-card"></i>NFC タッチ</button></div>
+          <div class="log" data-log>—</div>
+        </div>
+
+      </div>
+      <div class="note">
+        <strong>視覚チャネル</strong>はこのデモでは <code>tick</code> / <code>bounce</code> / <code>shake</code> の 3 種の keyframes を割り当てている（実装では各コンポーネントの <code>transition</code> に直接 motion トークンを流す）。<br>
+        <strong>触覚チャネル</strong>はモバイルブラウザ（Chrome on Android 等）でのみ発火。デスクトップでは log に「振動なし」と表示。<br>
+        <strong>音声チャネル</strong>は既定 OFF。上の toggle で ON にすると音源を読みに行くが、本プロジェクトに音源は同梱されていないため 404 で no-op する（contract のみ検証）。
+      </div>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+  import { fireFeedback, setFeedbackChannel } from '../assets/js/feedback.js';
+  lucide.createIcons();
+
+  function cssVar(name, fb) {
+    const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || (fb !== undefined ? fb : '');
+  }
+
+  /* ===== 環境チップ ===== */
+  function renderEnv() {
+    const root = document.getElementById('env-row');
+    const mqReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const items = [
+      { label: 'navigator.vibrate', on: typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function' },
+      { label: 'Audio API', on: typeof Audio !== 'undefined' },
+      { label: 'prefers-reduced-motion', on: !mqReduced }, // 「動きを減らす」OFF が緑
+      { label: '--haptic-enabled: ' + cssVar('--haptic-enabled', '1'), on: parseInt(cssVar('--haptic-enabled', '1'), 10) !== 0 },
+      { label: '--audio-cue-enabled: ' + cssVar('--audio-cue-enabled', '0'), on: parseInt(cssVar('--audio-cue-enabled', '0'), 10) !== 0 },
+    ];
+    root.innerHTML = items.map(function(i) {
+      const state = i.on ? 'on' : 'off';
+      return '<span class="env-chip" data-state="' + state + '"><span class="dot"></span>' + i.label + '</span>';
+    }).join('');
+  }
+  renderEnv();
+  window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', renderEnv);
+
+  /* ===== トークン表 ===== */
+  document.querySelectorAll('[data-token]').forEach(function(el) {
+    const raw = cssVar(el.dataset.token);
+    el.textContent = raw || '—';
+    if (!raw || raw === 'none') el.classList.add('muted');
+  });
+
+  /* ===== チャネル トグル ===== */
+  const hapticToggle = document.getElementById('toggle-haptic');
+  const audioToggle = document.getElementById('toggle-audio');
+  setFeedbackChannel('haptic', true);
+
+  hapticToggle.addEventListener('change', function(e) {
+    setFeedbackChannel('haptic', e.target.checked);
+  });
+  audioToggle.addEventListener('change', function(e) {
+    document.documentElement.style.setProperty('--audio-cue-enabled', e.target.checked ? '1' : '0');
+    setFeedbackChannel('audio', e.target.checked);
+    renderEnv();
+  });
+
+  /* ===== Fire ボタン ===== */
+  document.querySelectorAll('[data-feedback]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const visual = btn.dataset.visual;
+      if (visual) {
+        const cls = 'visual-' + visual;
+        btn.classList.remove(cls);
+        void btn.offsetWidth;
+        btn.classList.add(cls);
+      }
+      const result = fireFeedback(btn);
+      const log = btn.closest('.fire-item').querySelector('[data-log]');
+      const id = btn.dataset.feedback;
+      const time = new Date().toLocaleTimeString('ja-JP');
+      const lines = [
+        '[' + time + '] fire("' + id + '")',
+        '  visual : ' + (visual || 'none') + ' (CSS keyframes)',
+        '  haptic : ' + (result.haptic ? 'fired ✓' : '振動なし（未対応 / 無効 / pattern=none）'),
+        '  audio  : ' + (result.audio  ? 'fired ✓' : '無音（無効 / pattern=none / 音源未同梱）'),
+      ];
+      log.textContent = lines.join('\n');
+    });
+  });
+</script>
+</body>
+</html>
