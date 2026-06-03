@@ -1,0 +1,160 @@
+{
+  "projectMetadata": {
+    "projectName": "FIG Universal Design System",
+    "projectId": "fig-universal-2026",
+    "baseVersion": "1.0.0",
+    "inceptionDate": "2026-06-03",
+    "status": "Inception — Requirement Verification Complete"
+  },
+
+  "signatureColor": {
+    "hex": "#26B7BC",
+    "name": "FIGターコイズ",
+    "category": "PRIMARY",
+    "harmonization": "Core色からの継承性を基準に、公共交通ドメインの信頼性・安心感を表現する統一ブランド。心理的には落ち着きと信頼感を与え、WCAG 2.1 AA レベルの視認性を実現。補色はスレート系（#1E293B）で深みを持たせ、過酷な現場環境（バスターミナル、駅舎等）でも絶対的な見分けやすさを担保。色相環上では青緑圏に位置し、情報系 UI の業界標準との親和性も高い。",
+    "references": {
+      "wcag": "WCAG 2.1 AA 準拠（コントラスト比 4.5:1 以上）",
+      "fieldContext": "公共交通の現場環境を想定した視認性テスト必須"
+    }
+  },
+
+  "designSystem": {
+    "profile": "Mobile-Consumer",
+    "profileDescription": "バスアプリを想定したモバイルファースト・タッチUIに特化。初期フェーズは本プロファイルのみ。",
+    "expandPlan": "Phase 4 以降で Mobile-Terminal / Web-Admin プロファイルの追加を検討。ただし Semantic トークン設計段階で複数対応を見据え、CSS 変数構造を先制的に準備。",
+    "responseStrategy": "プロファイルクラス（.fig-profile-consumer）をドキュメントルートに付与し、CSS カスタムプロパティの値を上書きする形で複数対応を実現。"
+  },
+
+  "semanticTokens": {
+    "strategy": "プロファイルクラスをトリガーにしたCSS変数上書き方式",
+    "implementation": {
+      "layer1": {
+        "name": "Primitive",
+        "file": "primitives.css",
+        "content": "生値 — HEX色、px単位の寸法、立方体ベゼル値等。React・Semantic 層から直接参照禁止。"
+      },
+      "layer2": {
+        "name": "Semantic",
+        "file": "semantic.css",
+        "content": "役割トークン — color.text.*, color.surface.*, typography.*, motion.*, a11y.* 等。Component 層のみがこれを参照する。",
+        "multiProfile": "複数プロファイル対応時は、<body class=\"fig-profile-consumer\"> のセレクタで CSS 変数値を段階的に上書き。"
+      },
+      "layer3": {
+        "name": "Component",
+        "file": "components/**/*.jsx",
+        "content": "React コンポーネント。インラインスタイル禁止。Semantic トークンのみ参照。三層アーキテクチャの遵守がハルシネーション防止の鍵。"
+      }
+    },
+    "rule": "上位層は下位層のみ参照。逆流禁止。違反は即座に reject。",
+    "validation": "CI で @schema 検証 + 全コンポーネントの CSS 参照スキャン。"
+  },
+
+  "components": {
+    "priority": [
+      {
+        "order": 1,
+        "name": "Card",
+        "role": "コンテナコンポーネント。ルートカード、パスカード、到着情報カード等のベース。"
+      },
+      {
+        "order": 2,
+        "name": "Button & FAB",
+        "role": "プライマリ CTA（Button）と浮遊アクション（FAB）。モバイルタップ操作の中心。最小 44×44 px。"
+      },
+      {
+        "order": 3,
+        "name": "TextField",
+        "role": "入力欄。検索ボックス、フォーム等で使用。キーボード対応必須。"
+      }
+    ],
+    "successCriteria": {
+      "specification": {
+        "required": false,
+        "rationale": "仕様書は project-settings.json + README.md のみで十分。過剰なドキュメント作成は保守コストを増加させる。",
+        "alternative": ".spec.md は参考資料として扱い、正典はコード。"
+      },
+      "livePreview": {
+        "required": true,
+        "detail": "HTML プレビューで 5状態以上を可視化（Default, Hover, Active, Disabled, Error）。手動視覚確認による品質担保が優先。"
+      },
+      "reactImplementation": {
+        "required": true,
+        "detail": "動作する JSX ファイルが components/[name].jsx に存在。Semantic トークン参照が正確。インラインスタイルゼロ。"
+      },
+      "semanticTokens": {
+        "required": true,
+        "priority": "最重要。semantic.json / semantic.css に必要なすべてのトークン（色、モーション、spacing等）が定義され、コンポーネント内に生値がない状態が「完了」の証。"
+      },
+      "accessibility": {
+        "required": false,
+        "rationale": "初期フェーズは後回し。WCAG 2.1 AA 準拠は Construction Phase 4 以降の品質向上サイクルで検証。"
+      },
+      "multiProfile": {
+        "required": false,
+        "rationale": "初期は Mobile-Consumer のみ対応確認。複数プロファイル対応の検証は Phase 4 で実施。"
+      }
+    }
+  },
+
+  "architecture": {
+    "pattern": "三層アーキテクチャ",
+    "layers": {
+      "layer1_primitive": {
+        "name": "Primitive",
+        "file": "primitives.css",
+        "responsibility": "設計上の最小単位。HEX、px、立方体数値。依存なし。"
+      },
+      "layer2_semantic": {
+        "name": "Semantic",
+        "file": "semantic.css",
+        "responsibility": "意味づけ。色相（color.text.* 等）、タイポグラフィロール（typography.arrival-time 等）、モーション定義（motion.enter 等）。Primitive のみ参照。"
+      },
+      "layer3_component": {
+        "name": "Component",
+        "file": "components/**/*.jsx",
+        "responsibility": "UI の具体形。Semantic のみ参照。直書き禁止。"
+      }
+    },
+    "dependencyRule": "上から下のみ参照。逆方向は厳禁。",
+    "enforcement": "コード走査ツール / PR チェックリスト。AI エージェントへの strict instruction として TECHNICAL-ENVIRONMENT.md に記載。"
+  },
+
+  "portal": {
+    "livePreviewPriority": "A — Live Preview を最優先",
+    "rationale": "自動化環境の保守コストを引き算し、手動での視覚的確認（デバイスフレーム、多解像度チェック）を優先。これが AI にとって『正解の視覚的証明』となり、ハルシネーション検出の基準となる。",
+    "storybook": "後回し。Storybook は運用が成熟した段階（Phase 4 以降）で検討。",
+    "autoRegistration": "assets/js/portal-content.js に自動登録スクリプト（後日実装）。"
+  },
+
+  "reusability": {
+    "templateGranularity": "B — ディレクトリ単位複製",
+    "how": "extensions/[projectName]/ 全体をコピー。project-settings.json の signatureColor を新規値に変更。その後 React コンポーネント（CSS 変数参照）が自動的に新色で再レンダリング。JSX を 1 行も変更しない。",
+    "prerequisite": "三層アーキテクチャの徹底が不可欠。コンポーネント側にインラインスタイル / 生値がない状態を維持。",
+    "documentation": {
+      "minimal": true,
+      "content": "project-settings.json + README.md のみ。ディレクトリ構造とコードそのものが『最強のテンプレート』。複製元エンジニアの判断から次のエンジニアへ の知識伝達は、「なぜこの設計か」を体現したコード / ディレクトリ構造から読み取る形とする。"
+    }
+  },
+
+  "distribution": {
+    "method": "git submodule",
+    "rationale": "1名体制において npm パッケージ化（バージョン管理、publish フロー、SemVer 策定）の複雑性は保守オーバーヘッドが過大。submodule で十分。",
+    "workflow": "中央（FIG Universal Design System リポジトリ）で Semantic トークン / コンポーネント修正 → 各プロダクト（busapp 等）のフロントエンドは `git pull` で最新の『正解の型』を常時同期。",
+    "versionPinning": "submodule のコミットハッシュで履歴管理。セマンティックバージョニングは採用しない。"
+  },
+
+  "validation": {
+    "projectSettingsValidation": "D — AI自己検証 + スキーマ検証の組み合わせ",
+    "process": {
+      "step1": "AI が project-settings.json を生成後、自分で読み込んで検証：『harmonization が Core色との関係を述べているか』『Hex形式が正確か』『profileDescriptionが requirement-verification-questions の回答に整合しているか』。問題があれば再生成。",
+      "step2": "Cursor のエディタが $schema を読み込んでリアルタイムの型エラーを検証。JSON Schema に違反するフィールド or 値を即座にハイライト。",
+      "ci": "大掛かりな CI パイプラインは構築しない。エディタ + AI 自己検証で十分。"
+    }
+  },
+
+  "risks": {
+    "inception": "現場環境（バスターミナル等）での絶対的な視認性判断は、JSON のスキーマでは検証しきれない。エンジニアの目による微調整が不可欠。",
+    "construction": "AI は複数プロファイル対応時に「足し算」してコードを肥大化させる傾向。プロンプト制御と監視コストが課題。",
+    "operations": "ポータル / Extensions が『唯一の真実の情報源』として機能し続けられるか。1名体制のリソース限界と組織的認知負荷のバランスが長期課題。"
+  }
+}
