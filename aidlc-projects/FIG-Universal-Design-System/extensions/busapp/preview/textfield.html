@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TextField Components Preview — FIG Universal Design System</title>
+  <link rel="stylesheet" href="../tokens/primitives.css">
+  <link rel="stylesheet" href="../tokens/semantic.css">
+  <script src="https://unpkg.com/lucide@0.487.0/dist/umd/lucide.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-surface-canvas);
+      padding: var(--space-5);
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font: var(--typography-headline);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-3);
+    }
+
+    .preview-section {
+      margin-bottom: var(--space-5);
+    }
+
+    .preview-label {
+      font-size: var(--font-size-caption);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-2);
+      font-weight: 700;
+    }
+
+    /* ────── TextField Base Styles ────── */
+    .textfield {
+      margin-bottom: var(--space-4);
+    }
+
+    .textfield label {
+      display: block;
+      font-size: var(--font-size-caption);
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .textfield label .required {
+      color: var(--color-text-error);
+    }
+
+    .textfield input {
+      width: 100%;
+      padding: var(--layout-control-padding-block) var(--layout-control-padding-inline);
+      min-height: var(--interactive-input-height, 48px);
+      border: 2px solid var(--color-border-default);
+      border-radius: var(--radius-input, 12px);
+      background-color: var(--color-surface-default);
+      color: var(--color-text-primary);
+      font-size: var(--font-size-body-strong, 15px);
+      font-family: inherit;
+      transition: all var(--motion-hover);
+      outline: none;
+    }
+
+    .textfield input::placeholder {
+      color: var(--color-text-disabled);
+    }
+
+    /* Focus state */
+    .textfield input:focus {
+      border-color: var(--color-border-focus);
+      box-shadow: var(--state-focused-ring, 0 0 0 3px rgba(56, 161, 219, 0.40));
+    }
+
+    /* Error state */
+    .textfield input[aria-invalid="true"] {
+      border-color: var(--color-border-error);
+    }
+
+    /* Disabled state */
+    .textfield input:disabled {
+      background-color: var(--color-surface-container-low);
+      color: var(--color-text-disabled);
+      cursor: not-allowed;
+    }
+
+    /* Hint text */
+    .textfield .hint {
+      font-size: var(--font-size-caption);
+      color: var(--color-text-muted);
+      margin-top: 4px;
+    }
+
+    /* Error text */
+    .textfield .error {
+      font-size: var(--font-size-caption);
+      color: var(--color-text-error);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* Icon positioning */
+    .textfield .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .textfield .icon-leading {
+      position: absolute;
+      left: 12px;
+      color: var(--color-icon-default);
+      pointer-events: none;
+    }
+
+    .textfield .icon-leading i[data-lucide] {
+      width: 20px;
+      height: 20px;
+    }
+
+    .textfield input[style*="padding-left"] {
+      padding-left: 40px;
+    }
+
+    .textfield .icon-trailing {
+      position: absolute;
+      right: 12px;
+      color: var(--color-icon-default);
+      pointer-events: none;
+    }
+
+    .textfield .icon-trailing i[data-lucide] {
+      width: 20px;
+      height: 20px;
+    }
+
+    .textfield input[style*="padding-right"] {
+      padding-right: 40px;
+    }
+
+    /* Device Frames */
+    .device-frame {
+      margin-bottom: var(--space-5);
+      padding: var(--space-3);
+      background: #000;
+      border-radius: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      position: relative;
+    }
+
+    .device-frame::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 30px;
+      background: #000;
+      border-radius: 0 0 20px 20px;
+      z-index: 10;
+    }
+
+    .device-screen {
+      background: var(--color-surface-canvas);
+      border-radius: 32px;
+      overflow: hidden;
+      aspect-ratio: 9 / 20;
+      padding: 50px 16px 16px 16px;
+      overflow-y: auto;
+    }
+
+    /* Select styling */
+    .textfield select {
+      width: 100%;
+      padding: var(--layout-control-padding-block) var(--layout-control-padding-inline);
+      min-height: var(--interactive-input-height, 48px);
+      border: 2px solid var(--color-border-default);
+      border-radius: var(--radius-input, 12px);
+      background-color: var(--color-surface-default);
+      color: var(--color-text-primary);
+      font-size: var(--font-size-body-strong, 15px);
+      font-family: inherit;
+      transition: all var(--motion-hover);
+      outline: none;
+      appearance: none;
+      padding-right: 40px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 40px;
+    }
+
+    .textfield select:focus {
+      border-color: var(--color-border-focus);
+      box-shadow: var(--state-focused-ring, 0 0 0 3px rgba(56, 161, 219, 0.40));
+    }
+
+    .textfield select:disabled {
+      background-color: var(--color-surface-container-low);
+      color: var(--color-text-disabled);
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>TextField Components Preview</h1>
+    <p style="color: var(--color-text-muted); margin-bottom: var(--space-5);">FIGブランド統一デザインシステム / Semantic トークンベース実装</p>
+
+    <!-- ========== TEXT INPUT ========== -->
+    <div class="preview-section">
+      <div class="preview-label">Variant 1: Text Input</div>
+      <div class="device-frame">
+        <div class="device-screen">
+          <!-- Default -->
+          <div class="textfield">
+            <label>名前</label>
+            <input type="text" placeholder="山田太郎">
+          </div>
+
+          <!-- Focused -->
+          <div class="textfield">
+            <label>メールアドレス</label>
+            <input type="text" placeholder="example@email.com" style="border-color: var(--color-border-focus); box-shadow: var(--state-focused-ring, 0 0 0 3px rgba(56, 161, 219, 0.40));">
+          </div>
+
+          <!-- With hint -->
+          <div class="textfield">
+            <label>ニックネーム</label>
+            <input type="text" placeholder="3文字以上" value="たろう">
+            <div class="hint">後で変更できます</div>
+          </div>
+
+          <!-- With error -->
+          <div class="textfield">
+            <label>利用規約<span class="required"> *</span></label>
+            <input type="text" placeholder="必須項目です" aria-invalid="true">
+            <div class="error">この項目は入力必須です</div>
+          </div>
+
+          <!-- Disabled -->
+          <div class="textfield">
+            <label>確認コード</label>
+            <input type="text" placeholder="自動入力されます" disabled value="">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SEARCH INPUT ========== -->
+    <div class="preview-section">
+      <div class="preview-label">Variant 2: Search Input</div>
+      <div class="device-frame">
+        <div class="device-screen">
+          <!-- Default -->
+          <div class="textfield">
+            <label>バス停を検索</label>
+            <div class="input-wrapper">
+              <i class="icon-leading" data-lucide="search"></i>
+              <input type="search" placeholder="停留所名を入力" style="padding-left: 40px;">
+            </div>
+          </div>
+
+          <!-- Filled with leading icon -->
+          <div class="textfield">
+            <label>停留所検索</label>
+            <div class="input-wrapper">
+              <i class="icon-leading" data-lucide="map-pin"></i>
+              <input type="search" placeholder="京都駅前" value="京都駅前" style="padding-left: 40px; padding-right: 40px;">
+              <span style="position: absolute; right: 12px; cursor: pointer; background: none; border: none; padding: 0;">
+                <i data-lucide="x" style="width: 18px; height: 18px; color: var(--color-icon-default);"></i>
+              </span>
+            </div>
+          </div>
+
+          <!-- With hint -->
+          <div class="textfield">
+            <label>近くのバス停</label>
+            <div class="input-wrapper">
+              <i class="icon-leading" data-lucide="search"></i>
+              <input type="search" placeholder="現在地から探す" style="padding-left: 40px;">
+            </div>
+            <div class="hint">お気に入り登録できます</div>
+          </div>
+
+          <!-- Disabled -->
+          <div class="textfield">
+            <label>詳細検索</label>
+            <div class="input-wrapper">
+              <i class="icon-leading" data-lucide="search"></i>
+              <input type="search" placeholder="検索条件を入力" disabled style="padding-left: 40px;">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== NUMERIC INPUT ========== -->
+    <div class="preview-section">
+      <div class="preview-label">Variant 3: Numeric Input</div>
+      <div class="device-frame">
+        <div class="device-screen">
+          <!-- Default -->
+          <div class="textfield">
+            <label>金額</label>
+            <input type="number" placeholder="¥ 0" inputmode="numeric">
+          </div>
+
+          <!-- Filled -->
+          <div class="textfield">
+            <label>乗車回数</label>
+            <input type="number" value="5" placeholder="回数を入力" inputmode="numeric">
+            <div class="hint">月間乗車回数の入力</div>
+          </div>
+
+          <!-- With error -->
+          <div class="textfield">
+            <label>認証コード<span class="required"> *</span></label>
+            <input type="number" placeholder="4桁" aria-invalid="true" inputmode="numeric">
+            <div class="error">4桁の数字を入力してください</div>
+          </div>
+
+          <!-- Disabled -->
+          <div class="textfield">
+            <label>利用額（自動計算）</label>
+            <input type="number" placeholder="¥ 0" disabled value="">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== PASSWORD INPUT ========== -->
+    <div class="preview-section">
+      <div class="preview-label">Variant 4: Password Input</div>
+      <div class="device-frame">
+        <div class="device-screen">
+          <!-- Default (masked) -->
+          <div class="textfield">
+            <label>パスワード</label>
+            <div class="input-wrapper">
+              <input type="password" placeholder="8文字以上" style="padding-right: 40px;">
+              <button style="position: absolute; right: 12px; background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;" title="Show password">
+                <i data-lucide="eye" style="width: 18px; height: 18px; color: var(--color-icon-default);"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Filled (visible) -->
+          <div class="textfield">
+            <label>新パスワード</label>
+            <div class="input-wrapper">
+              <input type="text" value="MyPassword123" style="padding-right: 40px;">
+              <button style="position: absolute; right: 12px; background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;" title="Hide password">
+                <i data-lucide="eye-off" style="width: 18px; height: 18px; color: var(--color-icon-default);"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- With hint -->
+          <div class="textfield">
+            <label>確認用パスワード</label>
+            <div class="input-wrapper">
+              <input type="password" placeholder="パスワードを再入力" style="padding-right: 40px;">
+              <button style="position: absolute; right: 12px; background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;" title="Show password">
+                <i data-lucide="eye" style="width: 18px; height: 18px; color: var(--color-icon-default);"></i>
+              </button>
+            </div>
+            <div class="hint">大文字、小文字、数字を含む必要があります</div>
+          </div>
+
+          <!-- Disabled -->
+          <div class="textfield">
+            <label>現在のパスワード</label>
+            <div class="input-wrapper">
+              <input type="password" placeholder="変更できません" disabled style="padding-right: 40px;">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SELECT INPUT ========== -->
+    <div class="preview-section">
+      <div class="preview-label">Variant 5: Select Input</div>
+      <div class="device-frame">
+        <div class="device-screen">
+          <!-- Default -->
+          <div class="textfield">
+            <label>都道府県</label>
+            <select>
+              <option value="" selected disabled>選択してください</option>
+              <option>京都府</option>
+              <option>兵庫県</option>
+              <option>大分県</option>
+              <option>沖縄県</option>
+            </select>
+          </div>
+
+          <!-- Selected -->
+          <div class="textfield">
+            <label>利用予定日</label>
+            <select>
+              <option selected>本日</option>
+              <option>明日</option>
+              <option>3日後</option>
+              <option>1週間後</option>
+            </select>
+          </div>
+
+          <!-- With hint -->
+          <div class="textfield">
+            <label>乗車種別</label>
+            <select>
+              <option selected>通常乗車</option>
+              <option>定期券利用</option>
+              <option>回数券利用</option>
+            </select>
+            <div class="hint">定期券をお持ちの方はこちらを選択</div>
+          </div>
+
+          <!-- Disabled -->
+          <div class="textfield">
+            <label>配送方法（自動選択）</label>
+            <select disabled>
+              <option selected>標準配送</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== COMBINED FORM ========== -->
+    <div class="preview-section">
+      <div class="preview-label">Example: Login Form</div>
+      <div class="device-frame">
+        <div class="device-screen">
+          <div class="textfield">
+            <label>メールアドレス<span class="required"> *</span></label>
+            <div class="input-wrapper">
+              <i class="icon-leading" data-lucide="mail"></i>
+              <input type="email" placeholder="user@example.com" style="padding-left: 40px;">
+            </div>
+          </div>
+
+          <div class="textfield">
+            <label>パスワード<span class="required"> *</span></label>
+            <div class="input-wrapper">
+              <input type="password" placeholder="パスワードを入力" style="padding-right: 40px;">
+              <button style="position: absolute; right: 12px; background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;" title="Show password">
+                <i data-lucide="eye" style="width: 18px; height: 18px; color: var(--color-icon-default);"></i>
+              </button>
+            </div>
+          </div>
+
+          <button style="width: 100%; padding: var(--layout-control-padding-block) var(--layout-control-padding-inline); min-height: 48px; background-color: var(--color-surface-brand); color: var(--color-text-onBrand); border: none; border-radius: var(--radius-cta); font-weight: 700; cursor: pointer; transition: all var(--motion-hover);">
+            ログインする
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

@@ -37,13 +37,16 @@ cd extensions/busapp/
 ### 2. Live Preview で確認
 
 ```bash
-# preview/card.html をブラウザで開く（開発サーバー不要）
+# Card プレビュー
 open preview/card.html
-# または
-start preview/card.html
+
+# Button & FAB プレビュー
+open preview/button.html
 ```
 
 ### 3. React アプリケーションでの使用
+
+#### Card コンポーネント
 
 ```jsx
 import Card from './components/Card';
@@ -53,6 +56,146 @@ export function MyApp() {
     <Card variant="interactive" padding="md" onClick={handleClick}>
       <div>カードのコンテンツ</div>
     </Card>
+  );
+}
+```
+
+#### Button コンポーネント
+
+```jsx
+import Button from './components/Button';
+
+export function MyButtons() {
+  return (
+    <div>
+      {/* Primary CTA */}
+      <Button 
+        variant="primary"
+        onClick={handleSubmit}
+      >
+        <i data-lucide="check-circle" />
+        決定する
+      </Button>
+
+      {/* Secondary */}
+      <Button variant="secondary" onClick={handleCancel}>
+        キャンセル
+      </Button>
+
+      {/* Ghost / Tertiary */}
+      <Button variant="ghost" icon="map-pin" iconPosition="leading">
+        京都府
+      </Button>
+
+      {/* Destructive */}
+      <Button variant="destructive" onClick={handleDelete}>
+        <i data-lucide="trash-2" />
+        削除する
+      </Button>
+
+      {/* Loading state */}
+      <Button variant="primary" loading={isLoading} disabled={isLoading}>
+        処理中
+      </Button>
+    </div>
+  );
+}
+```
+
+#### FAB（Floating Action Button）
+
+```jsx
+import FAB from './components/FAB';
+
+export function MyApp() {
+  return (
+    <div>
+      <FAB
+        icon="plus"
+        position="bottom-right"
+        label="新規追加"
+        onClick={handleAdd}
+      />
+    </div>
+  );
+}
+```
+
+#### TextField コンポーネント
+
+```jsx
+import { useState } from 'react';
+import TextField from './components/TextField';
+
+export function MyForm() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [station, setStation] = useState('');
+  const [errors, setErrors] = useState({});
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Validation logic
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      {/* Text input */}
+      <TextField
+        type="text"
+        label="氏名"
+        placeholder="山田太郎"
+        value={email}
+        onChange={setEmail}
+        required
+      />
+
+      {/* Search input */}
+      <TextField
+        type="search"
+        label="バス停を検索"
+        placeholder="停留所名を入力"
+        leadingIcon="search"
+        value={station}
+        onChange={setStation}
+        clearable
+      />
+
+      {/* Numeric input */}
+      <TextField
+        type="number"
+        label="乗車回数"
+        placeholder="0"
+        inputMode="numeric"
+        value={count}
+        onChange={setCount}
+        hint="月間乗車回数を入力"
+      />
+
+      {/* Password input with toggle */}
+      <TextField
+        type="password"
+        label="パスワード"
+        placeholder="8文字以上"
+        value={password}
+        onChange={setPassword}
+        required
+        error={errors.password ? "8文字以上の英数字で設定してください" : undefined}
+      />
+
+      {/* Select input */}
+      <TextField
+        type="select"
+        label="都道府県"
+        value={region}
+        onChange={setRegion}
+        options={[
+          { label: "京都府", value: "kyoto" },
+          { label: "兵庫県", value: "hyogo" },
+          { label: "大分県", value: "oita" },
+        ]}
+      />
+    </form>
   );
 }
 ```
