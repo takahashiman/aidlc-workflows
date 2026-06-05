@@ -8,3 +8,7 @@
 .env
 buildspec.yml
 codebuild_build.sh
+
+# aidlc-projects 配下は各々独立リポジトリとして運用（親の追跡対象外）
+/aidlc-projects/FIG-Universal-Design-System/
+/aidlc-projects/ProductA/
