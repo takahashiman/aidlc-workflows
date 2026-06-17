@@ -12,7 +12,7 @@
 import { ui } from './state.js';
 import { buildNav } from './nav.js';
 import { createRouter, parseRoute, DEFAULT_ROUTE } from './router.js';
-import { renderOverview, renderProjects, renderOps, renderUsage, notFound } from './views.js';
+import { renderOverview, renderDeveloper, renderProjects, renderOps, renderUsage, notFound } from './views.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -141,6 +141,7 @@ function renderView(route, ctx) {
   if (!route) return notFound();
   switch (route.kind) {
     case 'overview': return renderOverview(route, ctx);
+    case 'developer': return renderDeveloper(route, ctx);
     case 'projects': return renderProjects(route, ctx);
     case 'ops': return renderOps(route, ctx);
     case 'usage': return renderUsage(route, ctx);
@@ -365,7 +366,7 @@ function restoreActiveTab() {
 function titleFor(route) {
   const base = 'FIG Core DS';
   if (!route) return base;
-  const map = { overview: '概要', projects: 'プロジェクト集', ops: '運用', usage: '使い方' };
+  const map = { overview: '概要', developer: 'Developer', projects: 'プロジェクト集', ops: '運用', usage: '使い方' };
   return `${map[route.kind] || ''} · ${base}`;
 }
 

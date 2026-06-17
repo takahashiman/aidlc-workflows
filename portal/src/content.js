@@ -7,12 +7,13 @@
  * src/legacy/legacy-content.js に保全。概要セクションは段階的にそこから取り込む。
  */
 
-/** 上位4区分（サイドナビ最上位 / BR-IA-1） */
+/** 上位区分（サイドナビ最上位 / BR-IA-1）。developer は Core 本文に developer スコープがある時のみ nav に出る（nav.js が空なら省略）。 */
 export const SECTIONS = [
   { id: 'overview', label: '概要', icon: '◎', route: '#/overview/principles/vision' },
   { id: 'projects', label: 'プロジェクト集', icon: '▤', route: '#/projects', dynamic: true },
   { id: 'ops', label: '運用', icon: '⚙', route: '#/ops/versions' },
   { id: 'usage', label: '使い方', icon: '?', route: '#/usage/portal-basics' },
+  { id: 'developer', label: 'Developer', icon: '⚒', route: '#/developer/guide/getting-started' },
 ];
 
 /** 概要（Core DS 自身）の静的ページツリー。route = #/overview/<section>/<item> */
@@ -69,17 +70,18 @@ export const OVERVIEW = [
 ];
 
 /**
- * Core 本文（data/core-content.json）から概要セクション木を生成（F-6）。
+ * Core 本文（data/core-content.json）から指定スコープのセクション木を生成（F-6 / §4-1）。
  * build.mjs.extractCoreContent() が Core 自前サイトの SITEMAP+PAGES を JSON 化し、
- * その `core` スコープを概要 IA に写像する（rolling 忠実・静的 OVERVIEW を置換）。
+ * その `scope`（core=概要 / developer=Developer ガイド）を IA に写像する（rolling 忠実）。
  * @param {object|null} coreContent { SITEMAP, PAGES }
- * @returns {Array|null} [{id,label,items:[{id,label}]}] / 取得不能なら null（静的フォールバック）
+ * @param {string} [scope='core'] SITEMAP のスコープキー
+ * @returns {Array|null} [{id,label,hint,items:[{id,label,avail}]}] / 取得不能なら null
  */
-export function coreOverviewSections(coreContent) {
-  const core = coreContent && coreContent.SITEMAP && coreContent.SITEMAP.core;
-  if (!core || !Array.isArray(core.sections)) return null;
+export function coreScopeSections(coreContent, scope = 'core') {
+  const node = coreContent && coreContent.SITEMAP && coreContent.SITEMAP[scope];
+  if (!node || !Array.isArray(node.sections)) return null;
   const pages = coreContent.PAGES || {};
-  const sections = core.sections.map(sec => ({
+  const sections = node.sections.map(sec => ({
     id: sec.id,
     label: sec.label || sec.id,
     hint: sec.hint || '',
@@ -87,17 +89,22 @@ export function coreOverviewSections(coreContent) {
       id: it.id,
       label: it.label || it.id,
       // 推奨度（component/pattern のみ持つ）。サイドバーの data-avail バッジ/減衰に使う。
-      avail: (pages[`core/${sec.id}/${it.id}`] || {}).availability || null,
+      avail: (pages[`${scope}/${sec.id}/${it.id}`] || {}).availability || null,
     })),
   })).filter(sec => sec.items.length);
   return sections.length ? sections : null;
 }
 
-/** Core PAGES から該当ページ定義を取得（route #/overview/<section>/<item> → key core/<section>/<item>） */
-export function corePage(coreContent, sectionId, itemId) {
+/** 後方互換: 概要（core スコープ）セクション木。 */
+export function coreOverviewSections(coreContent) {
+  return coreScopeSections(coreContent, 'core');
+}
+
+/** Core PAGES から該当ページ定義を取得（key `<scope>/<section>/<item>`。scope 既定=core） */
+export function corePage(coreContent, sectionId, itemId, scope = 'core') {
   const pages = coreContent && coreContent.PAGES;
   if (!pages) return null;
-  return pages[`core/${sectionId}/${itemId}`] || null;
+  return pages[`${scope}/${sectionId}/${itemId}`] || null;
 }
 
 /** 運用（ops）ビューの定義。route = #/ops/<view> */

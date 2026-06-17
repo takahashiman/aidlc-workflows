@@ -40,7 +40,7 @@
 | B6 | 静的 OVERVIEW フォールバックの整理 | `content.js` の静的 `OVERVIEW` は `core-content.json` 常設なら実質デッドコード | 整理 or フォールバック専用として明示 |
 | B7 | shell CSS の drift 検査 | `portal/assets/portal.css` は削除し `vendor/core/portal.css` に rolling 化済 | Core と byte 同一を build で検査する gate を足すと安心（任意） |
 | B8 | 検索インデックスの拡充 | `portal.js` `buildSearchIndex()` は nav リーフのみ | Core PAGES の `description` も索引に含めると命中精度向上 |
-| B9 | Developer/Extensions スコープ未露出 | `SITEMAP` には `extensions`/`developer` スコープ（Core 自前サイトの Developer ガイド等）があるが、ポータルは概要=`core` のみ写像 | 「使い方」等へ Developer ガイドを取込む余地 |
+| B9 | ~~Developer スコープ未露出~~ → ✅ 解決（§4-1 で Developer ガイドを画面化・2026-06-17） | `extensions` は方針どおり非露出のまま（プロジェクト集と重複） | — |
 | B10 | フォントの完全自己ホスト化（任意） | 現状は CSP 緩和で Google Fonts 依存（`index.html` の CSP） | 完全オフライン/CDN非依存にするなら woff2 自己ホスト（過去検討の方針B）へ切替 |
 
 ---
@@ -101,11 +101,17 @@ prune され「プレビュー未収録」表示。**Core リポジトリ `FIG-U
 
 ## 4. Developer ガイドの画面化 と 公開範囲の分離
 
+> ✅ **実装済み（2026-06-17）**: 4-1（Developer ガイド画面化）を実装し、4-2 の公開範囲方針を採用。
+> 下表のとおり結線（`corePage` の scope はテスト後方互換のため**末尾オプション引数**として追加）。
+> `npm test` 33 PASS（developer 用 +7）、build で developer 8 ページの描画例外0・Developer
+> パンくず付与を確認。`extensions` スコープは方針どおり**取込まない**。内容精査=機微情報
+> （シークレット/PAT/権利者専用 GitHub 操作）の混入なしを確認済（公開=開発者向けガイドとして適切）。
+
 > ライブ目視（2026-06-17）で、Core 自前サイト(index.html)にある **Developer 向け導入・運用
 > ガイドがポータルに出ていない**と判明。データは取り込み済み（`core-content.json` の
 > `developer/*` PAGES）だが、ポータルが `core` スコープしか画面化していないため。B9 を具体化。
 
-### 4-1. Developer ガイドの画面化（`core`→概要 のミラー）
+### 4-1. Developer ガイドの画面化（`core`→概要 のミラー）✅ 実装済み
 Core の `developer` スコープ（`SITEMAP.developer`）= **Developer Guide / guide** に 8 ページ:
 `getting-started` / `asset-reference` / `integration` / `version-management` /
 `migration` / `project-duplication` / `contribution` / `ai-co-creation`（全て `principle`=散文）。
@@ -122,9 +128,14 @@ Core の `developer` スコープ（`SITEMAP.developer`）= **Developer Guide / 
 - `extensions` スコープ（busapp 等）はポータルの「プロジェクト集」と重複するため**取込まない**。
 - 公開前に各ガイドの**内容精査**が必要（権利者確認）。
 
-### 4-2. 公開範囲の分離（権利者向け運用 vs 一般利用）
+### 4-2. 公開範囲の分離（権利者向け運用 vs 一般利用）✅ 方針採用（2026-06-17）
 **前提（重要）**: GitHub Pages（静的サイト）は**ページ単位のアクセス制御を持たない**。
 「別ページにする」だけでは見えにくいだけで閲覧制限は**強制されない**（security by obscurity）。
+
+**採用した方針（ユーザー決定 2026-06-17）**: 権利者向け（非エンジニアの詳細 GitHub 操作＝
+`user-actions-checklist.md` 相当）は**ポータルに載せず `aidlc-docs/` のリポジトリ内ドキュメントと
+して分離**（現状維持＝既に aidlc-docs/ にある）。Developer ガイド 8 ページは公開ポータルへ画面化
+（4-1）。`extensions` スコープは取込まない。真の閲覧制限が必要になったら 4-3 で別途設計。
 
 想定構成:
 - **公開（全社員・開発者）**: 概要 / プロジェクト集 / 運用 / 使い方（一般利用フロー）/ **Developer ガイド**。
