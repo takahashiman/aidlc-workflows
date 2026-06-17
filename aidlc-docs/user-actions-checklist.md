@@ -177,11 +177,12 @@
 ### U7（サンドボックス・検証済み）
 > U7 はローカルで検証完了（2026-06-10）。`ProductA` を現行 Core（`core` ブランチ・CSS クラス方式 `.fig-*`）へ再配線し、submodule 取り込み → `craco build` 成功 → bundle に Core クラス 64 種を確認（詳細は `aidlc-docs/construction/u7-sandbox/verification-report.md`）。本番（実 GitHub URL ＋ SemVer タグ pin）での再検証と削除は下記でフェーズ F に実施。
 
-- [ ] **E-9. 🛠（本番 submodule 検証）`ProductA` の submodule を実 Core repo・`v1.0.0`（⚠）タグに pin し直してビルド確認**
-  - **何を**: `aidlc-projects/ProductA/.gitmodules` の参照を実 Core repo（例 `your-org/FIG-UDS` ⚠）に、submodule を `v1.0.0`（⚠ A-2 で発行するタグ）に pin。`CI=true npx craco build` が成功することを確認。
+- [x] **E-9. 🛠（本番 submodule 検証）`ProductA` の submodule を実 Core repo・`v1.1.0`（⚠ 原文 v1.0.0）タグに pin し直してビルド確認** ✅ 2026-06-17
+  - **何を**: `aidlc-projects/ProductA/.gitmodules` の参照を実 Core repo（`takahashiman/FIG-Universal-Design-System`）に、submodule を **`v1.1.0`（=`6efb0c2`）** に pin。`npx craco build` が成功することを確認。
   - **なぜ**: ローカル実体ではなく、本番の配布経路（GitHub ＋ SemVer タグ）で配布機構が成立することを最終確認するため（US-X.1 AC1）。
-  - **確認**: ビルドが `Compiled successfully`、生成 CSS に `.fig-*` クラスが含まれる。
-  - ⚠ A-2（Core タグ発行）が前提。フェーズ F で実施。
+  - **⚠ タグ判断**: checklist 原文は `v1.0.0`（=`d9919f9`）だが、`d9919f9` は **共有 CI 未収録**のため現行正典は **`v1.1.0`（=`6efb0c2`・共有 CI 入り）**。よって v1.1.0 で実施（E 進捗の方針と整合）。
+  - **実施結果（PASS）**: submodule を `v1.1.0`（`6efb0c2`）へ checkout。必要 CSS 6 件（primitives/semantic/tokens の signature・base・profile-terminal・components）全て存在。`npx craco build` → **`Compiled successfully`**（main.js 46.31kB / main.css 10.56kB gz）。生成 CSS に **`.fig-*` クラス 51 種**を確認（fig-button/fig-card/fig-fab/fig-input/fig-form-group 等）。`src/App.jsx` は busapp の JSX extensions 依存から **Core の `.fig-*` CSS クラス消費**へ移行済（Core は JSX を持たない＝CSS クラス方式・U7 設計どおり）。
+  - **→ F-5（削除判断）**: E-9 が緑のため F-5 のサンドボックス削除条件は成立。削除実行はユーザー判断（破壊的操作）。
 
 ---
 
@@ -194,9 +195,10 @@
 - [ ] **F-3. 🛠 busapp の移行ゲート（主要フロー100%＋全体80%以上）が緑になるか確認**
   - 手順: `fig-ext-business-busapp` で `node ../fig-ext-template/scripts/migration-status.mjs --gate`
 - [ ] **F-4. 🛠 自動チェック（三層 Lint・VRT）がマージ条件として効いているか確認**
-- [ ] **F-5. 🛠 サンドボックス検証（E-9）が本番経路で OK なら `aidlc-projects/ProductA` を削除する**
+- [x] **F-5. 🛠 サンドボックス検証（E-9）が本番経路で OK なら `aidlc-projects/ProductA` を削除する** ✅ 2026-06-17（ローカル削除済／GitHub repo 削除はユーザー操作待ち）
   - **何を**: E-9 のビルド確認が緑なら、検証用サンドボックス `ProductA` を削除（repo ごと／ローカル作業ツリー）。
   - **なぜ**: ProductA は配布機構の検証専用で、本運用には不要（US-X.1 AC1「検証完了後に削除」）。
+  - **実施結果**: E-9 PASS を受け、ローカル作業ツリー `aidlc-projects/ProductA`（独立 git repo・親 aidlc-workflows では gitignore 済/未追跡）を削除済。**GitHub の `takahashiman/ProductA`（private）は `delete_repo` スコープ未付与のため未削除**＝ユーザー操作待ち。手順: `gh auth refresh -h github.com -s delete_repo`（ブラウザ認証）→ `gh repo delete takahashiman/ProductA --yes`。
 
 - [x] **F-6. 🛠（運用前修正）ポータルの Core ドキュメント忠実度を上げる** ✅ 2026-06-17（方針 (a) 採用・ローカル実装/検証完了。ライブ反映は次回デプロイ）
   - **背景**: 現状ポータルの `build.mjs.importCore()` は Core から**三層トークン CSS（primitives/semantic/deprecated-aliases＋tokens/）のみ**取込み、本文は `portal/src/content.js` の自前コンテンツで描画している。そのため **Core 自前サイト（`FIG-UDS/index.html`：Vision/Brand Colors/Elevation/Navigation & Structure・各コンポーネント spec 等）に比べてポータルの Core 概要が不足**している（2026-06-16 にユーザー指摘）。
