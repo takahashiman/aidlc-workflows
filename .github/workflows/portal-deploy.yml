@@ -1,0 +1,84 @@
+name: Portal Build & Deploy (U2)
+
+# U2 Portal を GitHub Pages へ公開（US-2.6 / IDQ1=A: Actions 直接デプロイ）。
+# rolling 追従の多重トリガ（IDQ2=A）: push / Core からの dispatch / nightly / 手動。
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'portal/**'
+      - '.github/workflows/portal-deploy.yml'
+  repository_dispatch:
+    types: [core-released]      # Core DS のリリース workflow から通知（rolling 追従）
+  schedule:
+    - cron: '0 18 * * *'        # nightly（dispatch 取りこぼし回収）
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest      # IDQ4=A: GitHub-hosted runner
+    defaults:
+      run:
+        working-directory: portal
+    steps:
+      - name: Checkout portal (aidlc-workflows)
+        uses: actions/checkout@v4
+
+      # Core DS を pin せず取込（rolling / BR-ROLL-1）。同一 org なら GITHUB_TOKEN で可。
+      - name: Checkout Core DS (rolling)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.CORE_DS_REPO || 'your-org/FIG-Core-DS' }}
+          ref: ${{ vars.CORE_DS_REF || 'core' }}
+          path: _core
+        continue-on-error: true   # 同一ワークスペース構成ではローカル Core を使う場合あり
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm ci || npm install
+
+      - name: Validate (schema + integrity, fail-fast)
+        run: node scripts/build.mjs --validate-only
+        env:
+          CORE_DS_PATH: ${{ github.workspace }}/_core
+
+      - name: Unit tests (routing / buildNav / schema)
+        run: npm test
+
+      - name: Build (rolling import + bundle)
+        run: node scripts/build.mjs
+        env:
+          CORE_DS_PATH: ${{ github.workspace }}/_core
+          # E-4: バージョン/ショーケース自動収集（collect-versions.mjs）用。
+          GH_OWNER: ${{ vars.GH_OWNER }}
+          CORE_DS_REPO: ${{ vars.CORE_DS_REPO }}
+          # private repo 横断 read のため PAT を使用（未設定時は同一repo限定の github.token にフォールバック）。
+          GITHUB_TOKEN: ${{ secrets.PORTAL_COLLECT_TOKEN || github.token }}
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: portal/site
+
+  deploy:
+    needs: build               # build 失敗時はデプロイしない（fail-fast / AVAIL-4）
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

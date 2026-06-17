@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- CSP (best-effort / SEC-4): 自己ホスト資産のみ許可。iframe デモは別途 sandbox 化。 -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; frame-src 'self' https:; base-uri 'self'; object-src 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>FIG Core Design System</title>
+  <meta name="description" content="FIGデザインシステムの単一エントリポイント。最新の Core を rolling 反映し、概要 / プロジェクト集 / 運用 / 使い方 を提供する。">
+
+  <!-- Core DS（ビルド時に rolling 取込・無改変 / BR-ROLL-3）。未ビルド時は dev-serve が vendor/core を要求 -->
+  <link rel="stylesheet" href="vendor/core/primitives.css">
+  <link rel="stylesheet" href="vendor/core/semantic.css">
+  <link rel="stylesheet" href="vendor/core/tokens/signature.css">
+  <link rel="stylesheet" href="vendor/core/tokens/base.css">
+  <link rel="stylesheet" href="vendor/core/tokens/profile-admin.css">
+  <link rel="stylesheet" href="vendor/core/tokens/profile-consumer.css">
+  <link rel="stylesheet" href="vendor/core/tokens/profile-terminal.css">
+  <link rel="stylesheet" href="vendor/core/tokens/components.css">
+  <!-- ポータル固有レイアウト（移設・BR-ROLL-3 例外） -->
+  <link rel="stylesheet" href="assets/portal.css">
+  <link rel="stylesheet" href="assets/portal-app.css">
+</head>
+<body class="fig-profile-admin">
+  <div id="app" data-testid="portal-app"></div>
+  <script type="module" src="src/portal.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://fig.example/schema/version-matrix.schema.json",
+  "title": "Version Matrix",
+  "description": "版ダッシュボード(PT-5)入力。U2 が契約を定義し、U5(CI-3) が自動収集で充足する。domain-entities: VersionMatrixEntry。",
+  "type": "object",
+  "required": ["entries"],
+  "properties": {
+    "_generatedBy": { "type": "string" },
+    "_note": { "type": "string" },
+    "collectedAt": { "type": ["string", "null"], "format": "date-time" },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["projectId", "projectName", "coreVersionPinned", "coreVersionLatest", "status"],
+        "properties": {
+          "projectId": { "type": "string" },
+          "projectName": { "type": "string" },
+          "coreVersionPinned": { "type": "string", "description": "製品が pin する Core 版" },
+          "coreVersionLatest": { "type": "string", "description": "現行最新 Core 版（rolling 基準）" },
+          "status": { "type": "string", "enum": ["up-to-date", "behind", "unknown"] },
+          "source": { "type": "string", "enum": ["submodule", "CORE-DS-VERSION", "package.json", "unknown"] },
+          "collectedAt": { "type": ["string", "null"], "format": "date-time" }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

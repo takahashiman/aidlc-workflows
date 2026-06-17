@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://fig.example/schema/showcase-index.schema.json",
+  "title": "Showcase Index",
+  "description": "Showcase(PT-6)入力。U2 が契約を定義し、U6(CI-4) が自動クローリングで充足する。domain-entities: ShowcaseItem。",
+  "type": "object",
+  "required": ["items"],
+  "properties": {
+    "_generatedBy": { "type": "string" },
+    "_note": { "type": "string" },
+    "collectedAt": { "type": ["string", "null"], "format": "date-time" },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "ownerProjectId", "kind"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "ownerProjectId": { "type": "string", "description": "どの製品の何か（US-5.2 AC1）" },
+          "kind": { "type": "string", "enum": ["extension", "temp-part"], "description": "temp-part は仮パーツ（BR-DOG-3）" },
+          "previewPath": { "type": "string" },
+          "screenshotUrl": { "type": "string" },
+          "promotable": { "type": "boolean", "description": "昇格提案導線の表示可否（US-5.2）" },
+          "promotedToCore": { "type": "boolean", "description": "Core 昇格済み→撤去推奨（BR-DOG-4）" },
+          "collectedAt": { "type": ["string", "null"], "format": "date-time" }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

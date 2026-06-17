@@ -1,0 +1,24 @@
+{
+  "_comment": "FIG Core DS — プロジェクト分類階層（Core Maintainer がガバナンス）。カテゴリ＞サブカテゴリ＞プロジェクト。ポータルのサイドナビ・スコープ分離の単一正典。",
+  "categories": [
+    {
+      "id": "bus",
+      "label": "バス",
+      "subcategories": [
+        { "id": "bus-location", "label": "バスロケーションシステム" }
+      ]
+    },
+    {
+      "id": "taxi",
+      "label": "タクシー",
+      "subcategories": []
+    },
+    {
+      "id": "logistics",
+      "label": "物流",
+      "subcategories": [
+        { "id": "imesh", "label": "iMESH" }
+      ]
+    }
+  ]
+}

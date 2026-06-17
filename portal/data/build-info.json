@@ -1,0 +1,6 @@
+{
+  "coreVersionLabel": "core@local",
+  "builtAt": null,
+  "rolling": true,
+  "_note": "ビルド時に scripts/build.mjs が実際の取込版で上書きする（表示専用・pin ではない, BR-ROLL-4）"
+}

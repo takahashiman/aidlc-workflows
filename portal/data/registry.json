@@ -1,0 +1,12 @@
+{
+  "_comment": "FIG Core DS — 拡張プロジェクト登録簿（Core Maintainer 管理・単一正典）。新規拡張は AI 自律セットアップ(US-3.2)が追加PRを自動起票する。",
+  "_schema": {
+    "repo": "string  — リポジトリ名（命名規約 fig-ext-<category>-<product>）",
+    "category": "string — taxonomy.categories[].id を参照（存在必須）",
+    "subcategory": "string — taxonomy の subcategories[].id を参照（任意）",
+    "name": "string — 表示名",
+    "demoUrl": "string — ポータルが iframe 集約するデモURL（任意）",
+    "coreVersion": "string — 参照中の Core DS SemVer（表示用。実体は version-matrix が自動収集）"
+  },
+  "projects": []
+}

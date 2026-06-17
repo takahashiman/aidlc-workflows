@@ -12,3 +12,8 @@ codebuild_build.sh
 # aidlc-projects 配下は各々独立リポジトリとして運用（親の追跡対象外）
 /aidlc-projects/FIG-Universal-Design-System/
 /aidlc-projects/ProductA/
+
+# U2 Portal — ビルド生成物（rolling 取込 Core / バンドル出力）
+/portal/vendor/core/
+/portal/site/
+/portal/node_modules/
