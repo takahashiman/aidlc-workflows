@@ -189,6 +189,7 @@
 > A〜E がすべて終わってから、全体がつながっているかを確認します。
 
 - [ ] **F-1. 🛠 ポータルに「Core＋busapp＋ショーケース＋バージョン一覧」が統合表示されるか確認**
+  - **進捗（2026-06-17）**: F-6 で Core 概要を Core 本文駆動に刷新（下記）。ローカルビルドで概要=8セクション/58ページ（principles/foundations/accessibility/components-navigation/components-actions/components-inputs/components-data/patterns）＋版ダッシュボード（busapp）＋Showcase が成立。**ライブ公開での最終目視はデプロイ後に実施**。
 - [ ] **F-2. 🛠 Core を1回更新 → ポータルが自動で最新反映（rolling）されるか確認**
 - [ ] **F-3. 🛠 busapp の移行ゲート（主要フロー100%＋全体80%以上）が緑になるか確認**
   - 手順: `fig-ext-business-busapp` で `node ../fig-ext-template/scripts/migration-status.mjs --gate`
@@ -197,11 +198,17 @@
   - **何を**: E-9 のビルド確認が緑なら、検証用サンドボックス `ProductA` を削除（repo ごと／ローカル作業ツリー）。
   - **なぜ**: ProductA は配布機構の検証専用で、本運用には不要（US-X.1 AC1「検証完了後に削除」）。
 
-- [ ] **F-6. 🛠（運用前修正）ポータルの Core ドキュメント忠実度を上げる**
+- [x] **F-6. 🛠（運用前修正）ポータルの Core ドキュメント忠実度を上げる** ✅ 2026-06-17（方針 (a) 採用・ローカル実装/検証完了。ライブ反映は次回デプロイ）
   - **背景**: 現状ポータルの `build.mjs.importCore()` は Core から**三層トークン CSS（primitives/semantic/deprecated-aliases＋tokens/）のみ**取込み、本文は `portal/src/content.js` の自前コンテンツで描画している。そのため **Core 自前サイト（`FIG-UDS/index.html`：Vision/Brand Colors/Elevation/Navigation & Structure・各コンポーネント spec 等）に比べてポータルの Core 概要が不足**している（2026-06-16 にユーザー指摘）。
   - **何を**: ポータルが Core の完全なドキュメント内容を反映するよう修正。方針候補: (a) Core の `index.html` 本文／コンポーネント spec も取込んで描画、(b) `portal/src/content.js` を Core ドキュメント相当に拡充、(c) ポータルは軽量インデックス＋詳細は Core ドキュメントへリンクアウト。
   - **なぜ**: ポータルは「ここを見れば全て解決する単一エントリポイント」（VISION）であり、Core 内容の欠落は本運用前に解消すべき。
   - **タイミング**: F-1（統合表示確認）と合わせて実施。方針 (a)/(b)/(c) は実施時に選定。
+  - **実施結果（方針 (a)＝Core 本文を取込描画 / rolling 忠実・単一正典）**:
+    - `build.mjs` に `extractCoreContent()` を追加。Core 自前サイトの正典 `assets/js/portal-content.js`（`window.PortalContent = { SITEMAP, PAGES }`）を `node:vm` で実行して抽出し、`portal/data/core-content.json` を毎ビルド再生成（pin せず＝BR-ROLL-3）。内部リンク `#/core/…` は概要ルート `#/overview/…` へ書換。fail-soft（抽出不能なら静的 OVERVIEW へフォールバック）。
+    - `importCore()` の vendor 取込に `preview/` を追加（Foundations/Components の live スウォッチ iframe 用。参照 CSS は既存 vendor の primitives/semantic/tokens で解決）。
+    - `content.js` に `coreOverviewSections()` / `corePage()`、`views.js` に `renderCorePage()`（principle=散文・foundation=説明＋preview iframe・component/pattern=推奨度バッジ＋preview＋プロファイル別コード＋a11y＋spec）を追加。`nav.js buildNav(taxonomy, registry, coreContent)`・`portal.js` が `data/core-content.json` をロードして概要を Core 駆動に。
+    - **検証**: ローカルビルド成功（SITEMAP + 73 pages 抽出）。概要が **8 セクション/58 ページ**へ拡充（旧=5 セクション/約15 項目の自前要約）。`npm test` 26 件 PASS（新規 `tests/core-content.test.js` 11 件含む）。全 58 ページ×3 プロファイルをレンダリングして例外0・preview iframe 144 件成立。
+    - **未**: ライブ公開（Pages デプロイ）での目視は次回 portal-deploy 実行時（F-1 と同時）。`aidlc-workflows` 作業ツリーに本変更（portal/・本 checklist）は未 commit。
 
 ---
 

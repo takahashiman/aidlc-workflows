@@ -1,6 +1,16 @@
 {
   "_generatedBy": "collect-versions (U5/CI-3)",
-  "collectedAt": "2026-06-10T02:30:24.463Z",
+  "collectedAt": "2026-06-17T02:06:59.330Z",
   "coreVersionLatest": "unknown",
-  "entries": []
+  "entries": [
+    {
+      "projectId": "fig-ext-bus-busapp",
+      "projectName": "Bus Operations App",
+      "coreVersionPinned": "v1.0.0",
+      "coreVersionLatest": "unknown",
+      "status": "unknown",
+      "source": "unknown",
+      "collectedAt": "2026-06-17T02:06:59.330Z"
+    }
+  ]
 }

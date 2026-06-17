@@ -76,6 +76,18 @@
 /* デモ iframe */
 .fig-demo-frame { width: 100%; height: 70vh; border: 1px solid var(--color-border, #e3e3e3); border-radius: 8px; background: #fff; }
 
+/* Core 本文（F-6）: コードブロック・推奨度バッジ */
+.fig-code {
+  background: var(--color-surface-subtle, #f7f8f9); border: 1px solid var(--color-border, #e3e3e3);
+  border-radius: 8px; padding: 12px 14px; overflow-x: auto; font-size: 13px; line-height: 1.6;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.fig-avail-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+.fig-avail { font-weight: 600; }
+.fig-avail--recommended { background: #d4edda; color: #1b5e20; }
+.fig-avail--caution { background: #fff3cd; color: #8a6d00; }
+.fig-avail--avoid { background: #f8d7da; color: #842029; }
+
 /* バッジ / 状態 */
 .fig-badge { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 999px; vertical-align: middle; }
 .fig-badge--temp { background: #fff3cd; color: #8a6d00; }

@@ -8,5 +8,13 @@
     "demoUrl": "string — ポータルが iframe 集約するデモURL（任意）",
     "coreVersion": "string — 参照中の Core DS SemVer（表示用。実体は version-matrix が自動収集）"
   },
-  "projects": []
+  "projects": [
+    {
+      "repo": "fig-ext-bus-busapp",
+      "category": "bus",
+      "subcategory": "bus-notification",
+      "name": "Bus Operations App",
+      "coreVersion": "v1.0.0"
+    }
+  ]
 }

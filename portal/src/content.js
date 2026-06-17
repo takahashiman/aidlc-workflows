@@ -68,6 +68,31 @@ export const OVERVIEW = [
   },
 ];
 
+/**
+ * Core 本文（data/core-content.json）から概要セクション木を生成（F-6）。
+ * build.mjs.extractCoreContent() が Core 自前サイトの SITEMAP+PAGES を JSON 化し、
+ * その `core` スコープを概要 IA に写像する（rolling 忠実・静的 OVERVIEW を置換）。
+ * @param {object|null} coreContent { SITEMAP, PAGES }
+ * @returns {Array|null} [{id,label,items:[{id,label}]}] / 取得不能なら null（静的フォールバック）
+ */
+export function coreOverviewSections(coreContent) {
+  const core = coreContent && coreContent.SITEMAP && coreContent.SITEMAP.core;
+  if (!core || !Array.isArray(core.sections)) return null;
+  const sections = core.sections.map(sec => ({
+    id: sec.id,
+    label: sec.label || sec.id,
+    items: (sec.items || []).map(it => ({ id: it.id, label: it.label || it.id })),
+  })).filter(sec => sec.items.length);
+  return sections.length ? sections : null;
+}
+
+/** Core PAGES から該当ページ定義を取得（route #/overview/<section>/<item> → key core/<section>/<item>） */
+export function corePage(coreContent, sectionId, itemId) {
+  const pages = coreContent && coreContent.PAGES;
+  if (!pages) return null;
+  return pages[`core/${sectionId}/${itemId}`] || null;
+}
+
 /** 運用（ops）ビューの定義。route = #/ops/<view> */
 export const OPS = [
   { id: 'versions', label: '版ダッシュボード', kind: 'version-dashboard' },

@@ -15,14 +15,15 @@ async function loadJson(path, fallback) {
 }
 
 async function loadData() {
-  const [taxonomy, registry, versionMatrix, showcase, buildInfo] = await Promise.all([
+  const [taxonomy, registry, versionMatrix, showcase, buildInfo, coreContent] = await Promise.all([
     loadJson('data/taxonomy.json', { categories: [] }),
     loadJson('data/registry.json', { projects: [] }),
     loadJson('data/version-matrix.json', { entries: [] }),
     loadJson('data/showcase-index.json', { items: [] }),
     loadJson('data/build-info.json', { coreVersionLabel: 'core@local' }),
+    loadJson('data/core-content.json', null), // F-6: 無ければ静的 OVERVIEW へフォールバック
   ]);
-  return { taxonomy, registry, versionMatrix, showcase, buildInfo };
+  return { taxonomy, registry, versionMatrix, showcase, buildInfo, coreContent };
 }
 
 /** サイドナビ描画（PT-2）。葉=直接リンク（即時到達 / BR-NAV-1） */
@@ -86,7 +87,7 @@ async function main() {
       <main class="portal-main" id="main" tabindex="-1" role="main"></main>
     </div>`;
 
-  const navTree = buildNav(data.taxonomy, data.registry);
+  const navTree = buildNav(data.taxonomy, data.registry, data.coreContent);
   const sidenav = $('#sidenav');
   const mainEl = $('#main');
 

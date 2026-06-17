@@ -3,18 +3,72 @@
  * 各 render は HTML 文字列を返す純粋関数（ctx = { data, ui }）。
  * data = { taxonomy, registry, versionMatrix, showcase, buildInfo }
  */
-import { OVERVIEW, OPS } from './content.js';
+import { OVERVIEW, OPS, coreOverviewSections, corePage } from './content.js';
 import { VIEWS } from './router.js';
 import { renderGuide, usageIndex } from './usage.js';
 
 const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 /* ───────────── 概要（PT-3 IA Section View） ───────────── */
-export function renderOverview(route) {
+export function renderOverview(route, ctx) {
   const [sectionId, itemId] = route.path;
+  const coreContent = ctx && ctx.data && ctx.data.coreContent;
+  const sections = coreOverviewSections(coreContent);
+  // F-6: Core 本文が取込まれていれば Core 自前サイト相当のページを描画。
+  if (sections) {
+    const section = sections.find(s => s.id === sectionId) || sections[0];
+    const item = section.items.find(i => i.id === itemId) || section.items[0];
+    const page = corePage(coreContent, section.id, item.id);
+    if (page) return `<div class="fig-doc">${renderCorePage(page, ctx && ctx.ui)}</div>`;
+  }
+  // フォールバック: 静的 OVERVIEW（content.js）
   const section = OVERVIEW.find(s => s.id === sectionId) || OVERVIEW[0];
   const item = section.items.find(i => i.id === itemId) || section.items[0];
   return `<div class="fig-doc">${item.body}</div>`;
+}
+
+/**
+ * Core PAGES の1ページを描画（F-6）。テンプレ種別ごとに本文/プレビュー/コード/a11y を構成。
+ * body / a11y / code は Core リポジトリ由来の信頼コンテンツ（HTML 断片）。title/description はエスケープ。
+ */
+export function renderCorePage(page, ui) {
+  const parts = [`<h1>${esc(page.title || '')}</h1>`];
+  if (page.description) parts.push(`<p class="fig-doc-lead">${esc(page.description)}</p>`);
+  if (page.availability) parts.push(coreAvailability(page.availability));
+  if (page.body) parts.push(page.body); // 信頼 HTML（散文・スウォッチ・表）
+  if (page.preview) parts.push(corePreviewFrame(page.preview, page.title || ''));
+  const code = coreVariant(page.code, ui);
+  if (code) parts.push(`<h2>コード</h2><pre class="fig-code"><code>${esc(code)}</code></pre>`);
+  const a11y = coreVariant(page.a11y, ui);
+  if (a11y) parts.push(`<h2>アクセシビリティ</h2><p class="fig-doc-lead">${a11y}</p>`); // 信頼 HTML（<code> を含む）
+  if (page.spec) parts.push(`<p class="fig-doc-muted">仕様: <code>${esc(page.spec)}</code></p>`);
+  return parts.join('\n');
+}
+
+/** Core スウォッチ/プレビュー HTML を sandbox iframe で埋め込む（vendor/core/preview/* を参照） */
+function corePreviewFrame(preview, title) {
+  const src = 'vendor/core/' + String(preview).replace(/^\/+/, '');
+  return `<iframe class="fig-demo-frame" src="${esc(src)}" title="${esc(title)} プレビュー"
+    sandbox="allow-scripts allow-same-origin" referrerpolicy="no-referrer"
+    loading="lazy" data-testid="core-preview"></iframe>`;
+}
+
+/** code / a11y は文字列 or {default,admin,consumer,terminal}。現在プロファイル優先で1つ選ぶ。 */
+function coreVariant(v, ui) {
+  if (v == null) return null;
+  if (typeof v === 'string') return v;
+  const profile = (ui && ui.profile) || 'admin';
+  return v[profile] || v.default || v.admin || v.consumer || v.terminal || Object.values(v)[0] || null;
+}
+
+/** プロファイル別の推奨度（recommended/caution/avoid）をバッジ表示 */
+function coreAvailability(av) {
+  const labels = { admin: 'Admin', consumer: 'Consumer', terminal: 'Terminal' };
+  const cells = ['admin', 'consumer', 'terminal']
+    .filter(k => av[k])
+    .map(k => `<span class="fig-badge fig-avail fig-avail--${esc(av[k])}" data-testid="avail-${k}">${labels[k]}: ${esc(av[k])}</span>`)
+    .join(' ');
+  return cells ? `<p class="fig-avail-row">${cells}</p>` : '';
 }
 
 /* ───────────── プロジェクト集（PT-4 Project View / US-2.2） ───────────── */

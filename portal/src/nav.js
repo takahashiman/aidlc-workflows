@@ -4,17 +4,18 @@
  *
  * buildNav は副作用のない純粋関数（テスト対象 / MAINT-2）。
  */
-import { SECTIONS, OVERVIEW, OPS } from './content.js';
+import { SECTIONS, OVERVIEW, OPS, coreOverviewSections } from './content.js';
 
 /**
  * @param {object} taxonomy  data/taxonomy.json
  * @param {object} registry  data/registry.json
+ * @param {object} [coreContent]  data/core-content.json（F-6・あれば概要を Core 本文駆動）
  * @returns {Array} NavNode[]  { id,label,route,children,source,status,badge }
  */
-export function buildNav(taxonomy, registry) {
+export function buildNav(taxonomy, registry, coreContent) {
   const registryByRef = indexRegistry(registry);
   return SECTIONS.map(sec => {
-    if (sec.id === 'overview') return node(sec, overviewChildren());
+    if (sec.id === 'overview') return node(sec, overviewChildren(coreContent));
     if (sec.id === 'ops') return node(sec, opsChildren());
     if (sec.id === 'usage') return node(sec, []); // 使い方は usage view 側でインデックス
     if (sec.id === 'projects') return node(sec, projectsChildren(taxonomy, registryByRef));
@@ -26,11 +27,14 @@ function node(sec, children) {
   return { id: sec.id, label: sec.label, icon: sec.icon, route: sec.route, source: 'static', children };
 }
 
-function overviewChildren() {
-  return OVERVIEW.map(section => ({
-    id: section.id, label: section.label, source: 'static',
+function overviewChildren(coreContent) {
+  // F-6: Core 本文があればそれを正典に。無ければ静的 OVERVIEW へフォールバック。
+  const sections = coreOverviewSections(coreContent) || OVERVIEW;
+  const source = coreOverviewSections(coreContent) ? 'core' : 'static';
+  return sections.map(section => ({
+    id: section.id, label: section.label, source,
     children: section.items.map(it => ({
-      id: it.id, label: it.label, route: `#/overview/${section.id}/${it.id}`, source: 'static', children: [],
+      id: it.id, label: it.label, route: `#/overview/${section.id}/${it.id}`, source, children: [],
     })),
   }));
 }
