@@ -3,28 +3,45 @@
  * 各 render は HTML 文字列を返す純粋関数（ctx = { data, ui }）。
  * data = { taxonomy, registry, versionMatrix, showcase, buildInfo }
  */
-import { OVERVIEW, OPS, coreOverviewSections, corePage } from './content.js';
+import { OVERVIEW, OPS, coreScopeSections, corePage } from './content.js';
 import { VIEWS } from './router.js';
 import { renderGuide, usageIndex } from './usage.js';
 
 const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-/* ───────────── 概要（PT-3 IA Section View / Core 自前サイト準拠） ───────────── */
+/* ───────────── 概要 / Developer（PT-3 IA Section View / Core 自前サイト準拠） ───────────── */
 export function renderOverview(route, ctx) {
+  return renderScopeView('core', '概要', route, ctx);
+}
+
+/** Developer ガイド（Core developer スコープ・§4-1）。renderCorePage は scope 非依存なので流用。 */
+export function renderDeveloper(route, ctx) {
+  return renderScopeView('developer', 'Developer', route, ctx);
+}
+
+/**
+ * Core 本文の指定スコープの1ページを Core の DOM 規約で描画。
+ * @param {string} scope     SITEMAP スコープ（core / developer）
+ * @param {string} crumbRoot パンくず先頭ラベル
+ */
+function renderScopeView(scope, crumbRoot, route, ctx) {
   const [sectionId, itemId] = route.path;
   const coreContent = ctx && ctx.data && ctx.data.coreContent;
-  const sections = coreOverviewSections(coreContent);
+  const sections = coreScopeSections(coreContent, scope);
   // F-6: Core 本文が取込まれていれば Core 自前サイト相当のページを Core の DOM 規約で描画。
   if (sections) {
     const section = sections.find(s => s.id === sectionId) || sections[0];
     const item = section.items.find(i => i.id === itemId) || section.items[0];
-    const page = corePage(coreContent, section.id, item.id);
-    if (page) return breadcrumbs(['概要', section.label, item.label]) + renderCorePage(page, ctx && ctx.ui);
+    const page = corePage(coreContent, section.id, item.id, scope);
+    if (page) return breadcrumbs([crumbRoot, section.label, item.label]) + renderCorePage(page, ctx && ctx.ui);
   }
-  // フォールバック: 静的 OVERVIEW（content.js）
-  const section = OVERVIEW.find(s => s.id === sectionId) || OVERVIEW[0];
-  const item = section.items.find(i => i.id === itemId) || section.items[0];
-  return `<div class="page-prose jp-prose">${item.body}</div>`;
+  // フォールバック: core は静的 OVERVIEW（content.js）。developer は Core 本文必須のため not-found。
+  if (scope === 'core') {
+    const section = OVERVIEW.find(s => s.id === sectionId) || OVERVIEW[0];
+    const item = section.items.find(i => i.id === itemId) || section.items[0];
+    return `<div class="page-prose jp-prose">${item.body}</div>`;
+  }
+  return notFound(`Developer ガイド「${sectionId || ''}/${itemId || ''}」`);
 }
 
 /**

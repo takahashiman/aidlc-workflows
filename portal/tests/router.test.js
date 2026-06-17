@@ -50,7 +50,13 @@ test('ops / usage を分解', () => {
   assert.equal(parseRoute('#/usage/promotion').path[0], 'promotion');
 });
 
+test('developer ガイドを分解（§4-1）', () => {
+  const r = parseRoute('#/developer/guide/getting-started');
+  assert.equal(r.kind, 'developer');
+  assert.deepEqual(r.path, ['guide', 'getting-started']);
+});
+
 test('定数', () => {
-  assert.deepEqual(KINDS, ['overview', 'projects', 'ops', 'usage']);
+  assert.deepEqual(KINDS, ['overview', 'projects', 'ops', 'usage', 'developer']);
   assert.deepEqual(VIEWS, ['component', 'page', 'demo']);
 });

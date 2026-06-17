@@ -2,13 +2,14 @@
  * Hash Router（PT-1 / business-logic §1.2-1.3）
  * route 文法:
  *   #/overview/<section>/<item>
+ *   #/developer/<section>/<item>            Developer ガイド（Core developer スコープ・§4-1）
  *   #/projects[/<category>[/<subcategory>[/<product>[/<view>]]]]   view=component|page|demo
  *   #/ops/<versions|showcase|promotion|governance>
  *   #/usage/<topic>
  *
  * parseRoute は副作用のない純粋関数（テスト対象 / MAINT-2）。
  */
-export const KINDS = ['overview', 'projects', 'ops', 'usage'];
+export const KINDS = ['overview', 'projects', 'ops', 'usage', 'developer'];
 export const VIEWS = ['component', 'page', 'demo'];
 export const DEFAULT_ROUTE = '#/overview/principles/vision';
 
