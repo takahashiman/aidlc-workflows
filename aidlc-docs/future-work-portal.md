@@ -99,6 +99,47 @@ prune され「プレビュー未収録」表示。**Core リポジトリ `FIG-U
 
 ---
 
+## 4. Developer ガイドの画面化 と 公開範囲の分離
+
+> ライブ目視（2026-06-17）で、Core 自前サイト(index.html)にある **Developer 向け導入・運用
+> ガイドがポータルに出ていない**と判明。データは取り込み済み（`core-content.json` の
+> `developer/*` PAGES）だが、ポータルが `core` スコープしか画面化していないため。B9 を具体化。
+
+### 4-1. Developer ガイドの画面化（`core`→概要 のミラー）
+Core の `developer` スコープ（`SITEMAP.developer`）= **Developer Guide / guide** に 8 ページ:
+`getting-started` / `asset-reference` / `integration` / `version-management` /
+`migration` / `project-duplication` / `contribution` / `ai-co-creation`（全て `principle`=散文）。
+`renderCorePage()` は scope 非依存なので描画はそのまま流用でき、IA/ルーティングの結線だけ:
+
+| ファイル | 変更 |
+|---|---|
+| `portal/src/content.js` | `coreOverviewSections(cc)` を `coreScopeSections(cc, scope='core')` へ一般化。`SECTIONS` に `{ id:'developer', label:'Developer', route:'#/developer/guide/getting-started' }` 追加 |
+| `portal/src/router.js` | `KINDS` に `'developer'` 追加 |
+| `portal/src/nav.js` | `buildNav` の `developer` 子を `coreScopeSections(cc,'developer')` から生成（`overviewChildren` 一般化） |
+| `portal/src/views.js` | `corePage(cc, scope, section, item)` に scope 引数追加（現状 `core/` 固定）。`renderOverview` を scope 対応 or `renderDeveloper` 追加 |
+| `portal/src/portal.js` | `renderView` に `case 'developer'`、`titleFor` に項目追加（検索 index は navTree 走査で自動対象化） |
+
+- `extensions` スコープ（busapp 等）はポータルの「プロジェクト集」と重複するため**取込まない**。
+- 公開前に各ガイドの**内容精査**が必要（権利者確認）。
+
+### 4-2. 公開範囲の分離（権利者向け運用 vs 一般利用）
+**前提（重要）**: GitHub Pages（静的サイト）は**ページ単位のアクセス制御を持たない**。
+「別ページにする」だけでは見えにくいだけで閲覧制限は**強制されない**（security by obscurity）。
+
+想定構成:
+- **公開（全社員・開発者）**: 概要 / プロジェクト集 / 運用 / 使い方（一般利用フロー）/ **Developer ガイド**。
+- **権利者向け（非エンジニアの詳細 GitHub 操作＝`user-actions-checklist.md` 相当）**: ポータルには載せず
+  **`aidlc-docs/` のリポジトリ内ドキュメントとして分離**（private repo なら collaborator のみ閲覧）。
+  ポータルに置く場合も nav 非表示の別ルート止まりで、**制限は効かない**点に留意。
+- **真の閲覧制限が必要になったら（要対応・未検討）**: 認証付きホスティング（社内 SSO 背後 /
+  GitHub Enterprise の private Pages / 別の gated デプロイ）。下記シークレット管理と一体で検討。
+
+### 4-3. 認証・シークレット/パスワード管理（将来・未検討）
+- 公開ポータルと権利者向け運用ページの**閲覧範囲を技術的に強制**する手段（認証/認可）。
+- パスワード・トークン等の**シークレット管理方針**（誰がどこで保管・ローテーション・最小権限）。
+  現状は GitHub の Secret/Variable（PORTAL_COLLECT_TOKEN 等）を都度設定しているのみ。
+- これらは本サイクルでは検討しない（FR スコープ外）。次回サイクルで設計する。
+
 ## 関連
 - 進捗の正典: `aidlc-docs/aidlc-state.md`
 - 手動操作の進捗: `aidlc-docs/user-actions-checklist.md`（F-6 にシェル収斂/フォントの記録）
