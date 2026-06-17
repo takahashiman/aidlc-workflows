@@ -29,12 +29,14 @@ function node(sec, children) {
 
 function overviewChildren(coreContent) {
   // F-6: Core 本文があればそれを正典に。無ければ静的 OVERVIEW へフォールバック。
-  const sections = coreOverviewSections(coreContent) || OVERVIEW;
-  const source = coreOverviewSections(coreContent) ? 'core' : 'static';
+  const coreSections = coreOverviewSections(coreContent);
+  const sections = coreSections || OVERVIEW;
+  const source = coreSections ? 'core' : 'static';
   return sections.map(section => ({
-    id: section.id, label: section.label, source,
+    id: section.id, label: section.label, hint: section.hint || '', source,
     children: section.items.map(it => ({
-      id: it.id, label: it.label, route: `#/overview/${section.id}/${it.id}`, source, children: [],
+      id: it.id, label: it.label, route: `#/overview/${section.id}/${it.id}`,
+      source, avail: it.avail || null, children: [],
     })),
   }));
 }

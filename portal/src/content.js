@@ -78,10 +78,17 @@ export const OVERVIEW = [
 export function coreOverviewSections(coreContent) {
   const core = coreContent && coreContent.SITEMAP && coreContent.SITEMAP.core;
   if (!core || !Array.isArray(core.sections)) return null;
+  const pages = coreContent.PAGES || {};
   const sections = core.sections.map(sec => ({
     id: sec.id,
     label: sec.label || sec.id,
-    items: (sec.items || []).map(it => ({ id: it.id, label: it.label || it.id })),
+    hint: sec.hint || '',
+    items: (sec.items || []).map(it => ({
+      id: it.id,
+      label: it.label || it.id,
+      // 推奨度（component/pattern のみ持つ）。サイドバーの data-avail バッジ/減衰に使う。
+      avail: (pages[`core/${sec.id}/${it.id}`] || {}).availability || null,
+    })),
   })).filter(sec => sec.items.length);
   return sections.length ? sections : null;
 }

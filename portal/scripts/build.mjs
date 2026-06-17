@@ -62,6 +62,10 @@ async function importCore(corePath) {
     const src = join(corePath, d);
     if (existsSync(src)) { await cp(src, join(dst, d), { recursive: true }); imported.push(d + '/'); }
   }
+  // シェル CSS（Core 自前サイトの portal.css）も rolling 取込（BR-ROLL-3）。
+  // index.html は vendor/core/portal.css を参照し、ポータルは固有の上書きだけを portal-app.css に持つ。
+  const shellCss = join(corePath, 'assets', 'portal.css');
+  if (existsSync(shellCss)) { await cp(shellCss, join(dst, 'portal.css')); imported.push('portal.css'); }
   // 取込版ラベル（表示専用・pin ではない, BR-ROLL-4）
   let versionLabel = 'core@local';
   const verFile = ['VERSION', 'CORE-DS-VERSION'].map(v => join(corePath, v)).find(existsSync);
@@ -109,6 +113,13 @@ async function extractCoreContent(corePath) {
       log('⚠ Core PortalContent を抽出できず（SITEMAP/PAGES 不在）→ 静的フォールバック');
       return;
     }
+    // 存在しない preview 参照を除去（Core 側のデータ不整合で実体の無い preview/*.html を
+    // 指すページがある。404 iframe を避け「プレビュー未収録」表示にフォールバックさせる）。
+    let pruned = 0;
+    for (const page of Object.values(pc.PAGES)) {
+      if (page && page.preview && !existsSync(join(corePath, page.preview))) { delete page.preview; pruned++; }
+    }
+    if (pruned) log(`preview 整合: 実体の無い preview 参照 ${pruned} 件を除去（未収録表示へ）`);
     const payload = { _generatedBy: 'extractCoreContent (F-6)', collectedAt: new Date().toISOString(), SITEMAP: pc.SITEMAP, PAGES: pc.PAGES };
     // Core 内部リンクをポータル概要ルートへ写像（developer/extensions スコープは概要に無いため対象外）
     const json = JSON.stringify(payload, null, 2).split('#/core/').join('#/overview/');

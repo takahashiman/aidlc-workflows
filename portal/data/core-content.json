@@ -1,6 +1,6 @@
 {
   "_generatedBy": "extractCoreContent (F-6)",
-  "collectedAt": "2026-06-17T02:06:59.322Z",
+  "collectedAt": "2026-06-17T04:54:46.257Z",
   "SITEMAP": {
     "core": {
       "label": "Core",
@@ -546,7 +546,6 @@
       "template": "component",
       "title": "Header / Footer",
       "description": "ページ最上部のグローバル領域と、最下部の補助領域。ブランド・主要ナビ・補助情報の所在を固定。",
-      "preview": "preview/components-header.html",
       "spec": "components/header.spec.md",
       "a11y": "<code>&lt;header&gt;</code> / <code>&lt;footer&gt;</code> ランドマーク。スキップリンクで本文へ即移動可能に。",
       "code": {
@@ -559,7 +558,6 @@
       "template": "component",
       "title": "Navigation Rail",
       "description": "デスクトップ・タブレット向けの縦型ナビ。M3 準拠の中密度ナビゲーション。",
-      "preview": "preview/components-navigation-rail.html",
       "spec": "components/navigation-rail.spec.md",
       "a11y": "<code>&lt;nav aria-label&gt;</code> + <code>aria-current=\"page\"</code>。アイコン単独でも label を必須化。",
       "availability": {
@@ -575,7 +573,6 @@
       "template": "component",
       "title": "Navigation Bar",
       "description": "画面下端固定のグローバルナビ（旧 Bottom Navigation）。3–5 タブが原則。",
-      "preview": "preview/components-navigation-bar.html",
       "spec": "components/bottom-navigation.spec.md",
       "a11y": {
         "default": "<code>&lt;nav aria-label&gt;</code> + 各アイテムに <code>aria-current</code>。48×48 タッチターゲット確保。",
@@ -596,7 +593,6 @@
       "template": "component",
       "title": "Side Sheet",
       "description": "横からスライドインする補助領域。永続/モーダルの2形態。",
-      "preview": "preview/components-side-sheet.html",
       "spec": "components/side-sheet.spec.md",
       "a11y": "modal 形態は <code>role=\"dialog\"</code> + フォーカストラップ + Esc。スクリム必須。",
       "availability": {
@@ -613,7 +609,6 @@
       "template": "component",
       "title": "Bottom Sheet",
       "description": "画面下端から立ち上がる一時領域。標準/モーダル/拡張可能の3形態。",
-      "preview": "preview/components-bottom-sheet.html",
       "spec": "components/bottom-sheet.spec.md",
       "a11y": "ドラッグハンドルに <code>role=\"button\"</code>。modal 時はフォーカストラップ + Esc。",
       "availability": {
@@ -629,7 +624,6 @@
       "template": "component",
       "title": "Breadcrumb",
       "description": "階層構造内の現在地と上位への経路。3階層以上から検討。",
-      "preview": "preview/components-breadcrumb.html",
       "spec": "components/breadcrumb.spec.md",
       "a11y": "<code>&lt;nav aria-label=\"現在地\"&gt;</code> + 最終要素に <code>aria-current=\"page\"</code>。",
       "availability": {
@@ -645,7 +639,6 @@
       "template": "component",
       "title": "Pagination",
       "description": "リスト・テーブルの分割ナビゲーション。前後ジャンプと番号指定を併設。",
-      "preview": "preview/components-pagination.html",
       "spec": "components/pagination.spec.md",
       "a11y": "<code>&lt;nav aria-label=\"ページ送り\"&gt;</code>。現在ページに <code>aria-current=\"page\"</code>。",
       "availability": {
@@ -690,7 +683,6 @@
       "template": "component",
       "title": "FAB",
       "description": "画面内で最も突出した単一アクション（Floating Action Button）。1画面に1つが原則。",
-      "preview": "preview/components-fab.html",
       "spec": "components/fab.spec.md",
       "a11y": {
         "default": "<code>aria-label</code> 必須。48×48 px 以上。下端固定時は安全領域とインセットを考慮。",
@@ -711,7 +703,6 @@
       "template": "component",
       "title": "Segmented Button",
       "description": "2–5 個の選択肢から1つ（or 複数）を切替。Tabs より粒度の細かい操作切替。",
-      "preview": "preview/components-segmented-button.html",
       "spec": "components/segmented-button.spec.md",
       "a11y": {
         "default": "<code>role=\"radiogroup\"</code> + 子に <code>role=\"radio\"</code>。複数選択時は <code>role=\"group\"</code> + checkbox。",
@@ -727,7 +718,6 @@
       "template": "component",
       "title": "Icon Button",
       "description": "アイコンのみの圧縮されたボタン。ツールバー・密度の高い領域向け。",
-      "preview": "preview/components-icon-button.html",
       "spec": "components/icon-button.spec.md",
       "a11y": {
         "default": "<code>aria-label</code> 必須（lucide 単独では意味伝達不可）。48×48 px 最小ヒット領域。",
@@ -760,7 +750,6 @@
       "template": "component",
       "title": "Toggle Switch",
       "description": "即時反映の二値スイッチ。設定の ON/OFF など、適用に確認を要さない操作向け。",
-      "preview": "preview/components-toggle-switch.html",
       "spec": "components/toggle-switch.spec.md",
       "a11y": {
         "default": "<code>role=\"switch\"</code> + <code>aria-checked</code>。色だけに依存せず、状態をラベルでも示す。",
@@ -776,7 +765,6 @@
       "template": "component",
       "title": "Checkbox",
       "description": "複数選択可能な独立した選択肢。確定操作（Save / Apply）と組で用いる。",
-      "preview": "preview/components-checkbox.html",
       "spec": "components/checkbox.spec.md",
       "a11y": {
         "default": "ネイティブ <code>&lt;input type=\"checkbox\"&gt;</code> 推奨。<code>aria-checked=\"mixed\"</code> で不確定状態。",
@@ -792,7 +780,6 @@
       "template": "component",
       "title": "Radio Button",
       "description": "排他的な選択肢。2–5 個程度。それ以上は Select / Picker を検討。",
-      "preview": "preview/components-radio-button.html",
       "spec": "components/radio-button.spec.md",
       "a11y": {
         "default": "ネイティブ <code>&lt;input type=\"radio\"&gt;</code> + 共通 name。<code>&lt;fieldset&gt;</code> でグループ化。",
@@ -808,7 +795,6 @@
       "template": "component",
       "title": "Date / Time Picker",
       "description": "日付・時刻の選択 UI。直接入力とポップオーバーの併用が原則。",
-      "preview": "preview/components-picker.html",
       "spec": "components/picker.spec.md",
       "a11y": {
         "default": "キーボードのみで全選択操作可能に。<code>aria-haspopup=\"dialog\"</code>。和暦/西暦の切替に配慮。",
@@ -824,7 +810,6 @@
       "template": "component",
       "title": "Form Group",
       "description": "関連する入力をまとめる構造体。ラベル・補助文・エラー文の規約。",
-      "preview": "preview/components-form-group.html",
       "spec": "components/form-group.spec.md",
       "a11y": "<code>&lt;fieldset&gt;</code> + <code>&lt;legend&gt;</code>。エラーは <code>aria-describedby</code> で関連付け。",
       "code": {
@@ -835,7 +820,6 @@
       "template": "component",
       "title": "Table",
       "description": "構造化データの一覧表示。ソート・絞り込み・ページネーションを併設。",
-      "preview": "preview/components-table.html",
       "spec": "components/table.spec.md",
       "a11y": {
         "default": "<code>&lt;th scope&gt;</code> 必須。並べ替え状態は <code>aria-sort</code>。レスポンシブで横スクロール許容。",
@@ -878,7 +862,6 @@
       "template": "component",
       "title": "Accordion",
       "description": "見出しと折り畳まれた本文の集合。FAQ・補助情報の段階的開示。",
-      "preview": "preview/components-accordion.html",
       "spec": "components/accordion.spec.md",
       "a11y": "<code>&lt;button aria-expanded&gt;</code> + <code>aria-controls</code>。展開部に <code>region</code> ロール。",
       "code": {
@@ -889,7 +872,6 @@
       "template": "component",
       "title": "Alert / Banner",
       "description": "画面内に永続的に表示する重要メッセージ。Toast と異なり自動消失しない。",
-      "preview": "preview/components-alert.html",
       "spec": "components/alert.spec.md",
       "a11y": "重要度に応じて <code>role=\"alert\"</code> または <code>role=\"status\"</code>。閉じるは Esc 対応。",
       "code": {
@@ -900,7 +882,6 @@
       "template": "component",
       "title": "Toast / Snackbar",
       "description": "操作中断なしの一時的通知。重大エラーは Modal を使う。",
-      "preview": "preview/components-toast.html",
       "spec": "components/toast.spec.md",
       "a11y": "<code>role=\"status\"</code> / <code>\"alert\"</code>、<code>aria-live</code> の使い分け。",
       "code": {
@@ -911,7 +892,6 @@
       "template": "component",
       "title": "Modal / Dialog",
       "description": "注意を画面全体から奪う、取消困難な操作の確認。",
-      "preview": "preview/components-modal.html",
       "spec": "components/modal.spec.md",
       "a11y": {
         "default": "<code>role=\"dialog\"</code> + フォーカストラップ + Escape ハンドラ。",
@@ -929,7 +909,6 @@
       "template": "component",
       "title": "Badge",
       "description": "数値・状態を伴う小さな付箋。他要素にアンカーして注意を喚起。",
-      "preview": "preview/components-badge.html",
       "spec": "components/badge.spec.md",
       "a11y": "数値のみのバッジは <code>aria-label=\"未読 3 件\"</code> 等で意味を補う。色だけに依存しない。",
       "code": {
@@ -951,7 +930,6 @@
       "template": "component",
       "title": "Icon Bubble",
       "description": "装飾的アイコンコンテナ。インタラクティブにしない。",
-      "preview": "preview/components-icon-bubble.html",
       "spec": "components/icon-bubble.spec.md",
       "a11y": "既定で <code>aria-hidden=\"true\"</code>。意味は親要素で集約表現。",
       "code": {
