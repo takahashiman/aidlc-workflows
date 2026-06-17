@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- CSP (best-effort / SEC-4): 自己ホスト資産のみ許可。iframe デモは別途 sandbox 化。 -->
+  <!-- CSP (best-effort / SEC-4): 自己ホスト資産＋Core のブランド書体(Google Fonts)のみ許可。
+       Core の primitives.css が @import する Noto Sans JP / M PLUS Rounded を本文でも描画させる
+       ため fonts.googleapis.com(style) と fonts.gstatic.com(font) を許可（FR-4.10 dogfooding）。 -->
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; frame-src 'self' https:; base-uri 'self'; object-src 'none'">
+        content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'; frame-src 'self' https:; base-uri 'self'; object-src 'none'">
   <meta name="referrer" content="no-referrer">
   <title>FIG Core Design System</title>
   <meta name="description" content="FIGデザインシステムの単一エントリポイント。最新の Core を rolling 反映し、概要 / プロジェクト集 / 運用 / 使い方 を提供する。">
@@ -19,8 +21,9 @@
   <link rel="stylesheet" href="vendor/core/tokens/profile-consumer.css">
   <link rel="stylesheet" href="vendor/core/tokens/profile-terminal.css">
   <link rel="stylesheet" href="vendor/core/tokens/components.css">
-  <!-- ポータル固有レイアウト（移設・BR-ROLL-3 例外） -->
-  <link rel="stylesheet" href="assets/portal.css">
+  <!-- シェル CSS も Core から rolling 取込（無改変・BR-ROLL-3）。未ビルド時は dev-serve が要求 -->
+  <link rel="stylesheet" href="vendor/core/portal.css">
+  <!-- ポータル固有ビュー（プロジェクト集/版表/Showcase）と shell の最小上書きのみ -->
   <link rel="stylesheet" href="assets/portal-app.css">
 </head>
 <body class="fig-profile-admin">

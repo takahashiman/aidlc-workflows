@@ -35,8 +35,10 @@ jobs:
             -not -path './.claude/*' \
             -not -path './scripts/aidlc-evaluator/test_cases/*' \
             -not -path './.git/*' \
+            -not -path './aidlc-docs/*' \
+            -not -path './portal/*' \
             -not -name 'CHANGELOG.md' \
-            -print | xargs awk '
+            -print0 | xargs -0 awk '
               FNR == 1 { prev_is_option = 0 }
               /^[A-Z]\) / && prev_is_option { print FILENAME ":" FNR ": " $0 }
               { prev_is_option = /^[A-Z]\) / }

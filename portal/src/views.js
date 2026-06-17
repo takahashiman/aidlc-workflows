@@ -3,18 +3,177 @@
  * 各 render は HTML 文字列を返す純粋関数（ctx = { data, ui }）。
  * data = { taxonomy, registry, versionMatrix, showcase, buildInfo }
  */
-import { OVERVIEW, OPS } from './content.js';
+import { OVERVIEW, OPS, coreOverviewSections, corePage } from './content.js';
 import { VIEWS } from './router.js';
 import { renderGuide, usageIndex } from './usage.js';
 
 const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-/* ───────────── 概要（PT-3 IA Section View） ───────────── */
-export function renderOverview(route) {
+/* ───────────── 概要（PT-3 IA Section View / Core 自前サイト準拠） ───────────── */
+export function renderOverview(route, ctx) {
   const [sectionId, itemId] = route.path;
+  const coreContent = ctx && ctx.data && ctx.data.coreContent;
+  const sections = coreOverviewSections(coreContent);
+  // F-6: Core 本文が取込まれていれば Core 自前サイト相当のページを Core の DOM 規約で描画。
+  if (sections) {
+    const section = sections.find(s => s.id === sectionId) || sections[0];
+    const item = section.items.find(i => i.id === itemId) || section.items[0];
+    const page = corePage(coreContent, section.id, item.id);
+    if (page) return breadcrumbs(['概要', section.label, item.label]) + renderCorePage(page, ctx && ctx.ui);
+  }
+  // フォールバック: 静的 OVERVIEW（content.js）
   const section = OVERVIEW.find(s => s.id === sectionId) || OVERVIEW[0];
   const item = section.items.find(i => i.id === itemId) || section.items[0];
-  return `<div class="fig-doc">${item.body}</div>`;
+  return `<div class="page-prose jp-prose">${item.body}</div>`;
+}
+
+/**
+ * Core PAGES の1ページを Core 自前サイトと同じ DOM 規約で描画（F-6 / 方針A）。
+ * profile 連動（availability バナー・code・a11y・preview の端末幅）はすべて CSS 駆動
+ * （body.fig-profile-* セレクタ）。よって全 profile 分を DOM に出し、表示は CSS が切替える。
+ * body / a11y / code は Core リポジトリ由来の信頼 HTML。title/description/code はエスケープ。
+ */
+export function renderCorePage(page, ui) {
+  const parts = [pageHeader(page.title, page.description)];
+  if (page.availability) parts.push(availBanner(page.availability));
+  switch (page.template) {
+    case 'foundation': parts.push(foundationBody(page)); break;
+    case 'component':  parts.push(tabsBody(page, 'component')); break;
+    case 'pattern':    parts.push(tabsBody(page, 'pattern')); break;
+    case 'external':   parts.push(externalBody(page)); break;
+    case 'principle':
+    default:           parts.push(principleBody(page)); break;
+  }
+  return parts.join('\n');
+}
+
+/* ── Core ページ部品 ── */
+function pageHeader(title, desc) {
+  return `<header class="page-header">
+    <h1 class="page-header__title jp-headline">${esc(title || '')}</h1>
+    ${desc ? `<p class="page-header__desc jp-prose">${esc(desc)}</p>` : ''}
+  </header>`;
+}
+
+/** profile 連動の推奨度バナー（CSS が現 profile=caution/avoid のときだけ表示・文言注入） */
+function availBanner(a) {
+  return `<div class="page-avail-banner" data-testid="page-avail-banner"
+    data-avail-admin="${esc(a.admin || 'recommended')}"
+    data-avail-consumer="${esc(a.consumer || 'recommended')}"
+    data-avail-terminal="${esc(a.terminal || 'recommended')}">
+    <span class="page-avail-banner__icon" aria-hidden="true">⚠</span>
+    <span class="page-avail-banner__text">
+      <strong class="page-avail-banner__head"></strong>
+      <span class="page-avail-banner__desc">このコンポーネントは選択中のプロファイルでの利用に注意が必要です。プロファイル別の利用指針を Accessibility タブで確認してください。</span>
+    </span></div>`;
+}
+
+function principleBody(page) {
+  let html = page.body ? `<div class="page-prose jp-prose">${page.body}</div>` : '';
+  if (page.preview) html += `<h3 class="page-prose">ライブプレビュー</h3>` + previewFrame(page.preview);
+  return html;
+}
+
+function foundationBody(page) {
+  const body = page.body ? `<div class="page-prose jp-prose">${page.body}</div>` : '';
+  return body + previewFrame(page.preview);
+}
+
+function externalBody(page) {
+  const body = page.body ? `<div class="page-prose jp-prose">${page.body}</div>` : '';
+  const cta = page.href ? `<div class="external-cta"><a class="btn btn--primary" href="${esc(page.href)}" target="_blank" rel="noopener noreferrer">別タブで開く →</a></div>` : '';
+  return body + cta;
+}
+
+/** component / pattern の4タブ（Overview / Live preview / Tokens&Code or Spec / Accessibility） */
+function tabsBody(page, kind) {
+  const tabs = kind === 'pattern'
+    ? [['overview', 'Overview'], ['preview', 'Live preview'], ['spec', 'Spec'], ['a11y', 'Accessibility']]
+    : [['overview', 'Overview'], ['preview', 'Live preview'], ['tokens', 'Tokens & Code'], ['a11y', 'Accessibility']];
+  const tablist = tabs.map(([id, label], i) =>
+    `<button type="button" class="page-tab" role="tab" id="tab-${id}" aria-controls="panel-${id}" aria-selected="${i === 0 ? 'true' : 'false'}" tabindex="${i === 0 ? '0' : '-1'}" data-tab="${id}">${esc(label)}</button>`
+  ).join('');
+  const panelHtml = (id) =>
+    id === 'overview' ? overviewPanel(page)
+    : id === 'preview' ? previewPanel(page)
+    : id === 'tokens' ? tokensPanel(page)
+    : id === 'spec' ? specPanel(page)
+    : a11yPanel(page);
+  const panels = tabs.map(([id], i) =>
+    `<section class="tab-panel" role="tabpanel" id="panel-${id}" aria-labelledby="tab-${id}" data-active="${i === 0 ? 'true' : 'false'}">${panelHtml(id)}</section>`
+  ).join('');
+  return `<div class="page-tabs" role="tablist" aria-label="${esc(page.title)} ビュー切替" data-testid="page-tabs">${tablist}</div><div class="page-panels">${panels}</div>`;
+}
+
+function overviewPanel(page) {
+  const body = page.body
+    ? `<div class="page-prose jp-prose">${page.body}</div>`
+    : `<div class="page-prose jp-prose"><p>${esc(page.description || 'このページの概要は spec を参照してください。')}</p></div>`;
+  return body + specLink(page);
+}
+function previewPanel(page) {
+  if (!page.preview) return `<div class="page-empty-preview">このコンポーネントのライブプレビューは未収録です。Spec タブを参照してください。</div>`;
+  return previewFrame(page.preview);
+}
+function tokensPanel(page) {
+  const intro = `<div class="page-prose jp-prose"><p>このコンポーネントが参照する意味的トークン、およびプロファイル別の実装例です。</p></div>`;
+  return intro + codeBlocks(page.code) + specLink(page);
+}
+function specPanel(page) {
+  return page.spec
+    ? `<div class="page-prose jp-prose"><p>詳細仕様は <a href="${esc(specHref(page.spec))}" target="_blank" rel="noopener noreferrer">${esc(page.spec)}</a> を参照してください。Spec を Single Source of Truth として、本ポータルは抜粋と参照に徹します。</p></div>`
+    : `<div class="page-prose jp-prose"><p>このパターンの spec はまだ準備中です。</p></div>`;
+}
+
+/** code（プロファイル連動・全 profile を DOM 出力し CSS が現 profile を表示） */
+function codeBlocks(code) {
+  if (!code) return '';
+  const blocks = ['admin', 'consumer', 'terminal'].map(p => {
+    const body = resolveProfileValue(code, p);
+    return body ? `<pre class="page-code" data-code-profile="${p}"><code class="language-html">${esc(body)}</code></pre>` : '';
+  }).join('');
+  if (!blocks) return '';
+  return `<h3 class="page-prose">Code（プロファイル連動）</h3><div class="code-blocks">${blocks}</div>`;
+}
+
+/** a11y（プロファイル連動・3 ブロックを常時出力し CSS が現 profile を表示。a11y は信頼 HTML） */
+function a11yPanel(page) {
+  const fallback = 'このページの a11y 注意点は spec を参照してください。';
+  const blocks = ['admin', 'consumer', 'terminal'].map(p => {
+    const body = resolveProfileValue(page.a11y, p) || fallback;
+    return `<div class="a11y-callout" data-a11y-profile="${p}"><strong>Accessibility</strong><div class="jp-text">${body}</div></div>`;
+  }).join('');
+  return `<div class="a11y-blocks">${blocks}</div>`;
+}
+
+function specLink(page) {
+  return page.spec
+    ? `<p class="page-prose"><a href="${esc(specHref(page.spec))}" target="_blank" rel="noopener noreferrer">Spec を開く: ${esc(page.spec)} →</a></p>`
+    : '';
+}
+/** spec パス（components/x.spec.md）→ vendor 取込していないため Core repo を直接は開けない。表示は相対のまま。 */
+function specHref(spec) { return 'vendor/core/' + String(spec).replace(/^\/+/, ''); }
+
+/** Core プレビュー HTML を端末枠 iframe で埋め込む（vendor/core/preview/*・profile 連動は CSS+JS） */
+function previewFrame(preview) {
+  if (!preview) return `<div class="page-empty-preview">プレビューは未収録です。</div>`;
+  const src = 'vendor/core/' + String(preview).replace(/^\/+/, '');
+  return `<div class="preview-frame" data-preview-frame="true">
+    <iframe class="page-iframe" src="${esc(src)}" loading="lazy" title="ライブプレビュー" data-testid="core-preview"></iframe>
+  </div>
+  <div class="page-iframe-meta"><a href="${esc(src)}" target="_blank" rel="noopener noreferrer">新しいタブで開く ↗</a></div>`;
+}
+
+/** code / a11y は文字列 or {default,admin,consumer,terminal}。指定 profile を解決（Core 準拠）。 */
+function resolveProfileValue(value, profile) {
+  if (value == null) return null;
+  if (typeof value === 'string') return value;
+  return value[profile] || value.default || null;
+}
+
+function breadcrumbs(parts) {
+  const sep = `<span class="portal-breadcrumbs__sep" aria-hidden="true">/</span>`;
+  return `<nav class="portal-breadcrumbs" aria-label="現在地">${parts.map(p => `<span>${esc(p)}</span>`).join(sep)}</nav>`;
 }
 
 /* ───────────── プロジェクト集（PT-4 Project View / US-2.2） ───────────── */

@@ -5,7 +5,8 @@
       "id": "bus",
       "label": "バス",
       "subcategories": [
-        { "id": "bus-location", "label": "バスロケーションシステム" }
+        { "id": "bus-location", "label": "バスロケーションシステム" },
+        { "id": "bus-notification", "label": "接近案内通知" }
       ]
     },
     {

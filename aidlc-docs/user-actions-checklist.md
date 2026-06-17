@@ -189,6 +189,7 @@
 > A〜E がすべて終わってから、全体がつながっているかを確認します。
 
 - [ ] **F-1. 🛠 ポータルに「Core＋busapp＋ショーケース＋バージョン一覧」が統合表示されるか確認**
+  - **進捗（2026-06-17）**: F-6 で Core 概要を Core 本文駆動に刷新（下記）。ローカルビルドで概要=8セクション/58ページ（principles/foundations/accessibility/components-navigation/components-actions/components-inputs/components-data/patterns）＋版ダッシュボード（busapp）＋Showcase が成立。**ライブ公開での最終目視はデプロイ後に実施**。
 - [ ] **F-2. 🛠 Core を1回更新 → ポータルが自動で最新反映（rolling）されるか確認**
 - [ ] **F-3. 🛠 busapp の移行ゲート（主要フロー100%＋全体80%以上）が緑になるか確認**
   - 手順: `fig-ext-business-busapp` で `node ../fig-ext-template/scripts/migration-status.mjs --gate`
@@ -197,11 +198,19 @@
   - **何を**: E-9 のビルド確認が緑なら、検証用サンドボックス `ProductA` を削除（repo ごと／ローカル作業ツリー）。
   - **なぜ**: ProductA は配布機構の検証専用で、本運用には不要（US-X.1 AC1「検証完了後に削除」）。
 
-- [ ] **F-6. 🛠（運用前修正）ポータルの Core ドキュメント忠実度を上げる**
+- [x] **F-6. 🛠（運用前修正）ポータルの Core ドキュメント忠実度を上げる** ✅ 2026-06-17（方針 (a) 採用・ローカル実装/検証完了。ライブ反映は次回デプロイ）
   - **背景**: 現状ポータルの `build.mjs.importCore()` は Core から**三層トークン CSS（primitives/semantic/deprecated-aliases＋tokens/）のみ**取込み、本文は `portal/src/content.js` の自前コンテンツで描画している。そのため **Core 自前サイト（`FIG-UDS/index.html`：Vision/Brand Colors/Elevation/Navigation & Structure・各コンポーネント spec 等）に比べてポータルの Core 概要が不足**している（2026-06-16 にユーザー指摘）。
   - **何を**: ポータルが Core の完全なドキュメント内容を反映するよう修正。方針候補: (a) Core の `index.html` 本文／コンポーネント spec も取込んで描画、(b) `portal/src/content.js` を Core ドキュメント相当に拡充、(c) ポータルは軽量インデックス＋詳細は Core ドキュメントへリンクアウト。
   - **なぜ**: ポータルは「ここを見れば全て解決する単一エントリポイント」（VISION）であり、Core 内容の欠落は本運用前に解消すべき。
   - **タイミング**: F-1（統合表示確認）と合わせて実施。方針 (a)/(b)/(c) は実施時に選定。
+  - **実施結果（方針 (a)＝Core 本文を取込描画 / rolling 忠実・単一正典）**:
+    - `build.mjs` に `extractCoreContent()` を追加。Core 自前サイトの正典 `assets/js/portal-content.js`（`window.PortalContent = { SITEMAP, PAGES }`）を `node:vm` で実行して抽出し、`portal/data/core-content.json` を毎ビルド再生成（pin せず＝BR-ROLL-3）。内部リンク `#/core/…` は概要ルート `#/overview/…` へ書換。fail-soft（抽出不能なら静的 OVERVIEW へフォールバック）。
+    - `importCore()` の vendor 取込に `preview/` を追加（Foundations/Components の live スウォッチ iframe 用。参照 CSS は既存 vendor の primitives/semantic/tokens で解決）。
+    - `content.js` に `coreOverviewSections()` / `corePage()`、`views.js` に `renderCorePage()`（principle=散文・foundation=説明＋preview iframe・component/pattern=推奨度バッジ＋preview＋プロファイル別コード＋a11y＋spec）を追加。`nav.js buildNav(taxonomy, registry, coreContent)`・`portal.js` が `data/core-content.json` をロードして概要を Core 駆動に。
+    - **検証**: ローカルビルド成功（SITEMAP + 73 pages 抽出）。概要が **8 セクション/58 ページ**へ拡充（旧=5 セクション/約15 項目の自前要約）。`npm test` 26 件 PASS（新規 `tests/core-content.test.js` 11 件含む）。全 58 ページ×3 プロファイルをレンダリングして例外0・preview iframe 144 件成立。
+    - **未**: ライブ公開（Pages デプロイ）での目視は次回 portal-deploy 実行時（F-1 と同時）。`aidlc-workflows` 作業ツリーに本変更（portal/・本 checklist）は未 commit。
+  - **追補・第2ラウンド（ライブ目視フィードバック→シェル収斂 / 方針A確定 2026-06-17）**: 初回実装は「中身」だけ Core 化し、シェル/動的挙動が Core 自前サイト未到達だった（指摘5点=①profile 切替が `<select>` で非準拠 ②検索なし ③サイドバー独立スクロールなし ④デバイス別 availability ラベル[N/A・注意]＋淡色化が無い ⑤全体スタイルが Core 品質未満／FR-4.10）。根因=Core 級シェル CSS（`portal/assets/portal.css`）は同梱済だったが JS が簡易シェル（portal-app.css 語彙）を描画し、portal-app.css が Core シェルを上書きしていた。**対応**: 描画レイヤを Core の DOM 規約へ収斂。`portal.js` を全面改修（profile=アイコン付き radiogroup・検索オーバーレイ[Ctrl/⌘+K]・`.portal-sidebar` sticky 独立スクロール・折りたたみセクション・モバイルメニュー・タブ委譲・iframe への profile 伝播）。`views.js` の Core ページ描画を `page-header`/`page-avail-banner`/`page-tabs`/`preview-frame`/`page-prose`、コード/a11y は全 profile 分を `data-code-profile`/`data-a11y-profile` で出力し `body.fig-profile-*` で CSS 表示切替（profile 連動を完全 CSS 駆動化＝④解消）。サイドバー項目は `data-avail-*`＋N/A/注意 バッジ。`content.js`/`nav.js` は overview リーフに `avail` を伝播。`portal-app.css` はシェル上書きを撤去し Core に無いビュー（プロジェクト集/版表/Showcase）専用へ縮小。**preview 404 対策**: Core 自体が参照する `preview/*.html` の 22/50 が実体なし（Core 自前サイトも 404）→ build 時に実体無し preview 参照を除去し「未収録」表示へフォールバック。**shell CSS の rolling 化（ユーザー指示）**: `importCore()` が Core の `assets/portal.css` を `vendor/core/portal.css` へ rolling 取込、index.html は同 vendor を参照、ポータル所有コピー `portal/assets/portal.css`（U2移設・byte 同一を確認）を削除。**検証**: build 成功（73 pages・preview 22 prune・portal.css vendor）／`npm test` 26 PASS（新語彙へ更新）／全58概要ページ描画 例外0（tabs36・preview-frame48・avail-banner8）／dev-serve で vendor/core/portal.css=200・旧 assets/portal.css=404。
+  - **追補・フォント（ライブ目視で本文とプレビューの書体が不一致 2026-06-17）**: 原因=Core の `primitives.css:14` がブランド書体（Noto Sans JP / M PLUS Rounded 1c）を Google Fonts から `@import` する設計だが、ポータルの CSP（`style-src 'self' 'unsafe-inline'`／font は `default-src 'self'`）が遮断し本文がシステムフォントへフォールバック。preview は別ドキュメントで CSP 無しのため Google Fonts が効き、書体差が出ていた。**対応（方針A=CSP 緩和・ユーザー選択）**: `index.html` の CSP に `style-src ... https://fonts.googleapis.com` と `font-src 'self' https://fonts.gstatic.com` を追加。Core の primitives.css をそのまま機能させ本文も Core 書体で描画（rolling 無改変で Core の型システムに追従＝FR-4.10 dogfooding）。代替案B=woff2 自己ホスト（CDN非依存）は不採用。**未**: ライブ再目視（要ハードリロード）＋commit。
 
 ---
 

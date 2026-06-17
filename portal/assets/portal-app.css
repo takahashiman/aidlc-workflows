@@ -1,13 +1,12 @@
 /*
- * portal-app.css — U2 ポータルの SPA レイアウト/部品スタイル。
- * Core の Semantic トークン（--color-* 等）を優先参照し、未取込時のフォールバック値を併記。
- * （ポータル固有レイアウトのため BR-ROLL-3 の例外。Core CSS は vendor/core で無改変。）
+ * portal-app.css — ポータル固有ビュー（プロジェクト集 / 運用 / 使い方）のスタイル。
+ *
+ * シェル（ヘッダ・サイドバー・本文レイアウト・概要/コンポーネントページ）は
+ * Core 自前サイトの portal.css を rolling 取込した vendor/core/portal.css が正典。
+ * 本ファイルは portal.css に無いポータル固有ビュー（.fig-* の表/ショーケース等）
+ * だけを担当し、シェルのクラスは上書きしない（F-6 方針A・収斂）。
+ * 例外: .portal-header のグリッド列のみ、ポータルは scope トグルを持たないため調整。
  */
-:root {
-  --portal-nav-w: 260px;
-  --portal-header-h: 56px;
-  --portal-gap: 16px;
-}
 
 /* アクセシビリティ補助 */
 .fig-sr-only {
@@ -16,65 +15,38 @@
 }
 .fig-skip-link {
   position: absolute; left: 8px; top: -40px; z-index: 100;
-  background: var(--color-surface, #fff); color: var(--color-text, #111);
+  background: var(--color-surface-default, #fff); color: var(--color-text-primary, #111);
   padding: 8px 12px; border-radius: 6px; transition: top .15s;
 }
 .fig-skip-link:focus { top: 8px; }
 
-/* シェル */
-.portal-header {
-  display: flex; align-items: center; justify-content: space-between;
-  height: var(--portal-header-h); padding: 0 var(--portal-gap);
-  border-bottom: 1px solid var(--color-border, #e3e3e3);
-  background: var(--color-surface, #fff);
-}
-.portal-brand { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; font-weight: 700; }
-.portal-brand__mark {
-  display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 6px;
-  background: var(--color-brand, #1f3a5f); color: #fff; font-size: 12px; font-weight: 700;
-}
-.portal-controls { display: inline-flex; align-items: center; gap: 12px; }
+/* ヘッダ列調整: brand / search(1fr) / controls / menu の4列（scope トグル無し） */
+.portal-header { grid-template-columns: auto 1fr auto auto; }
 .fig-version-badge {
-  font-size: 12px; padding: 3px 8px; border-radius: 999px;
-  background: var(--color-surface-alt, #f1f3f5); color: var(--color-text-muted, #555);
+  font-size: 12px; padding: 3px 8px; border-radius: 999px; white-space: nowrap;
+  background: var(--color-surface-container-high, #f1f3f5); color: var(--color-text-muted, #555);
 }
-.fig-profile-ctl { font-size: 13px; display: inline-flex; gap: 6px; align-items: center; }
 
-.portal-body { display: grid; grid-template-columns: var(--portal-nav-w) 1fr; min-height: calc(100vh - var(--portal-header-h)); }
-.portal-nav { border-right: 1px solid var(--color-border, #e3e3e3); padding: var(--portal-gap) 8px; overflow-y: auto; }
-.portal-main { padding: 24px 32px; max-width: 920px; outline: none; }
+/* サイドバー: pending 項目の減衰（availability の CSS 連動は portal.css 側） */
+.sidebar-item.is-pending { opacity: 0.6; }
 
-/* サイドナビ（tree） */
-.fig-nav__root, .fig-nav__children { list-style: none; margin: 0; padding: 0; }
-.fig-nav__children { margin-left: 12px; border-left: 1px solid var(--color-border, #ececec); padding-left: 8px; }
-.fig-nav__item { margin: 1px 0; }
-.fig-nav__group { display: block; font-size: 12px; font-weight: 700; color: var(--color-text-muted, #777); padding: 8px 8px 4px; text-transform: none; }
-.fig-nav__item--d0 > .fig-nav__link, .fig-nav__item--d0 > .fig-nav__group { font-weight: 700; }
-.fig-nav__link {
-  display: block; padding: 6px 10px; border-radius: 6px; text-decoration: none;
-  color: var(--color-text, #222); font-size: 14px;
-}
-.fig-nav__link:hover { background: var(--color-surface-alt, #f1f3f5); }
-.fig-nav__link.is-current { background: var(--color-brand-subtle, #e8eef6); color: var(--color-brand, #1f3a5f); font-weight: 600; }
-.fig-nav__item--pending > .fig-nav__link { color: var(--color-text-muted, #999); }
-
-/* ドキュメント本文 */
-.fig-doc h1 { font-size: 24px; margin: 0 0 12px; }
-.fig-doc h2 { font-size: 18px; margin: 24px 0 8px; }
-.fig-doc-lead { font-size: 15px; color: var(--color-text, #333); }
+/* ───────────── ポータル固有ビュー本文（.fig-doc 系） ───────────── */
+.fig-doc h1 { font: var(--typography-display, 600 24px/1.3 sans-serif); margin: 0 0 12px; color: var(--color-text-primary, #111); }
+.fig-doc h2 { font: var(--typography-title, 600 18px/1.4 sans-serif); margin: 24px 0 8px; color: var(--color-text-primary, #111); }
+.fig-doc-lead { font-size: 15px; color: var(--color-text-secondary, #333); line-height: var(--lh-jp-body, 1.75); }
 .fig-doc-muted, .fig-doc-list .fig-doc-muted { color: var(--color-text-muted, #777); font-size: 13px; }
 .fig-doc-list { padding-left: 1.2em; line-height: 1.8; }
 
-/* タブ（閲覧3形態） */
-.fig-tablist { display: inline-flex; gap: 4px; border-bottom: 1px solid var(--color-border, #e3e3e3); margin: 8px 0 16px; }
+/* プロジェクト閲覧3形態タブ */
+.fig-tablist { display: inline-flex; gap: 4px; border-bottom: 1px solid var(--color-border-default, #e3e3e3); margin: 8px 0 16px; }
 .fig-tab {
   padding: 8px 14px; text-decoration: none; color: var(--color-text-muted, #666);
   border-bottom: 2px solid transparent; font-size: 14px;
 }
-.fig-tab[aria-current="page"] { color: var(--color-brand, #1f3a5f); border-bottom-color: var(--color-brand, #1f3a5f); font-weight: 600; }
+.fig-tab[aria-current="page"] { color: var(--color-text-brand, #1f3a5f); border-bottom-color: var(--color-border-brand, #1f3a5f); font-weight: 600; }
 
-/* デモ iframe */
-.fig-demo-frame { width: 100%; height: 70vh; border: 1px solid var(--color-border, #e3e3e3); border-radius: 8px; background: #fff; }
+/* デモ iframe（プロジェクトのページ/デモ閲覧） */
+.fig-demo-frame { width: 100%; height: 70vh; border: 1px solid var(--color-border-default, #e3e3e3); border-radius: 8px; background: #fff; }
 
 /* バッジ / 状態 */
 .fig-badge { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 999px; vertical-align: middle; }
@@ -88,22 +60,16 @@
 .fig-status--behind { background: #fff3cd; color: #8a6d00; }
 .fig-status--unknown { background: #eee; color: #777; }
 
-/* テーブル */
+/* テーブル（版ダッシュボード） */
 .fig-table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .fig-table caption { text-align: left; color: var(--color-text-muted, #777); font-size: 13px; margin-bottom: 8px; }
-.fig-table th, .fig-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--color-border, #ececec); }
+.fig-table th, .fig-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--color-border-subtle, #ececec); }
 .fig-table thead th { color: var(--color-text-muted, #555); font-weight: 600; }
 
 /* Showcase */
 .fig-showcase { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
-.fig-showcase-item { padding: 12px; border: 1px solid var(--color-border, #e3e3e3); border-radius: 8px; }
-.fig-btn-link { color: var(--color-brand, #1f3a5f); font-size: 13px; text-decoration: none; }
+.fig-showcase-item { padding: 12px; border: 1px solid var(--color-border-default, #e3e3e3); border-radius: 8px; }
+.fig-btn-link { color: var(--color-text-brand, #1f3a5f); font-size: 13px; text-decoration: none; }
 
 /* 空状態 */
-.fig-empty { padding: 16px; background: var(--color-surface-alt, #f7f8f9); border-radius: 8px; color: var(--color-text-muted, #666); }
-
-/* レスポンシブ（最小限） */
-@media (max-width: 760px) {
-  .portal-body { grid-template-columns: 1fr; }
-  .portal-nav { border-right: none; border-bottom: 1px solid var(--color-border, #e3e3e3); }
-}
+.fig-empty { padding: 16px; background: var(--color-surface-container-low, #f7f8f9); border-radius: 8px; color: var(--color-text-muted, #666); }

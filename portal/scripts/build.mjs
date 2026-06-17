@@ -21,6 +21,7 @@ import { existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
+import vm from 'node:vm';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORTAL = resolve(__dirname, '..');
@@ -49,8 +50,9 @@ async function importCore(corePath) {
   await rm(dst, { recursive: true, force: true });
   await mkdir(dst, { recursive: true });
   // 取込対象（存在するもののみ）。Core の三層トークン＋コンポーネント CSS。
+  // preview/ は Foundations/Components ページの live スウォッチ iframe が参照する（F-6）。
   const files = ['primitives.css', 'semantic.css', 'deprecated-aliases.css'];
-  const dirs = ['tokens'];
+  const dirs = ['tokens', 'preview'];
   let imported = [];
   for (const f of files) {
     const src = join(corePath, f);
@@ -60,6 +62,10 @@ async function importCore(corePath) {
     const src = join(corePath, d);
     if (existsSync(src)) { await cp(src, join(dst, d), { recursive: true }); imported.push(d + '/'); }
   }
+  // シェル CSS（Core 自前サイトの portal.css）も rolling 取込（BR-ROLL-3）。
+  // index.html は vendor/core/portal.css を参照し、ポータルは固有の上書きだけを portal-app.css に持つ。
+  const shellCss = join(corePath, 'assets', 'portal.css');
+  if (existsSync(shellCss)) { await cp(shellCss, join(dst, 'portal.css')); imported.push('portal.css'); }
   // 取込版ラベル（表示専用・pin ではない, BR-ROLL-4）
   let versionLabel = 'core@local';
   const verFile = ['VERSION', 'CORE-DS-VERSION'].map(v => join(corePath, v)).find(existsSync);
@@ -78,6 +84,51 @@ async function importMetadata(corePath) {
     await cp(src, join(dataDir, f));
   }
   log('メタデータ取込: registry.json / taxonomy.json → data/');
+}
+
+/**
+ * Core 本文（SITEMAP + PAGES）を抽出 → data/core-content.json（F-6・rolling 忠実）
+ *
+ * Core 自前サイトの正典は `assets/js/portal-content.js`（古典スクリプトで
+ * `window.PortalContent = { SITEMAP, PAGES, DEFAULT_ROUTE }` を公開）。これを
+ * node:vm で実行して同オブジェクトを取り出し、ポータルが概要セクションを Core
+ * 本文から生成できるよう JSON 化する。pin せず毎ビルド再生成（BR-ROLL-3）。
+ * 内部リンク `#/core/...` はポータルの概要ルート `#/overview/...` へ書換える。
+ * fail-soft: 取得できない場合は静的フォールバック（content.js の OVERVIEW）。
+ */
+async function extractCoreContent(corePath) {
+  const src = join(corePath, 'assets', 'js', 'portal-content.js');
+  const out = join(PORTAL, 'data', 'core-content.json');
+  if (!existsSync(src)) {
+    log('⚠ Core portal-content.js 不在 → 概要は静的フォールバック:', src);
+    return;
+  }
+  try {
+    const code = await readFile(src, 'utf8');
+    const sandbox = { window: {}, document: {}, console };
+    vm.createContext(sandbox);
+    vm.runInContext(code, sandbox, { filename: src, timeout: 5000 });
+    const pc = sandbox.window.PortalContent;
+    if (!pc || !pc.SITEMAP || !pc.PAGES) {
+      log('⚠ Core PortalContent を抽出できず（SITEMAP/PAGES 不在）→ 静的フォールバック');
+      return;
+    }
+    // 存在しない preview 参照を除去（Core 側のデータ不整合で実体の無い preview/*.html を
+    // 指すページがある。404 iframe を避け「プレビュー未収録」表示にフォールバックさせる）。
+    let pruned = 0;
+    for (const page of Object.values(pc.PAGES)) {
+      if (page && page.preview && !existsSync(join(corePath, page.preview))) { delete page.preview; pruned++; }
+    }
+    if (pruned) log(`preview 整合: 実体の無い preview 参照 ${pruned} 件を除去（未収録表示へ）`);
+    const payload = { _generatedBy: 'extractCoreContent (F-6)', collectedAt: new Date().toISOString(), SITEMAP: pc.SITEMAP, PAGES: pc.PAGES };
+    // Core 内部リンクをポータル概要ルートへ写像（developer/extensions スコープは概要に無いため対象外）
+    const json = JSON.stringify(payload, null, 2).split('#/core/').join('#/overview/');
+    await writeFile(out, json);
+    const pageCount = Object.keys(pc.PAGES).length;
+    log('Core 本文抽出: SITEMAP +', pageCount, 'pages → data/core-content.json');
+  } catch (e) {
+    log('⚠ Core 本文抽出スキップ（既存据え置き／静的フォールバック）:', e.message);
+  }
 }
 
 /** version/migration の自動収集（U5/CI-3）＋ showcase スタブ（U6/CI-4 で差替） */
@@ -168,6 +219,7 @@ async function bundle(versionLabel) {
 
   const versionLabel = await importCore(corePath);
   await importMetadata(corePath);
+  await extractCoreContent(corePath);
   await collectAndStub(corePath);
   await validate();
 
