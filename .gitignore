@@ -17,3 +17,7 @@ codebuild_build.sh
 /portal/vendor/core/
 /portal/site/
 /portal/node_modules/
+
+# デザインシステム handoff エクスポート成果物（リポジトリ追跡対象外）
+/design-system-handoff/
+/design-system-handoff.zip

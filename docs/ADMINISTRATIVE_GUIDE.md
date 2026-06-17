@@ -593,16 +593,16 @@ Releases follow a **changelog-first** flow: the CHANGELOG is updated *before* th
 1. **Dispatch the Release PR workflow** via the GitHub Actions UI:
    - Navigate to Actions → Release PR → Run workflow
    - Optionally specify a version (e.g., `0.2.0`); leave blank to auto-determine from conventional commits
-   - `release-pr.yml` generates `CHANGELOG.md`, writes the version to `aidlc-rules/VERSION`, and opens a PR on branch `release/v1.2.0` with labels `release` and `rules`
+   - `release-pr.yml` generates `CHANGELOG.md`, writes the version to `aidlc-rules/VERSION`, and opens a PR on branch `release/v1.0.0` with labels `release` and `rules`
 
 2. **Review and merge the release PR:**
    - Verify the changelog content is correct
    - Merge the PR (requires `@awslabs/aidlc-admins` approval since `CHANGELOG.md` is owned by them)
-   - `tag-on-merge.yml` automatically creates tag `v1.2.0` on the merge commit and dispatches the release and build workflows
+   - `tag-on-merge.yml` automatically creates tag `v1.0.0` on the merge commit and dispatches the release and build workflows
 
-3. **`release.yml` runs automatically** (dispatched by `tag-on-merge.yml` with `--ref v1.2.0`):
-   - Zips `aidlc-rules/` into `ai-dlc-rules-v1.2.0.zip`
-   - Creates a **draft** GitHub Release named "AI-DLC Workflow v1.2.0" with the zip attached
+3. **`release.yml` runs automatically** (dispatched by `tag-on-merge.yml` with `--ref v1.0.0`):
+   - Zips `aidlc-rules/` into `ai-dlc-rules-v1.0.0.zip`
+   - Creates a **draft** GitHub Release named "AI-DLC Workflow v1.0.0" with the zip attached
 
 4. **`codebuild.yml` runs automatically** (dispatched by `tag-on-merge.yml`; requires `codebuild` environment approval):
    - Runs CodeBuild on the tagged commit
