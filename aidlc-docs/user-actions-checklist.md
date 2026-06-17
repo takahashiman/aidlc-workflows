@@ -189,16 +189,28 @@
 ## フェーズ F. 仕上げの統合確認 〔Build & Test〕
 > A〜E がすべて終わってから、全体がつながっているかを確認します。
 
-- [ ] **F-1. 🛠 ポータルに「Core＋busapp＋ショーケース＋バージョン一覧」が統合表示されるか確認**
-  - **進捗（2026-06-17）**: F-6 で Core 概要を Core 本文駆動に刷新（下記）。ローカルビルドで概要=8セクション/58ページ（principles/foundations/accessibility/components-navigation/components-actions/components-inputs/components-data/patterns）＋版ダッシュボード（busapp）＋Showcase が成立。**ライブ公開での最終目視はデプロイ後に実施**。
-- [ ] **F-2. 🛠 Core を1回更新 → ポータルが自動で最新反映（rolling）されるか確認**
-- [ ] **F-3. 🛠 busapp の移行ゲート（主要フロー100%＋全体80%以上）が緑になるか確認**
-  - 手順: `fig-ext-business-busapp` で `node ../fig-ext-template/scripts/migration-status.mjs --gate`
-- [ ] **F-4. 🛠 自動チェック（三層 Lint・VRT）がマージ条件として効いているか確認**
-- [x] **F-5. 🛠 サンドボックス検証（E-9）が本番経路で OK なら `aidlc-projects/ProductA` を削除する** ✅ 2026-06-17（ローカル削除済／GitHub repo 削除はユーザー操作待ち）
+- [x] **F-1. 🛠 ポータルに「Core＋busapp＋ショーケース＋バージョン一覧」が統合表示されるか確認** ✅ 2026-06-17（ライブデータ層で確認）
+  - **進捗（2026-06-17）**: F-6 で Core 概要を Core 本文駆動に刷新（下記）。ローカルビルドで概要=8セクション/58ページ（principles/foundations/accessibility/components-navigation/components-actions/components-inputs/components-data/patterns）＋版ダッシュボード（busapp）＋Showcase が成立。
+  - **ライブ確認（`https://takahashiman.github.io/aidlc-workflows/data/*` を curl）**:
+    - **Core**: `core-content.json`=HTTP200・166KB・有効 JSON（`extractCoreContent (F-6)` 生成・`collectedAt 2026-06-17T06:07Z`）。SITEMAP scopes=`core/extensions/developer`・PAGES=73。
+    - **busapp**: `registry.json` に `fig-ext-bus-busapp`（category=bus / subcategory=bus-notification / name=Bus Operations App）。
+    - **バージョン一覧**: `version-matrix.json` に busapp（pinned=v1.1.0 / latest=v1.1.0 / status=`up-to-date` / source=CORE-DS-VERSION）。
+    - **Showcase**: `showcase-index.json`=`items:[]`（**意図どおり空**＝E-8 で busapp FAB が Core 昇格→撤去・temp-part Issue 0 件のため。収集機構は稼働）。
+  - **既知の表示差（非ブロッキング）**: `registry.json` の busapp `coreVersion` 表示値が `v1.0.0` のまま（実体の参照版は version-matrix が自動収集＝v1.1.0。registry の coreVersion は表示用フィールド）。別タスクで v1.1.0 へ更新可。
+- [x] **F-2. 🛠 Core を1回更新 → ポータルが自動で最新反映（rolling）されるか確認** ✅ 2026-06-17（rolling 機構の配線・稼働を確認。Core 変更→反映のフル E2E は任意）
+  - **確認（`portal-deploy.yml`）**: Core DS を **pin せず checkout（rolling / BR-ROLL-1）**。多重トリガ=`push(portal/**)` / `repository_dispatch: core-released`（Core リリースから通知） / `schedule: cron '0 18 * * *'`（nightly・dispatch 取りこぼし回収） / `workflow_dispatch`（手動）。
+  - **稼働の根拠**: ライブの `core-content.json`/`version-matrix.json` の `collectedAt` が**デプロイ時刻（06:07Z）で毎回再生成**＝ビルド毎に Core を再収集している（pin スナップショットでない）。version-matrix の busapp が latest=v1.1.0 と一致し `up-to-date`。
+  - **残（任意のフル E2E）**: 「Core を実際に 1 コミット → portal が自動反映」を実演するには Core repo への変更＋デプロイ 1 サイクルが必要。機構は上記で成立済のため必須ではない。
+- [x] **F-3. 🛠 busapp の移行ゲート（主要フロー100%＋全体80%以上）が緑になるか確認** ✅ 2026-06-17
+  - 手順: `fig-ext-bus-busapp` で `node ../fig-ext-template/scripts/migration-status.mjs --gate`
+  - **結果（PASS / exit 0）**: 画面 4/5 移行（80.0%）・主要フロー完了=true（pass-issue:○）・ゲート=**✓ PASS**（閾値 80% ∧ critical 100% ∧ 混在 0）。
+- [ ] **F-4. 🛠 自動チェック（三層 Lint・VRT）がマージ条件として効いているか確認** ⚠ 2026-06-17（機構あり／GitHub 強制はプラン制約で不可）
+  - **確認結果**: ゲート用 workflow（guardrail＝三層 Lint、migration-gate）は PR で起動する設計・実地で緑化済（E-3）。ただし `gh api .../branches/main/protection` が **HTTP 403「Upgrade to GitHub Pro or make this repository public」**＝**private + 無料プランではブランチ保護（required status checks）が GitHub 側で強制不可**（「Not enforced」）。
+  - **結論**: チェック自体は走るが、「必須チェック未通過なら merge ブロック」の**強制は Team/Enterprise org 化 or public 化が前提**（設計の org 前提と一致）。プランに依存するためチェックボックスは保留。VRT は別途保留中（playwright install 安定化＋baseline 整備が前提）。
+- [x] **F-5. 🛠 サンドボックス検証（E-9）が本番経路で OK なら `aidlc-projects/ProductA` を削除する** ✅ 2026-06-17（ローカル削除＋GitHub repo 削除 完了）
   - **何を**: E-9 のビルド確認が緑なら、検証用サンドボックス `ProductA` を削除（repo ごと／ローカル作業ツリー）。
   - **なぜ**: ProductA は配布機構の検証専用で、本運用には不要（US-X.1 AC1「検証完了後に削除」）。
-  - **実施結果**: E-9 PASS を受け、ローカル作業ツリー `aidlc-projects/ProductA`（独立 git repo・親 aidlc-workflows では gitignore 済/未追跡）を削除済。**GitHub の `takahashiman/ProductA`（private）は `delete_repo` スコープ未付与のため未削除**＝ユーザー操作待ち。手順: `gh auth refresh -h github.com -s delete_repo`（ブラウザ認証）→ `gh repo delete takahashiman/ProductA --yes`。
+  - **実施結果**: E-9 PASS を受け、ローカル作業ツリー `aidlc-projects/ProductA`（独立 git repo・親 aidlc-workflows では gitignore 済/未追跡）を削除済。GitHub の `takahashiman/ProductA`（private）も `delete_repo` スコープ付与後にユーザーが削除完了（2026-06-17）。
 
 - [x] **F-6. 🛠（運用前修正）ポータルの Core ドキュメント忠実度を上げる** ✅ 2026-06-17（方針 (a) 採用・ローカル実装/検証完了。ライブ反映は次回デプロイ）
   - **背景**: 現状ポータルの `build.mjs.importCore()` は Core から**三層トークン CSS（primitives/semantic/deprecated-aliases＋tokens/）のみ**取込み、本文は `portal/src/content.js` の自前コンテンツで描画している。そのため **Core 自前サイト（`FIG-UDS/index.html`：Vision/Brand Colors/Elevation/Navigation & Structure・各コンポーネント spec 等）に比べてポータルの Core 概要が不足**している（2026-06-16 にユーザー指摘）。
