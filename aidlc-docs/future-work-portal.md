@@ -150,6 +150,32 @@ Core の `developer` スコープ（`SITEMAP.developer`）= **Developer Guide / 
 - パスワード・トークン等の**シークレット管理方針**（誰がどこで保管・ローテーション・最小権限）。
   現状は GitHub の Secret/Variable（PORTAL_COLLECT_TOKEN 等）を都度設定しているのみ。
 - これらは本サイクルでは検討しない（FR スコープ外）。次回サイクルで設計する。
+- **🔮 会社用 org 移設が前提条件（2026-06-17 ユーザー方針）**: 現アカウント `takahashiman` は
+  無料（Personal）プランのため、private Pages・SSO 背後の gated デプロイ・組織レベルの
+  Secret 管理などは**そもそも使えない**。将来の **会社用 GitHub 組織アカウントへの移設**で、
+  真の閲覧制限（認証付きホスティング／GitHub Enterprise の private Pages）と組織シークレット管理が
+  初めて選択肢に入る。本節の設計はその移設タイミングと合わせて検討する。
+  - 関連: checklist **F-4**（branch protection 強制）も同じ org 移設で自動有効化される
+    （`aidlc-docs/user-actions-checklist.md` の F-4「🔮 将来前提」参照）。
+
+### 4-4. Developer ガイド／ポータル全体の IA ブラッシュアップ（将来・未着手）
+> 4-1 で Developer ガイドを「画面化」はできたが、**訪問者体験としての導線設計はこれから**。
+> 次回以降の AI-DLC 開発で着手する。目標と作業候補を以下にメモする。
+
+- **目標**: 初めてポータルを訪れた人が**迷わない構成**にする。「自分は何者で（開発者/利用者/
+  権利者）、まずどこを読めばよいか」が入口で即わかる IA を目指す。
+- **各シーン別の丁寧なフロー**: 「開発（実装に使う）」「運用（昇格・メンテ・配布）」など
+  **利用シーンごと**に、順を追ったガイド導線（getting-started → 次の一歩 → 参照）を整備する。
+- **getting-started の責務分離（改修）**: 現状の `developer/getting-started` には
+  **Core 昇格フロー等の「運用」に関する内容が混ざっている**。導入（はじめての人向けの開発の
+  入口）と運用（昇格・バージョン管理・配布など）を**ページ/セクションとして分離**し、
+  getting-started は純粋な導入に絞る。運用系は `#/ops/*`（promotion 等）や
+  `version-management`/`integration` 等の既存ページへ寄せる/相互リンクで誘導。
+  - 注: ガイド本文の正典は **Core 側（`assets/js/portal-content.js` の `developer/*` PAGES）**。
+    内容の組み替えは原則 **Core リポジトリ側で行い**、ポータルは rolling 取込で反映（§背景参照）。
+    ポータル側で要るのは IA（SECTIONS/nav の並び・ラベル・入口導線）の調整のみ。
+- **入口（トップ/概要）の設計**: 役割別の入口カードや「はじめに読む順番」の提示など、
+  初訪問者のオンボーディングを意識したランディングを検討。
 
 ## 関連
 - 進捗の正典: `aidlc-docs/aidlc-state.md`

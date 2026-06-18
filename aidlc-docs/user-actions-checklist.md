@@ -152,9 +152,10 @@
   - **なぜ**: 各製品が参照する Core バージョンを手動更新なしで一覧化するため（US-4.3）。`migration-manifest` も同時に集約されます（移行進捗表示）。
   - **確認**: ポータルの版ダッシュボードに各製品の pin / 最新 / 状態（最新・遅れ・不明）が出る。
 
-- [ ] **E-5. 🛠（任意）Core 自身の既存 CSS の三層負債を段階解消する**
+- [ ] **E-5. 🛠（任意・継続）Core 自身の既存 CSS の三層負債を段階解消する**
   - **背景**: 三層 Lint 導入で、Core の既存 `assets/portal.css`・`tokens/components.css` に「色を直接指定している箇所」が多数見つかります（導入前からの負債）。
   - **方針**: 一度に直さず、**新規・変更分から** semantic 色トークン経由に直す。本 Lint の主対象は拡張製品 repo の新規コードです。
+  - **🔮 将来前提（2026-06-17）**: 明示的に「任意」かつ**恒久の継続運用ポリシー**（単発で完了にする性質ではない）。現状はブロッカーではなく、**会社用 org 移設後も「新規・変更分から段階的に解消」を継続**する想定。一括解消が必要になった場合は別タスクとして起票。
 
 ### U6（ショーケース・コード生成済み）
 > 収集の実体は **ポータルの単一クローラ**（`portal/scripts/collect-versions.mjs` の `collectShowcase()`）。バージョン収集（E-4）と同じ1回の走査で showcase も集めます（二重に走らせません）。各製品 repo は規約に従うだけで改修不要。
@@ -207,6 +208,7 @@
 - [ ] **F-4. 🛠 自動チェック（三層 Lint・VRT）がマージ条件として効いているか確認** ⚠ 2026-06-17（機構あり／GitHub 強制はプラン制約で不可）
   - **確認結果**: ゲート用 workflow（guardrail＝三層 Lint、migration-gate）は PR で起動する設計・実地で緑化済（E-3）。ただし `gh api .../branches/main/protection` が **HTTP 403「Upgrade to GitHub Pro or make this repository public」**＝**private + 無料プランではブランチ保護（required status checks）が GitHub 側で強制不可**（「Not enforced」）。
   - **結論**: チェック自体は走るが、「必須チェック未通過なら merge ブロック」の**強制は Team/Enterprise org 化 or public 化が前提**（設計の org 前提と一致）。プランに依存するためチェックボックスは保留。VRT は別途保留中（playwright install 安定化＋baseline 整備が前提）。
+  - **🔮 将来前提（2026-06-17 ユーザー方針）**: 現アカウント `takahashiman` は**無料（Personal）プラン**だが、将来 **会社用 GitHub（組織アカウント）へリポジトリ移設予定**。移設先が Team/Enterprise org であれば、本項の branch protection 強制は**設計どおり自動的に有効化される**（追加のコード対応は不要・設定のみ）。よって本項は「現プランでは叶わないが、会社用 org 移設で実装視野」として保留。移設時の手順=各 repo（busapp/Core registry 等）で required status checks を再確認・有効化。
 - [x] **F-5. 🛠 サンドボックス検証（E-9）が本番経路で OK なら `aidlc-projects/ProductA` を削除する** ✅ 2026-06-17（ローカル削除＋GitHub repo 削除 完了）
   - **何を**: E-9 のビルド確認が緑なら、検証用サンドボックス `ProductA` を削除（repo ごと／ローカル作業ツリー）。
   - **なぜ**: ProductA は配布機構の検証専用で、本運用には不要（US-X.1 AC1「検証完了後に削除」）。
