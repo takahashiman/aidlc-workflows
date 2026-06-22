@@ -16,6 +16,57 @@ export const SECTIONS = [
   { id: 'developer', label: 'Developer', icon: '⚒', route: '#/developer/guide/getting-started' },
 ];
 
+/**
+ * Home ランディングの役割別入口（US-P1 / BR-PIA-2 / SP2）。役割→誘導先を単一定義。
+ * 管理者カードの権利者向け詳細 GitHub 操作は **ポータルに載せない**＝aidlc-docs 側にある旨を注記（§4-2 / NRD45-SEC-2）。
+ */
+export const ROLE_ENTRIES = [
+  {
+    id: 'developer', label: '開発者', icon: '⚒',
+    desc: '実装に使う — 既存を整える / 新規を作る。',
+    links: [
+      { label: 'シナリオA：既存アプリを整える（最優先）', route: '#/usage/scenario-existing' },
+      { label: 'シナリオ②：新規開発で使う', route: '#/usage/scenario-new' },
+      { label: 'Developer ガイド（はじめに）', route: '#/developer/guide/getting-started' },
+    ],
+  },
+  {
+    id: 'user', label: '利用者', icon: '◎',
+    desc: '見て確認する — 最新の正解と各製品の実装。',
+    links: [
+      { label: 'ポータルの歩き方', route: '#/usage/portal-basics' },
+      { label: '閲覧3形態の使い分け', route: '#/usage/view-modes' },
+      { label: 'プロジェクト集', route: '#/projects' },
+    ],
+  },
+  {
+    id: 'admin', label: '管理者', icon: '⚙',
+    desc: '配布・昇格・版を運用する。',
+    links: [
+      { label: '版ダッシュボード', route: '#/ops/versions' },
+      { label: 'Showcase（横断一覧）', route: '#/ops/showcase' },
+      { label: 'Core 昇格フロー', route: '#/ops/promotion' },
+    ],
+    note: '非エンジニア向けの詳細な GitHub 操作（権利者向け）は、公開ポータルではなくリポジトリ内ドキュメント（aidlc-docs/）に分離しています。',
+  },
+];
+
+/** はじめに読む順番（オンボーディング・US-P5 / BR-PIA-3 / SP1）。本文は複製せずリンク順序のみ。 */
+export const READING_ORDER = [
+  { label: '① ビジョン（何のための基盤か）', route: '#/overview/principles/vision' },
+  { label: '② 三層トークン / デバイスプロファイル', route: '#/overview/foundations/tokens' },
+  { label: '③ シナリオ別ガイド（既存 / 新規）', route: '#/usage/scenario-existing' },
+  { label: '④ 主要操作の使い方', route: '#/usage/portal-basics' },
+];
+
+/** Home の主要4操作クイックリンク（US-P7 / AC②-1）。 */
+export const HOME_QUICK_LINKS = [
+  { label: '新製品セットアップ', route: '#/usage/new-product-setup' },
+  { label: '既存コードを移行', route: '#/usage/migration' },
+  { label: 'Core 昇格を提案', route: '#/usage/promotion' },
+  { label: '参照 Core バージョン確認', route: '#/usage/core-version' },
+];
+
 /** 概要（Core DS 自身）の静的ページツリー。route = #/overview/<section>/<item> */
 export const OVERVIEW = [
   {

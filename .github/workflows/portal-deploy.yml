@@ -72,8 +72,58 @@ jobs:
         with:
           path: portal/site
 
+  # U2-4/U2-5: 品質ゲート（VRT＋a11y）。build 後・deploy 前に実行（IDQ45-3=A / fail-fast）。
+  quality:
+    needs: build
+    runs-on: ubuntu-latest      # VRT ベースライン真実源（Linux / NRD45-VRT-3）
+    defaults:
+      run:
+        working-directory: portal
+    steps:
+      - name: Checkout portal (aidlc-workflows)
+        uses: actions/checkout@v4
+
+      - name: Checkout Core DS (rolling)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.CORE_DS_REPO || 'your-org/FIG-Core-DS' }}
+          ref: ${{ vars.CORE_DS_REF || 'core' }}
+          path: _core
+        continue-on-error: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm ci || npm install
+
+      - name: Install Playwright (chromium)
+        run: npx playwright install --with-deps chromium
+
+      - name: Build (site for static serving)
+        run: node scripts/build.mjs
+        env:
+          CORE_DS_PATH: ${{ github.workspace }}/_core
+
+      - name: VRT (Home / coverage / usage index)
+        run: npm run test:vrt
+
+      - name: a11y (axe WCAG AA serious/critical = 0)
+        run: npm run test:a11y
+
+      - name: Upload quality report (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portal-quality-report
+          path: |
+            portal/playwright-report/
+            portal/test-results/
+          if-no-files-found: ignore
+
   deploy:
-    needs: build               # build 失敗時はデプロイしない（fail-fast / AVAIL-4）
+    needs: [build, quality]    # build＋品質ゲート通過時のみデプロイ（fail-fast / AVAIL-4）
     runs-on: ubuntu-latest
     environment:
       name: github-pages

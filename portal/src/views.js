@@ -3,20 +3,84 @@
  * 各 render は HTML 文字列を返す純粋関数（ctx = { data, ui }）。
  * data = { taxonomy, registry, versionMatrix, showcase, buildInfo }
  */
-import { OVERVIEW, OPS, coreScopeSections, corePage } from './content.js';
+import { OVERVIEW, OPS, coreScopeSections, corePage, ROLE_ENTRIES, READING_ORDER, HOME_QUICK_LINKS } from './content.js';
 import { VIEWS } from './router.js';
 import { renderGuide, usageIndex } from './usage.js';
 
 const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+/* ───────────── Home ランディング（PT-Home / US-P1/P5 / SP1/SP2） ───────────── */
+/** 役割別入口・はじめに読む順番・シナリオ入口・主要4操作クイックリンク。 */
+export function renderHome() {
+  const roleCard = (r) => `<li class="fig-role-card" data-testid="role-card-${esc(r.id)}">
+    <h3 class="fig-role-card__title"><span class="fig-role-card__icon" aria-hidden="true">${esc(r.icon)}</span> ${esc(r.label)}</h3>
+    <p class="fig-doc-muted">${esc(r.desc)}</p>
+    <ul class="fig-doc-list">${r.links.map(l => `<li><a href="${esc(l.route)}" data-testid="role-link-${esc(r.id)}">${esc(l.label)} →</a></li>`).join('')}</ul>
+    ${r.note ? `<p class="fig-doc-note">${esc(r.note)}</p>` : ''}
+  </li>`;
+  const order = READING_ORDER.map(o => `<li><a href="${esc(o.route)}">${esc(o.label)}</a></li>`).join('');
+  const quick = HOME_QUICK_LINKS.map(q => `<li><a class="fig-btn-link" href="${esc(q.route)}" data-testid="home-quicklink">${esc(q.label)} →</a></li>`).join('');
+  return `<div class="fig-home" data-testid="home">
+    <header class="fig-home__hero">
+      <h1>FIG Core Design System ポータル</h1>
+      <p class="fig-doc-lead">あなたは開発者 / 利用者 / 管理者のどれですか？まずどこを読めばよいかを下から選べます。</p>
+    </header>
+    <section aria-labelledby="home-roles"><h2 id="home-roles">役割で選ぶ</h2>
+      <ul class="fig-role-cards">${ROLE_ENTRIES.map(roleCard).join('')}</ul></section>
+    <section aria-labelledby="home-scenarios"><h2 id="home-scenarios">シナリオで始める</h2>
+      <ul class="fig-doc-list">
+        <li><span class="fig-badge fig-badge--featured">★最優先</span> <a href="#/usage/scenario-existing" data-testid="home-scenario-existing">シナリオA：既存アプリを整える →</a></li>
+        <li><a href="#/usage/scenario-new" data-testid="home-scenario-new">シナリオ②：新規開発で使う →</a></li>
+      </ul></section>
+    <section aria-labelledby="home-order"><h2 id="home-order">はじめに読む順番</h2>
+      <ol class="fig-doc-list">${order}</ol></section>
+    <section aria-labelledby="home-quick"><h2 id="home-quick">主要操作</h2>
+      <ul class="fig-doc-list fig-home__quick">${quick}</ul></section>
+    <p class="fig-doc-muted"><a href="#/overview/components/coverage" data-testid="home-coverage-link">コンポーネント整備状況（余白）を見る →</a></p>
+  </div>`;
+}
+
+/* ───────────── 未整備可視化「余白」（US-P6 / SP4 / BR-PIA-8/9） ───────────── */
+/** Core カタログの整備済/未整備（preview 未収録）を一覧・バッジ・整備率で提示。22件 preview は作らない（スコープ尊重）。 */
+export function renderBrowseMargin(ctx) {
+  const cc = ctx && ctx.data && ctx.data.coreContent;
+  const pages = cc && cc.PAGES;
+  if (!pages) return emptyOps('コンポーネント整備状況（余白）', 'Core 本文がまだ取り込まれていません（rolling 取込前）。');
+  const rows = Object.entries(pages)
+    .filter(([, p]) => p && (p.template === 'component' || p.template === 'pattern'))
+    .map(([key, p]) => ({ key, title: p.title || key, ready: !!p.preview }))
+    .sort((a, b) => a.title.localeCompare(b.title, 'ja'));
+  const ready = rows.filter(r => r.ready).length;
+  const total = rows.length;
+  const items = rows.map(r => `<li class="fig-coverage-item" data-testid="coverage-item">
+    <span>${esc(r.title)}</span>
+    ${r.ready
+      ? '<span class="fig-badge fig-badge--ready" data-testid="coverage-ready">整備済</span>'
+      : '<span class="fig-badge fig-badge--pending" data-testid="coverage-pending">未整備</span>'}
+  </li>`).join('');
+  return `<div class="fig-doc"><h1>コンポーネント整備状況（余白）</h1>
+    <p class="fig-doc-lead">整備率 <strong data-testid="coverage-rate">${ready}/${total}</strong>。未整備＝ライブプレビュー未収録です。Core リポジトリ側で preview を足せば、ポータル改修なしに自動で「整備済」へ切り替わります。</p>
+    <ul class="fig-coverage">${items}</ul></div>`;
+}
+
 /* ───────────── 概要 / Developer（PT-3 IA Section View / Core 自前サイト準拠） ───────────── */
 export function renderOverview(route, ctx) {
+  // 未整備可視化「余白」ビュー（US-P6 / BR-PIA-8）。#/overview/components/coverage
+  if (route.path[0] === 'components' && route.path[1] === 'coverage') return renderBrowseMargin(ctx);
   return renderScopeView('core', '概要', route, ctx);
 }
 
 /** Developer ガイド（Core developer スコープ・§4-1）。renderCorePage は scope 非依存なので流用。 */
 export function renderDeveloper(route, ctx) {
-  return renderScopeView('developer', 'Developer', route, ctx);
+  return renderScopeView('developer', 'Developer', route, ctx) + opsCrosslinkNote();
+}
+
+/** 導入↔運用 責務分離（US-P4 / SP5 / BR-PIA-7）。Developer ガイドに運用ビューへの相互リンク注記を IA レベルで添える（本文は不変）。 */
+function opsCrosslinkNote() {
+  return `<aside class="fig-doc-note" data-testid="ops-crosslink"><strong>運用について</strong>：
+    Core 昇格・バージョン管理・配布などの運用作業は
+    <a href="#/ops/promotion">運用 › Core 昇格フロー</a>・<a href="#/ops/versions">運用 › 版ダッシュボード</a>、
+    手順は <a href="#/usage/promotion">使い方 › Core 昇格を提案</a> を参照してください。</aside>`;
 }
 
 /**

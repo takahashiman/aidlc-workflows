@@ -1,6 +1,6 @@
 {
   "_generatedBy": "extractCoreContent (F-6)",
-  "collectedAt": "2026-06-17T04:54:46.257Z",
+  "collectedAt": "2026-06-22T05:47:39.884Z",
   "SITEMAP": {
     "core": {
       "label": "Core",
@@ -964,7 +964,7 @@
       "template": "pattern",
       "title": "Arrival Card",
       "description": "到着時刻カードのアンビエント呼吸と差分更新。",
-      "preview": null,
+      "preview": "preview/arrival-card.html",
       "spec": "patterns/arrival-card.md",
       "a11y": "到着時刻の動的更新は <code>aria-live=\"polite\"</code> で読み上げ。"
     },

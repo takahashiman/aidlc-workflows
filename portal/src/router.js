@@ -1,7 +1,9 @@
 /**
  * Hash Router（PT-1 / business-logic §1.2-1.3）
  * route 文法:
+ *   #/home                                  ランディング（役割別入口・はじめに読む順番・U2-4 / BR-PIA-1）
  *   #/overview/<section>/<item>
+ *   #/overview/components/coverage          未整備可視化「余白」ビュー（U2-4 / BR-PIA-8）
  *   #/developer/<section>/<item>            Developer ガイド（Core developer スコープ・§4-1）
  *   #/projects[/<category>[/<subcategory>[/<product>[/<view>]]]]   view=component|page|demo
  *   #/ops/<versions|showcase|promotion|governance>
@@ -9,9 +11,9 @@
  *
  * parseRoute は副作用のない純粋関数（テスト対象 / MAINT-2）。
  */
-export const KINDS = ['overview', 'projects', 'ops', 'usage', 'developer'];
+export const KINDS = ['home', 'overview', 'projects', 'ops', 'usage', 'developer'];
 export const VIEWS = ['component', 'page', 'demo'];
-export const DEFAULT_ROUTE = '#/overview/principles/vision';
+export const DEFAULT_ROUTE = '#/home';
 
 /** @returns {{kind:string, path:string[], view?:string, query:URLSearchParams, raw:string}|null} */
 export function parseRoute(hash) {

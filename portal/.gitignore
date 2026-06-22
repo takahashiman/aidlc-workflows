@@ -1,0 +1,5 @@
+# Playwright（VRT/a11y）成果物。ベースライン tests/vrt/__screenshots__/ は追跡する。
+test-results/
+playwright-report/
+blob-report/
+.playwright/
