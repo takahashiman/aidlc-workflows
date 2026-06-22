@@ -57,6 +57,6 @@ test('developer ガイドを分解（§4-1）', () => {
 });
 
 test('定数', () => {
-  assert.deepEqual(KINDS, ['overview', 'projects', 'ops', 'usage', 'developer']);
+  assert.deepEqual(KINDS, ['home', 'overview', 'projects', 'ops', 'usage', 'developer']);
   assert.deepEqual(VIEWS, ['component', 'page', 'demo']);
 });

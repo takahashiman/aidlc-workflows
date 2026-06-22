@@ -71,14 +71,131 @@ export const GUIDES = {
     ],
     verification: ['フィードバックが起票・記録される。'],
   },
+
+  /* ───────── シナリオ別ガイド（US-P2/P3 / BR-PIA-4/5/6） ───────── */
+  'scenario-existing': {
+    title: 'シナリオA：既存アプリを整える',
+    group: 'scenario', featured: true, // ★最優先（BR-PIA-5）
+    purpose: '既存コードのある製品を、機能を壊さず FIG Core DS のスタイルへ整える（最低でも自社デザイン資産化を達成）。LLocana/BusDelayAlerts が実例（AC②-3）。',
+    preconditions: ['対象製品の repo にアクセスできること。', 'Core DS（FIG-UDS）の閲覧 URL を知っていること。'],
+    steps: [
+      '公開サイト / 本ポータルを閲覧し、最新の正解（Core DS）と Developer ガイドを確認する（「Developer ガイド（はじめに）」）。',
+      '必要な repo を clone し、既存コードを配置する（→「GitHub 操作ガイド」）。',
+      '配布を入れる：Core を submodule で pin し Core CSS を import する（→「新製品セットアップ」の配布手順、または「移行」）。',
+      'スタイル修正を開始する：ブリッジ CSS で @theme へ写像し、状態色を semantic 化・生 HEX を解消する（→「移行」）。',
+      '「最低でも自社デザイン資産化」達成を確認して開発を終える。',
+    ],
+    verification: [
+      '主要画面の生 HEX が 0・vite build 成功・状態色が Core status / ブランドが signature を参照している。',
+      '（あわよくば）既存機能を壊さず画面操作感も改善＝UX 改修フロー（画面遷移図の確認 / VSCode×Pencil）へ進める。',
+    ],
+  },
+  'scenario-new': {
+    title: 'シナリオ②：新規開発で FIG-UDS を使う',
+    group: 'scenario',
+    purpose: '既存資産が少ない新規開発で、Construction から FIG Core DS のスタイル＋UI を実装する。',
+    preconditions: ['新規製品を作成できる権限があること。'],
+    steps: [
+      'template から新製品を複製し signature seed を注入する（→「新製品セットアップ」）。',
+      'Core を submodule pin＋CSS import で配布する。',
+      'Construction で FIG-UDS のトークン／コンポーネントを使って実装する。',
+      'プロジェクト集へ登録する（registry 登録 PR は AI セットアップが自動起票）。',
+    ],
+    verification: ['build 成功・プロジェクト集に製品が現れる（準備中→公開）。'],
+  },
+
+  /* ───────── 主要操作ガイド（US-P7 / US-X3 / BR-PIA-10/11） ───────── */
+  'new-product-setup': {
+    title: '新製品セットアップ',
+    group: 'operation',
+    purpose: '新規製品を template から複製し、signature seed を注入して開発を開始する（シナリオ②の起点 / US-P7）。',
+    preconditions: ['GitHub Template から repo を作成できること。', '製品のメインカラー（signature seed）が決まっていること。'],
+    steps: [
+      'template を複製して新しい製品 repo を作成する（→「GitHub 操作ガイド」）。',
+      'project-settings.json に 製品名 / signature seed / カテゴリ を記入する。',
+      'init を実行し、変数置換と初期設定を反映する。',
+      'Core DS を submodule で pin（CORE-DS-VERSION）する。',
+      'registry 登録 PR（AI セットアップが自動起票）をマージし、プロジェクト集に出現することを確認する。',
+    ],
+    verification: ['build が成功し、プロジェクト集に製品が「準備中→公開」で現れる。'],
+  },
+  'migration': {
+    title: '既存コードを Core 採用へ移行',
+    group: 'operation',
+    purpose: '既存コードを Core DS 採用へ移行し、スタイルを統一する（シナリオA の中核 / US-P7）。',
+    preconditions: ['対象 repo を clone 済みであること。'],
+    steps: [
+      'Core を submodule で追加し pin する。Core CSS（primitives/semantic/tokens）を import する。',
+      'ブリッジ CSS 1枚で Core semantic → アプリ Tailwind @theme を写像する。',
+      '状態色を semantic 化（success/warning/danger）し、ブランド色を signature ユーティリティへ機械置換する。',
+      '主要画面の生 HEX を 0 にする（周辺画面は段階対応）。',
+      'migration-status で定量確認する（主要フロー 100% / 全体 ≧ 80%）。',
+    ],
+    verification: ['主要画面 生 HEX 0・vite build 成功・migration-status PASS。'],
+  },
+  'github-operations': {
+    title: 'GitHub 操作ガイド（ツール非依存）',
+    group: 'operation',
+    purpose: '主要4操作で必要になる GitHub 操作を、ツールに依存しない再現手順としてまとめる（US-X3 / BR-PIA-11）。各チーム標準の Git / AI アシスタントに読み替え可能。',
+    preconditions: ['対象 repo の閲覧・変更権限があること。'],
+    steps: [
+      'repo を clone する（または Template から新規作成する）。',
+      '作業ブランチを作成する（修正前後比較が要るなら before ブランチを先に用意する）。',
+      'Core submodule の pin（参照バージョン）を更新する。',
+      'Issue を起票する：仮パーツは temp-part ラベル、Core 昇格提案は core-promotion ラベル。',
+      '変更を PR にまとめてレビュー・マージする。',
+    ],
+    verification: ['必要な clone / ブランチ / submodule pin / Issue / PR が作成できる。'],
+  },
+  'ux-refine': {
+    title: 'UX 改修フロー（VSCode×Pencil・あわよくば）',
+    group: 'operation',
+    purpose: 'スタイル整理に加え操作感まで改善する「あわよくば」フロー（US-X2 / 画像02-A）。Core の UX 契約（体感バジェット / 画面遷移 / フィードバック）を基準に、Pencil（設計参照）で評価者へ修正項目を提案→承認し、最小改善を実コードへ反映する。実装が正典・既存機能は非回帰（壊さない）が大前提。スタイルと同じく UX 知見も Core へ蓄積・還元する。',
+    preconditions: [
+      'シナリオA でスタイル整理（生 HEX 0・build 成功）まで到達していること。',
+      'Core の UX 契約を参照できること（patterns の transition-budget / page-transition / feedback-contract・accessibility-guidelines）＝改修の判断基準。',
+      'VSCode の Pencil 拡張が使えること（.pen は MCP 経由のみ・暗号化）。',
+    ],
+    steps: [
+      '① 評価：Core の UX 契約に照らして現状を点検する（例：画面遷移が体感バジェット 200ms に収まっているか／生の motion 値が Core トークンを参照しているか）。',
+      '② 提案：主要フローを Pencil（.pen）で as-is/to-be 表現し、契約違反・改善余地を「修正項目」として評価者に提案→承認を得る（書き出し画像を設計参照として共有）。',
+      '③ 反映：承認された最小 UX 改善を実コードへ反映する（実装が正典）。生の motion 値は Core トークン（例 --motion-duration-budget-nav）へ寄せ、判定ロジックは純粋関数に切り出して単体テスト可能にする。',
+      '④ 検証：単体（vitest）＋機能 e2e（Playwright・到達先アサート）＋既存 VRT の3つが緑であることを反映の合格条件とする（非回帰）。',
+      '⑤ 還元：製品で得た UX 知見（例：履歴なし時の戻り先規約）は Core の pattern / 画面遷移規約へ昇格提案する（→「Core 昇格を提案する」）。',
+      '⑥ 活用・確認：確立した画面遷移など最終 UX は次回開発で再利用し、dev-flow-journal とこのポータルで確認できるよう残す（US-X4）。',
+    ],
+    verification: [
+      '改修後の画面遷移が Core の体感バジェット内で、生の motion 値ではなく Core トークンを参照している。',
+      '既存機能が非回帰（通常フローの挙動・遷移・状態表示が不変）であることをテストで確認できる。',
+      'Pencil の as-is/to-be で改善差分が説明でき、UX 知見が Core 昇格 or バックログとして循環に乗っている。',
+    ],
+  },
 };
 
-/** 使い方インデックス（トップ） */
+/** 使い方ガイドの表示順グループ（usageIndex の並び）。 */
+const USAGE_GROUPS = [
+  { id: 'scenario', label: 'シナリオ別ガイド' },
+  { id: 'operation', label: '主要操作' },
+  { id: 'basics', label: 'その他' },
+];
+
+/** 使い方インデックス（トップ）。グループ別・シナリオA は★最優先で先頭（BR-PIA-5）。 */
 export function usageIndex() {
-  const items = Object.entries(GUIDES)
-    .map(([id, g]) => `<li><a href="#/usage/${id}" data-testid="usage-link-${id}">${esc(g.title)}</a><span class="fig-doc-muted"> — ${esc(g.purpose)}</span></li>`)
-    .join('');
-  return `<h1>使い方</h1><p class="fig-doc-lead">操作を要する場面ごとに、ツールに依存しない再現手順を用意しています。</p><ul class="fig-doc-list">${items}</ul>`;
+  const li = ([id, g]) => {
+    const star = g.featured ? '<span class="fig-badge fig-badge--featured" data-testid="usage-featured">★最優先</span> ' : '';
+    return `<li>${star}<a href="#/usage/${id}" data-testid="usage-link-${id}">${esc(g.title)}</a><span class="fig-doc-muted"> — ${esc(g.purpose)}</span></li>`;
+  };
+  const entries = Object.entries(GUIDES);
+  const groupOf = (g) => (g.group || 'basics');
+  // 各グループ内は featured を先頭に（安定）。
+  const inGroup = (gid) => entries
+    .filter(([, g]) => groupOf(g) === gid)
+    .sort((a, b) => (b[1].featured ? 1 : 0) - (a[1].featured ? 1 : 0));
+  const sections = USAGE_GROUPS.map(grp => {
+    const rows = inGroup(grp.id).map(li).join('');
+    return rows ? `<section data-testid="usage-group-${grp.id}"><h2>${esc(grp.label)}</h2><ul class="fig-doc-list">${rows}</ul></section>` : '';
+  }).join('');
+  return `<h1>使い方</h1><p class="fig-doc-lead">操作を要する場面ごとに、ツールに依存しない再現手順を用意しています。</p>${sections}`;
 }
 
 /** 1ガイドの描画（テンプレ: 目的→前提→手順→確認） */
