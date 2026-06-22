@@ -75,7 +75,13 @@ jobs:
   # U2-4/U2-5: 品質ゲート（VRT＋a11y）。build 後・deploy 前に実行（IDQ45-3=A / fail-fast）。
   quality:
     needs: build
-    runs-on: ubuntu-latest      # VRT ベースライン真実源（Linux / NRD45-VRT-3）
+    # VRT ベースライン真実源（Linux / NRD45-VRT-3）。
+    # Playwright 公式コンテナでブラウザ同梱（/ms-playwright）＝install 不要・
+    # 旧 azureedge CDN 起因のダウンロードハングを根絶。tag は portal/package.json の
+    # @playwright/test 版と一致させること。
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.0-noble
     defaults:
       run:
         working-directory: portal
@@ -91,15 +97,8 @@ jobs:
           path: _core
         continue-on-error: true
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
       - name: Install deps
-        run: npm ci || npm install
-
-      - name: Install Playwright (chromium)
-        run: npx playwright install --with-deps chromium
+        run: npm ci || npm install   # ブラウザはコンテナ同梱＝playwright install 不要
 
       - name: Build (site for static serving)
         run: node scripts/build.mjs
@@ -112,7 +111,7 @@ jobs:
       - name: a11y (axe WCAG AA serious/critical = 0)
         run: npm run test:a11y
 
-      - name: Upload quality report (on failure)
+      - name: Upload quality report / 生成ベースライン (on failure)
         if: failure()
         uses: actions/upload-artifact@v4
         with:
@@ -120,6 +119,7 @@ jobs:
           path: |
             portal/playwright-report/
             portal/test-results/
+            portal/tests/vrt/__screenshots__/
           if-no-files-found: ignore
 
   deploy:
