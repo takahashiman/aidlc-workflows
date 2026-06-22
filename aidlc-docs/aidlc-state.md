@@ -16,13 +16,22 @@
 - **正典ブリーフ**: `aidlc-docs/next-initiative-brief.md`（§3 の2大目標がスコープ）
 - **Current Stage**: CONSTRUCTION(#2) - **U2-1〜U2-7 ✅全 Unit 完了**（2026-06-22 U2-7 Code Gen 承認）。残＝**Build and Test（全 Unit 後）**。U2-7 成果＝UX 改修フロー確立（C1 戻り堅牢化＋motion トークン化を代表実証）。**UX/導線の本格改修は保留（今後活用）**。
 
-### 🔖 RESUME POINT（次セッション開始点・2026-06-23 更新＝commit/push 実行中）
-- **いま**: CONSTRUCTION(#2)。**U2-1〜U2-7 ✅全 Unit 完了**。残ステージ＝**Build and Test（全 Unit 後・CI で成立中）**。
-- **commit/push 実行状況（2026-06-23・3レポ）**:
-    1. **Core（@core）✅push 済**: ブランチ `feat/arrival-card-preview`・commit `ba961f0`（U2-6 7ファイル）。**Issue #2**（core-promotion）＋**PR #3**（base=core・Closes #2）作成済。**component-check CI 起動済**（run 27940636212）。⏸ 残＝CI 緑確認→**Maintainer 承認マージ→MINOR タグ v1.3.0**（SEC-3 自動マージ禁止・承認/操作待ち）。
-    2. **BusDelayAlerts（feature/figuds-adoption）✅push 済**: commit `b8e1c4f`（U2-2＋U2-3＋U2-7 の33ファイル・旧 fig-core submodule 残骸除去済・vendor/core=v1.2.1）。`705b0b3..b8e1c4f`。**figuds-build CI 起動済**（run 27940789090・pin整合/build/test:unit/raw-hex/test:e2e/VRT 初回）。⏸ 残＝CI 結果確認。
-    3. **aidlc-workflows ⏳進行中**: `main` から `feat/initiative2-portal-docs` ブランチ作成済。portal＋aidlc-docs を commit→push→PR→portal-deploy.yml quality（VRT/a11y 初回）。
-- **次の一手**: ① 3レポの CI 結果確認（Build and Test の本体＝VRT/a11y/e2e 実描画＋ベースライン初回生成は CI Linux で成立）／② Core PR #3 の Maintainer 承認マージ＋v1.3.0 タグ（承認後）／③ CI 赤があれば修正。
+### 🔖 RESUME POINT（次セッション開始点・2026-06-23 更新＝Build and Test 全グリーン）
+- **いま**: CONSTRUCTION(#2)。**U2-1〜U2-7 ✅全 Unit 完了**＋**3レポ commit/push 完了＋CI 全グリーン**。残＝**Core PR#3 のマージ＋タグ／PR#4 マージ（ユーザー操作）**のみ。
+- **Build and Test 結果（2026-06-23・3レポすべて緑）**:
+    1. **Core PR#3**（`feat/arrival-card-preview`・base=core）= **lint✅/VRT✅/a11y✅**（run 27954197966）。Issue #2＋PR #3 作成済。⏸ 残＝**Maintainer 承認マージ→MINOR タグ v1.3.0**（SEC-3 自動マージ禁止）。最新 HEAD=`4120732`。
+    2. **BusDelayAlerts**（`feature/figuds-adoption`）= **build✅/VRT✅/e2e✅**（run 27946891781）。VRT ベースライン3枚（home/ticket-purchase/map-search）を CI Linux 生成→`tests/vrt/__screenshots__/` に commit 済（HEAD=`a4ec3ff`）。
+    3. **aidlc-workflows PR#4**（`feat/initiative2-portal-docs`・base=main）= **CI✅/CodeQL✅/grype✅/PR Validation✅**（HEAD=`f5cd997`）。⏸ 残＝マージ。
+- **CI を緑化するため今回直した不整合（初回 CI 統合起因・記録）**:
+    - 契約文 URL（PR validation）＝awslabs→takahashiman。
+    - arrival-card の V3 層逆流（`--bg-app`→`--color-surface-canvas`）。
+    - Core lint スコープ過大＝root `.`→`preview`＋レガシー preview/storybook/uploads 等を lint-rules.json ignore 管理＋lint/a11y/vrt の CI 正典 ref を PR head に（ブートストラップ）。
+    - submodule pin 誤検知＝tag fetch フォールバック。
+    - grype High＝msgpack 1.1.2→1.2.1。
+    - **playwright ブラウザ DL ハング（VRT/a11y 20分 timeout の真因）＝旧 azureedge CDN 廃止。Playwright を 1.55.0 へ＋VRT/a11y/e2e を Playwright 公式 Docker コンテナ（mcr.microsoft.com/playwright:v1.55.0-noble）実行に変更＝DL 撤廃で根絶**。
+    - a11y runner＝`browser.newContext()` 経由 page に修正＋失敗ノード詳細出力。
+    - **a11y が本物の違反検出→修正**: passed status を WCAG AA 化（`--color-status-passed-fg` slate-500→slate-600）＋arrival-card の `<s>` muted 化・通過済カードの opacity:0.5 撤去。
+- **次の一手（ユーザー操作）**: ① Core PR#3 を Maintainer 承認マージ→`v1.3.0` タグ（MINOR）。② aidlc-workflows PR#4 をマージ。③（任意）BDA submodule pin を v1.3.0 へ更新。代替＝.pen portal 取込／UX 知見 Core 還元（C1→page-transition back・承認後）。
   - 代替: **Build and Test をローカル先行**（新情報少）／**`.pen` の portal 取込**（保存後 export_nodes→portal/assets→ux-refine 画像結線）／**UX 知見 Core 還元**（C1 戻り規約→page-transition back 追補・承認後）。
   - **U2-7 完了内容（2026-06-22）**: **UX 改修フローの確立**が成果（C-UXFlow＝capture→review→reflect・Core UX 契約を基準に .pen で提案→承認→反映→Core 還元→ポータル確認）。代表 C1＝RouteDetail 戻りの堅牢化（`navigation.ts` の純粋 `decideBackTarget`・履歴なし=Home フォールバック）＋motion トークン化（`motion.ts` で `--motion-duration-budget-nav` 参照・300ms 生値解消）。二層検証＝vitest 8/0＋Playwright e2e（tests/e2e 戻り2経路）＋既存 VRT。portal `ux-refine` ガイド（6手順）。検証 PASS（製品 vitest 8/0・生HEX0・build／portal 42/0・build）。**e2e/VRT 実描画は CI Linux 初回**。
   - **保留・今後**: **UX/導線の本格改修は保留**（C1 は flow 確立の代表実証として working tree に在・本格展開は今後）。`.pen` は今後の改修に備え `BusDelayAlerts/design/llocana-ux.pen` 保存（MCP に save-as なし＝VSCode/Pencil 拡張で Save As が必要・保存後 export_nodes で portal/assets へ書き出し→ux-refine 画像結線）。UX 知見の Core 還元（C1 戻り規約→page-transition back 追補）は承認後。[[ux-circulation-loop]]。
