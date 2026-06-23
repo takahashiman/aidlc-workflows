@@ -67,7 +67,7 @@
 .fig-tag--temp { background: #fff3cd; color: #8a6d00; }
 .fig-tag--ext { background: #e7f0fb; color: #1c4f8a; }
 .fig-tag--core { background: #d4edda; color: #1b5e20; }
-.fig-tag--pending { background: #eee; color: #777; }
+.fig-tag--pending { background: #eee; color: #5f5f5f; } /* #777 は #eee 上 3.85:1=AA 未達 → #5f5f5f で ≈5.5:1 */
 .fig-showcase-item__preview { display: inline-block; margin: 2px 0 6px; font-size: 12px; }
 .fig-status { font-size: 12px; padding: 2px 8px; border-radius: 999px; }
 .fig-status--up-to-date { background: #d4edda; color: #1b5e20; }
@@ -131,9 +131,10 @@
    上下余白を確保して窮屈さを解消。間隔は配置側のコンテナ（card head の gap 等）が制御。 */
 .fig-tag--featured {
   /* 温色面（warning text を薄めた peach）でチップを塗る＝白地でも温色カード上でも明瞭に浮く。
-     生 HEX は使わず text-warning トークンから派生。文字 4.6:1≧AA。 */
+     生 HEX は使わず text-warning トークンから派生。文字は peach 面（≈#f4e5da）上で
+     warning text 既定だと 4.08:1=AA 未達のため、黒を 20% 混ぜて暗色化し ≈5.7:1≧AA に。 */
   background: color-mix(in srgb, var(--color-text-warning, #B45309) 15%, #fff);
-  color: var(--color-text-warning, #B45309);
+  color: color-mix(in srgb, var(--color-text-warning, #B45309) 80%, #000);
   border: 1px solid color-mix(in srgb, var(--color-text-warning, #B45309) 35%, transparent);
   font-weight: 600;
   /* 余白は基盤 .fig-tag の em 比率（0.5/0.4em）を踏襲。横だけ僅かに広げて 2 文字を据わり良く。 */
