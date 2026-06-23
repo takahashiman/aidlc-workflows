@@ -24,7 +24,7 @@
 .portal-header { grid-template-columns: auto 1fr auto auto; }
 .fig-version-badge {
   font-size: 12px; padding: 3px 8px; border-radius: 999px; white-space: nowrap;
-  background: var(--color-surface-container-high, #f1f3f5); color: var(--color-text-muted, #555);
+  background: var(--color-surface-container-high, #f1f3f5); color: var(--color-text-secondary, #334155);   /* muted は container-high 面で 3.86:1＝AA 未達のため secondary */
 }
 
 /* サイドバー: pending 項目の減衰（availability の CSS 連動は portal.css 側） */
