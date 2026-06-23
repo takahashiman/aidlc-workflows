@@ -131,7 +131,7 @@ function renderItem(node, currentRaw) {
   const badges = av
     ? `<span class="sidebar-item__badge sidebar-item__badge--avoid" aria-hidden="true">N/A</span><span class="sidebar-item__badge sidebar-item__badge--caution" aria-hidden="true">注意</span>`
     : '';
-  const tempBadge = node.badge === 'temp-part' ? ` <span class="fig-badge fig-badge--temp">仮</span>` : '';
+  const tempBadge = node.badge === 'temp-part' ? ` <span class="fig-tag fig-tag--temp">仮</span>` : '';
   const pendingCls = node.status === 'pending' ? ' is-pending' : '';
   return `<li><a class="sidebar-item${pendingCls}" href="${route}" data-route="${esc(route)}"${isCurrent ? ' aria-current="page"' : ''}${availAttrs} data-testid="nav-${esc(node.id)}"><span class="sidebar-item__label">${esc(node.label)}${tempBadge}</span>${badges}</a></li>`;
 }
@@ -267,9 +267,22 @@ async function main() {
   const searchIndex = buildSearchIndex(navTree);
   const sidenav = $('#sidenav');
   const mainEl = $('#main');
+  const currentRoute = () => parseRoute(location.hash) || parseRoute(DEFAULT_ROUTE);
+
+  // サイドバーは data 駆動で不変のため一度だけ描画する。以降の遷移では aria-current の
+  // 付け替えのみ行い DOM を作り直さない（→ ユーザーが畳んだアコーディオンが遷移で復活しない）。
+  sidenav.innerHTML = renderSidebar(navTree, currentRoute().raw);
+
+  function updateActiveNav(route) {
+    const target = ('#/' + (route ? route.raw : '')).split('?')[0];
+    sidenav.querySelectorAll('.sidebar-item[aria-current]').forEach(a => a.removeAttribute('aria-current'));
+    for (const a of sidenav.querySelectorAll('.sidebar-item')) {
+      if ((a.getAttribute('data-route') || '').split('?')[0] === target) { a.setAttribute('aria-current', 'page'); break; }
+    }
+  }
 
   function paint(route) {
-    sidenav.innerHTML = renderSidebar(navTree, route ? route.raw : '');
+    updateActiveNav(route);
     mainEl.innerHTML = renderView(route, ctx);
     restoreActiveTab();
     applyProfileToFrames(ui.profile);
@@ -283,7 +296,6 @@ async function main() {
   }
 
   const router = createRouter(paint);
-  const currentRoute = () => parseRoute(location.hash) || parseRoute(DEFAULT_ROUTE);
 
   // プロファイル切替（radiogroup・CSS 駆動のため再描画しない）
   app.addEventListener('click', (e) => {

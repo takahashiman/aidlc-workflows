@@ -16,8 +16,14 @@
 - **正典ブリーフ**: `aidlc-docs/next-initiative-brief.md`（§3 の2大目標がスコープ）
 - **Current Stage**: CONSTRUCTION(#2) - **U2-1〜U2-7 ✅全 Unit 完了**（2026-06-22 U2-7 Code Gen 承認）。残＝**Build and Test（全 Unit 後）**。U2-7 成果＝UX 改修フロー確立（C1 戻り堅牢化＋motion トークン化を代表実証）。**UX/導線の本格改修は保留（今後活用）**。
 
-### 🔖 RESUME POINT（次セッション開始点・2026-06-23 更新＝Build and Test 全グリーン）
-- **いま**: CONSTRUCTION(#2)。**U2-1〜U2-7 ✅全 Unit 完了**＋**3レポ commit/push 完了＋CI 全グリーン**。残＝**Core PR#3 のマージ＋タグ／PR#4 マージ（ユーザー操作）**のみ。
+### 🔖 RESUME POINT（次セッション開始点・2026-06-23 更新＝ポータル UX 精緻化を commit/push 後）
+- **いま（最新・2026-06-23 commit/push 済）**: ポータル UX 精緻化＋Core リンク是正を **commit/push 済**。**① Core PR #4**（`feat/text-link-aa-contrast`・base=core・本文リンク AA 是正＝core-promotion）作成済→⏸ **component-check（lint/VRT/a11y）→ Maintainer 承認マージ→ MINOR タグ v1.3.x** が残（SEC-3 承認ゲート）。**② aidlc-workflows PR**（作業ブランチ・portal＋aidlc-docs）作成済→⏸ portal-deploy quality（VRT/a11y・**見た目変更多数のためベースライン再生成**）→マージが残。**反映機構=rolling（マージ駆動・検証済）**＝Core PR#4 が `core` にマージされ次第、ポータルは次ビルド（tag dispatch/nightly/手動）で自動反映。**ユーザーは目視でポータル反映を確認予定**。
+- **（旧・参考）ポータル UX 精緻化セッションの未コミット成果**（現在は上記 PR に収容済）:
+- **このセッションの成果（未コミット）**: ① クイックスタート新設（usage.js・コピペ手順）。② シナリオ番号統一（A→①）。③ **Home 全面再構成（developer-first）**＝役割選択撤去・シナリオ/主要操作/整備状況の3カード・利用者/管理者/参考はフッター（US-P1/BR-PIA を覆す＝ユーザー承認済・**正式な要件記録更新が未了**）。④ **Core リンク是正＋昇格（実装のみ）**＝Core semantic.css の `--color-text-link` を AA 安全値へ＋portal.css に本文リンク新設→portal に rolling 取込・portal-app.css の暫定規則撤去。⑤ バッジ＝「推奨」文言・密度改善（em 比率/光学センタリング）。⑥ **★命名衝突発見**＝ポータルの `.fig-badge` が Core の数値バッジ・コンポーネント（固定 height）と同名衝突→**ポータル側を `.fig-tag` へ全面改名**で解消。アコーディオン「閉じても復活」バグも修正。検証＝portal vitest **42/42**・build PASS（VRT ベースライン再生成は CI）。
+- **未コミット一覧**: aidlc-workflows= `portal/{assets/portal-app.css, src/{content,views,usage,portal}.js, tests/ia.test.js}`＋aidlc-docs（audit/state）。Core(@core)= `assets/portal.css, semantic.css`。
+  - ⚠ **`portal/vendor/core/` は .gitignore 済（コミット対象外）**＝`portal/scripts/build.mjs` が Core から **rolling 取込**で再生成する。リンク是正の**源は Core repo**（assets/portal.css・semantic.css＝tracked）。ローカル build では sibling Core を取り込むため即反映するが、**公開ポータルに durable に効かせるには Core を昇格（マージ/リリース）→ポータルの取込 Core ref を更新**する必要がある（＝リンク是正を core-promotion に乗せる理由）。次セッションで build.mjs の corePath（CORE_DIR/既定 sibling か pin か）と portal-deploy CI の Core 取得方法を要確認。
+- **次の一手（次セッション・全て承認制）**: (1) この未コミット成果を **commit/push**（ポータルは作業ブランチ→PR／Core は `feat/...` ブランチ→**core-promotion Issue/PR**＝リンク是正の昇格。マージ/タグは SEC-3 で承認ゲート）。(2) **IA 改訂の正式記録**（developer-first へ US-P1/BR-PIA 改訂を plans/requirements に反映）。(3) **別パス**＝図解化（テキスト過多解消）・サイドメニュー→フッター一覧化。命名衝突の教訓は portal の migration/promotion ガイド＋audit＋memory `core-classname-collision` に記録済。[[core-classname-collision]] [[developer-first-home]]
+- **（参考・直前の完了済み履歴）**: U2-1〜U2-7 全 Unit 完了＋3レポ commit/push＋CI 全グリーン＋**Core PR#3 マージ→v1.3.0 タグ／aidlc-workflows PR#4・#5 マージ済**（下記旧 RESUME POINT は履歴）。
 - **Build and Test 結果（2026-06-23・3レポすべて緑）**:
     1. **Core PR#3**（`feat/arrival-card-preview`・base=core）= **lint✅/VRT✅/a11y✅**（run 27954197966）。Issue #2＋PR #3 作成済。⏸ 残＝**Maintainer 承認マージ→MINOR タグ v1.3.0**（SEC-3 自動マージ禁止）。最新 HEAD=`4120732`。
     2. **BusDelayAlerts**（`feature/figuds-adoption`）= **build✅/VRT✅/e2e✅**（run 27946891781）。VRT ベースライン3枚（home/ticket-purchase/map-search）を CI Linux 生成→`tests/vrt/__screenshots__/` に commit 済（HEAD=`a4ec3ff`）。
