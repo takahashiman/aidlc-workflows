@@ -25,7 +25,7 @@ export const ROLE_ENTRIES = [
     id: 'developer', label: '開発者', icon: '⚒',
     desc: '実装に使う — 既存を整える / 新規を作る。',
     links: [
-      { label: 'シナリオA：既存アプリを整える（最優先）', route: '#/usage/scenario-existing' },
+      { label: 'シナリオ①：既存アプリを整える（最優先）', route: '#/usage/scenario-existing' },
       { label: 'シナリオ②：新規開発で使う', route: '#/usage/scenario-new' },
       { label: 'Developer ガイド（はじめに）', route: '#/developer/guide/getting-started' },
     ],
@@ -59,12 +59,31 @@ export const READING_ORDER = [
   { label: '④ 主要操作の使い方', route: '#/usage/portal-basics' },
 ];
 
-/** Home の主要4操作クイックリンク（US-P7 / AC②-1）。 */
+/** Home の主要4操作クイックリンク（US-P7 / AC②-1）。※フッター等で再利用。 */
 export const HOME_QUICK_LINKS = [
   { label: '新製品セットアップ', route: '#/usage/new-product-setup' },
   { label: '既存コードを移行', route: '#/usage/migration' },
   { label: 'Core 昇格を提案', route: '#/usage/promotion' },
   { label: '参照 Core バージョン確認', route: '#/usage/core-version' },
+];
+
+/**
+ * Home: シナリオ・カード（developer-first 再構成・US-P1 改 2026-06-23）。
+ * 役割選択を撤去し「開発者」を前提に、シナリオ＞主要操作＞整備状況の3本をカード表現。
+ */
+export const HOME_SCENARIOS = [
+  { id: 'existing', title: 'シナリオ①：既存アプリを整える', featured: true,
+    desc: '既存コードを壊さず Core DS のスタイルへ統一する。最低でも自社デザイン資産化を達成。', route: '#/usage/scenario-existing' },
+  { id: 'new', title: 'シナリオ②：新規開発で使う',
+    desc: 'Construction から Core のトークン／UI で実装する。', route: '#/usage/scenario-new' },
+];
+
+/** Home: 主要操作カード（最短＝quickstart を先頭に）。 */
+export const HOME_OPERATIONS = [
+  { id: 'quickstart', title: 'クイックスタート', desc: '最短で Core を入れて着手（コピペ手順）。', route: '#/usage/quickstart' },
+  { id: 'migration', title: '既存コードを移行', desc: 'Core 採用へ移行しスタイルを統一する。', route: '#/usage/migration' },
+  { id: 'new-product-setup', title: '新製品セットアップ', desc: 'template から複製し signature を注入。', route: '#/usage/new-product-setup' },
+  { id: 'promotion', title: 'Core 昇格を提案', desc: '仮／独自パーツを Core へ還元する。', route: '#/usage/promotion' },
 ];
 
 /** 概要（Core DS 自身）の静的ページツリー。route = #/overview/<section>/<item> */

@@ -48,7 +48,12 @@ export const GUIDES = {
       '普遍化・a11y 仕上げは Core Maintainer が伴走するため、提案者が完璧に整える必要はない。',
       '二段レビュー（軽微=1名/重大=2名）を経て MINOR のリリース列車に乗る。',
     ],
-    verification: ['core-promotion ラベルの Issue が起票され、Maintainer のレビュー対象になる。'],
+    notes: [
+      '命名の予約：Core のコンポーネント／ユーティリティのクラス名は予約語として扱う。昇格時は、既存 Core 名（例 .fig-badge＝数値バッジ）と意味の異なるものに同名を当てない（別コンポーネントなら別名）。',
+      '昇格レビュー時に「製品やポータルが同名クラスを別用途で使っていないか」を確認する。衝突していると rolling 取込後に固定 height や box-sizing で表示が崩れる（本ポータルでも .fig-badge 衝突を .fig-tag へ改名して解消した実例あり）。',
+      'リンク色など本文スタイルも Core を正典に：製品ローカルで重複定義せず、Core の portal.css / トークン（例 --color-text-link は本文 AA 安全な値）を参照し、不足なら本フローで Core 側に足す。',
+    ],
+    verification: ['core-promotion ラベルの Issue が起票され、Maintainer のレビュー対象になる。', '昇格物のクラス名が既存 Core 名と衝突していない。'],
   },
   'temp-part': {
     title: '仮パーツを作って開発を止めない（鶏卵回避）',
@@ -74,14 +79,14 @@ export const GUIDES = {
 
   /* ───────── シナリオ別ガイド（US-P2/P3 / BR-PIA-4/5/6） ───────── */
   'scenario-existing': {
-    title: 'シナリオA：既存アプリを整える',
+    title: 'シナリオ①：既存アプリを整える',
     group: 'scenario', featured: true, // ★最優先（BR-PIA-5）
     purpose: '既存コードのある製品を、機能を壊さず FIG Core DS のスタイルへ整える（最低でも自社デザイン資産化を達成）。LLocana/BusDelayAlerts が実例（AC②-3）。',
     preconditions: ['対象製品の repo にアクセスできること。', 'Core DS（FIG-UDS）の閲覧 URL を知っていること。'],
     steps: [
       '公開サイト / 本ポータルを閲覧し、最新の正解（Core DS）と Developer ガイドを確認する（「Developer ガイド（はじめに）」）。',
       '必要な repo を clone し、既存コードを配置する（→「GitHub 操作ガイド」）。',
-      '配布を入れる：Core を submodule で pin し Core CSS を import する（→「新製品セットアップ」の配布手順、または「移行」）。',
+      '配布を入れる：Core を submodule で pin し Core CSS を import する。コピペで着手するなら→「クイックスタート（最短でCore採用）」。',
       'スタイル修正を開始する：ブリッジ CSS で @theme へ写像し、状態色を semantic 化・生 HEX を解消する（→「移行」）。',
       '「最低でも自社デザイン資産化」達成を確認して開発を終える。',
     ],
@@ -105,6 +110,62 @@ export const GUIDES = {
   },
 
   /* ───────── 主要操作ガイド（US-P7 / US-X3 / BR-PIA-10/11） ───────── */
+  'quickstart': {
+    title: 'クイックスタート（最短でCore採用）',
+    group: 'operation', featured: true,
+    purpose: '既存 repo に FIG-UDS Core を最短で入れ、スタイル統一に着手するためのコピペ起点。BusDelayAlerts の実証レシピをそのまま下敷きにしている（シナリオ① の具体手順 / US-P7）。',
+    preconditions: [
+      '対象 repo を clone 済みで、作業ブランチを切っていること（→「GitHub 操作ガイド」）。',
+      'Vite + Tailwind（または CSS 変数でテーマを持つ構成）であること。別構成でも「Core semantic → アプリのテーマ変数」を1枚で写像する考え方は同じ。',
+    ],
+    steps: [
+      'Core を submodule で追加し、リリースタグ（例 v1.3.0）で pin する（下記コマンド①）。',
+      'Core のトークン CSS をアプリの入口 CSS で import し、最後にブリッジ CSS を読む（後勝ちで上書き／下記②）。',
+      'ブリッジ CSS を1枚置き、Core semantic → アプリのテーマ変数へ写像する（下記③＝BDA の src/styles/figuds-bridge.css がテンプレ。shadcn 例。自分のテーマ変数名に読み替える）。',
+      'package.json に gen:tokens / check:rawhex / VRT スクリプトを足す（下記④。seed=自社メインカラー）。生 HEX ガードは scripts/check-raw-hex.mjs を BDA から流用。',
+      'CI に build＋生HEXガード＋VRT を組む（BDA の .github/workflows/figuds-build.yml がテンプレ。VRT は初回 CI(Linux) でベースライン生成→コミット）。',
+      '主要画面の生 HEX を 0 にし、状態色を status・ブランド色を signature 参照へ寄せる（詳細は→「移行」）。',
+    ],
+    snippets: [
+      { label: '① Core を submodule で pin', body:
+'git submodule add https://github.com/takahashiman/FIG-Universal-Design-System.git vendor/core\n' +
+'git -C vendor/core checkout v1.3.0   # 参照する Core リリースに pin\n' +
+'git submodule update --init --recursive' },
+      { label: '② 入口 CSS で取込（最後にブリッジを後勝ちで）', body:
+'@import "../../vendor/core/primitives.css";\n' +
+'@import "../../vendor/core/semantic.css";\n' +
+'/* ...既存のテーマ/Tailwind 読込... */\n' +
+'@import "./styles/figuds-bridge.css";   /* ← 必ず最後 */' },
+      { label: '③ ブリッジ CSS（figuds-bridge.css・shadcn 例・抜粋）', body:
+':root {\n' +
+'  /* ブランド主色: signature → primary */\n' +
+'  --primary:            var(--signature-base);\n' +
+'  --primary-foreground: var(--signature-on);\n' +
+'  /* 面・線 */\n' +
+'  --background: var(--color-surface-default);\n' +
+'  --foreground: var(--color-text-primary);\n' +
+'  --border:     var(--color-border-default);\n' +
+'  --ring:       var(--signature-base);\n' +
+'}\n' +
+'@theme inline {\n' +
+'  /* 状態色: status トークン → success/warning/danger ユーティリティ */\n' +
+'  --color-success: var(--status-success-surface);\n' +
+'  --color-warning: var(--status-warning-surface);\n' +
+'  --color-danger:  var(--status-danger-surface);\n' +
+'}' },
+      { label: '④ package.json スクリプト（seed=自社メインカラー）', body:
+'"gen:tokens":   "node vendor/core/tools/palette-gen/generate.mjs --seed=#2C6B5E --out src/styles/generated",\n' +
+'"prebuild":     "npm run gen:tokens",\n' +
+'"predev":       "npm run gen:tokens",\n' +
+'"check:rawhex": "node scripts/check-raw-hex.mjs",\n' +
+'"test:vrt":     "playwright test --project=chromium"' },
+    ],
+    verification: [
+      'npm run build が成功し、check:rawhex（主要画面の生 HEX 0）が緑。',
+      '状態色が Core status・ブランド色が signature を参照しており、見た目が FIG-UDS に揃っている。',
+      '（次へ）周辺画面の生 HEX 解消は→「移行」、操作感の改善は→「UX 改修フロー」。',
+    ],
+  },
   'new-product-setup': {
     title: '新製品セットアップ',
     group: 'operation',
@@ -122,7 +183,7 @@ export const GUIDES = {
   'migration': {
     title: '既存コードを Core 採用へ移行',
     group: 'operation',
-    purpose: '既存コードを Core DS 採用へ移行し、スタイルを統一する（シナリオA の中核 / US-P7）。',
+    purpose: '既存コードを Core DS 採用へ移行し、スタイルを統一する（シナリオ① の中核 / US-P7）。',
     preconditions: ['対象 repo を clone 済みであること。'],
     steps: [
       'Core を submodule で追加し pin する。Core CSS（primitives/semantic/tokens）を import する。',
@@ -131,7 +192,12 @@ export const GUIDES = {
       '主要画面の生 HEX を 0 にする（周辺画面は段階対応）。',
       'migration-status で定量確認する（主要フロー 100% / 全体 ≧ 80%）。',
     ],
-    verification: ['主要画面 生 HEX 0・vite build 成功・migration-status PASS。'],
+    notes: [
+      '命名の衝突に注意：製品独自のスタイルは Core のコンポーネント名（例 .fig-badge / .fig-status-pill など Core が定義済みのクラス）を流用せず、自分の名前空間（例 .fig-tag / 製品プレフィックス）を使う。',
+      '同名だと Core 側の固定値（height など）＋ box-sizing: border-box が効いて、自分で足した padding が枠内に押し込められ「文字が枠を貫通する／余白が効かない」など不可解な崩れが起きる（原因特定に時間を要する）。',
+      '見分け方：意図した padding が効かない時は devtools で computed の height / box-sizing と、どの stylesheet の規則が当たっているか（Core の tokens/components.css 等）を確認する。',
+    ],
+    verification: ['主要画面 生 HEX 0・vite build 成功・migration-status PASS。', 'Core コンポーネント名と自製スタイルの名前空間が衝突していない。'],
   },
   'github-operations': {
     title: 'GitHub 操作ガイド（ツール非依存）',
@@ -152,7 +218,7 @@ export const GUIDES = {
     group: 'operation',
     purpose: 'スタイル整理に加え操作感まで改善する「あわよくば」フロー（US-X2 / 画像02-A）。Core の UX 契約（体感バジェット / 画面遷移 / フィードバック）を基準に、Pencil（設計参照）で評価者へ修正項目を提案→承認し、最小改善を実コードへ反映する。実装が正典・既存機能は非回帰（壊さない）が大前提。スタイルと同じく UX 知見も Core へ蓄積・還元する。',
     preconditions: [
-      'シナリオA でスタイル整理（生 HEX 0・build 成功）まで到達していること。',
+      'シナリオ① でスタイル整理（生 HEX 0・build 成功）まで到達していること。',
       'Core の UX 契約を参照できること（patterns の transition-budget / page-transition / feedback-contract・accessibility-guidelines）＝改修の判断基準。',
       'VSCode の Pencil 拡張が使えること（.pen は MCP 経由のみ・暗号化）。',
     ],
@@ -179,10 +245,10 @@ const USAGE_GROUPS = [
   { id: 'basics', label: 'その他' },
 ];
 
-/** 使い方インデックス（トップ）。グループ別・シナリオA は★最優先で先頭（BR-PIA-5）。 */
+/** 使い方インデックス（トップ）。グループ別・シナリオ① は★最優先で先頭（BR-PIA-5）。 */
 export function usageIndex() {
   const li = ([id, g]) => {
-    const star = g.featured ? '<span class="fig-badge fig-badge--featured" data-testid="usage-featured">★最優先</span> ' : '';
+    const star = g.featured ? '<span class="fig-tag fig-tag--featured" data-testid="usage-featured">★最優先</span> ' : '';
     return `<li>${star}<a href="#/usage/${id}" data-testid="usage-link-${id}">${esc(g.title)}</a><span class="fig-doc-muted"> — ${esc(g.purpose)}</span></li>`;
   };
   const entries = Object.entries(GUIDES);
@@ -207,11 +273,25 @@ export function renderGuide(topic) {
     const tag = ordered ? 'ol' : 'ul';
     return `<h2>${esc(title)}</h2><${tag} class="fig-doc-list">${arr.map(s => `<li>${esc(s)}</li>`).join('')}</${tag}>`;
   };
+  // 任意: コピペ用スニペット（quickstart 等）。各 { label, body } を <pre><code> で提示。
+  const snippets = (arr) => {
+    if (!arr || !arr.length) return '';
+    return `<h2>コピペ</h2>${arr.map(s => `<section class="fig-usage-snippet">
+      <h3 class="fig-usage-snippet__label">${esc(s.label)}</h3>
+      <pre class="fig-usage-pre"><code>${esc(s.body)}</code></pre></section>`).join('')}`;
+  };
+  // 任意: 注意（落とし穴）。失敗しやすい点を明示する。
+  const notes = (arr) => {
+    if (!arr || !arr.length) return '';
+    return `<h2>注意（落とし穴）</h2><ul class="fig-doc-list fig-usage-notes">${arr.map(s => `<li>${esc(s)}</li>`).join('')}</ul>`;
+  };
   return `<article class="fig-usage" data-testid="usage-guide-${topic}">
     <h1>${esc(g.title)}</h1>
     <p class="fig-doc-lead">${esc(g.purpose)}</p>
     ${block('前提', g.preconditions)}
     ${block('手順', g.steps, true)}
+    ${snippets(g.snippets)}
+    ${notes(g.notes)}
     ${block('確認', g.verification)}
     <p class="fig-doc-muted"><a href="#/usage/portal-basics">← 使い方インデックス</a></p>
   </article>`;

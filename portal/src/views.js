@@ -3,40 +3,58 @@
  * 各 render は HTML 文字列を返す純粋関数（ctx = { data, ui }）。
  * data = { taxonomy, registry, versionMatrix, showcase, buildInfo }
  */
-import { OVERVIEW, OPS, coreScopeSections, corePage, ROLE_ENTRIES, READING_ORDER, HOME_QUICK_LINKS } from './content.js';
+import { OVERVIEW, OPS, coreScopeSections, corePage, ROLE_ENTRIES, READING_ORDER, HOME_SCENARIOS, HOME_OPERATIONS } from './content.js';
 import { VIEWS } from './router.js';
 import { renderGuide, usageIndex } from './usage.js';
 
 const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-/* ───────────── Home ランディング（PT-Home / US-P1/P5 / SP1/SP2） ───────────── */
-/** 役割別入口・はじめに読む順番・シナリオ入口・主要4操作クイックリンク。 */
+/* リンク末尾の遷移アフォーダンス（「→」の代替・右シェブロン）。FIG-UDS の控えめなトーンに合わせる。 */
+const CHEV = '<svg class="fig-link-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>';
+
+/* ───────────── Home ランディング（PT-Home / US-P1改 developer-first / SP1/SP2） ─────────────
+ * 2026-06-23 再構成: 訪問者は「開発者」を前提とし、Home は シナリオ＞主要操作＞整備状況 の
+ * 3本をカード表現に集約。役割選択・読む順番は撤去し、利用者/管理者/参考はフッターへ控えめに退避。 */
+/** カード1枚（シナリオ／操作／整備状況で共用）。featured は ★最優先 バッジ付き。 */
+function homeCard(c, prefix) {
+  return `<li class="fig-home-card${c.featured ? ' fig-home-card--featured' : ''}">
+    <a class="fig-home-card__link" href="${esc(c.route)}" data-testid="${prefix}-${esc(c.id)}">
+      <span class="fig-home-card__head">
+        <span class="fig-home-card__title">${esc(c.title)}</span>
+        <span class="fig-home-card__chev" aria-hidden="true">${CHEV}</span>
+      </span>
+      <span class="fig-home-card__desc">${esc(c.desc)}</span>
+      ${c.featured ? '<span class="fig-home-card__badge"><span class="fig-tag fig-tag--featured">推奨</span></span>' : ''}
+    </a></li>`;
+}
+
 export function renderHome() {
-  const roleCard = (r) => `<li class="fig-role-card" data-testid="role-card-${esc(r.id)}">
-    <h3 class="fig-role-card__title"><span class="fig-role-card__icon" aria-hidden="true">${esc(r.icon)}</span> ${esc(r.label)}</h3>
-    <p class="fig-doc-muted">${esc(r.desc)}</p>
-    <ul class="fig-doc-list">${r.links.map(l => `<li><a href="${esc(l.route)}" data-testid="role-link-${esc(r.id)}">${esc(l.label)} →</a></li>`).join('')}</ul>
-    ${r.note ? `<p class="fig-doc-note">${esc(r.note)}</p>` : ''}
-  </li>`;
-  const order = READING_ORDER.map(o => `<li><a href="${esc(o.route)}">${esc(o.label)}</a></li>`).join('');
-  const quick = HOME_QUICK_LINKS.map(q => `<li><a class="fig-btn-link" href="${esc(q.route)}" data-testid="home-quicklink">${esc(q.label)} →</a></li>`).join('');
+  const scenarios = HOME_SCENARIOS.map(c => homeCard(c, 'home-scenario')).join('');
+  const operations = HOME_OPERATIONS.map(c => homeCard(c, 'home-op')).join('');
+  // フッター（控えめ）: 利用者/管理者（ROLE_ENTRIES）＋はじめに読む（READING_ORDER）を再利用。
+  const footGroups = [
+    ...ROLE_ENTRIES.filter(r => r.id !== 'developer').map(r => ({ label: r.label, links: r.links })),
+    { label: 'はじめに読む', links: READING_ORDER.map(o => ({ label: o.label.replace(/^[①-⑨]\s*/, ''), route: o.route })) },
+  ];
+  const footer = footGroups.map(g => `<div class="fig-home-foot__col">
+    <h3 class="fig-home-foot__title">${esc(g.label)}</h3>
+    <ul class="fig-home-foot__list">${g.links.map(l => `<li><a href="${esc(l.route)}">${esc(l.label)}</a></li>`).join('')}</ul>
+  </div>`).join('');
   return `<div class="fig-home" data-testid="home">
     <header class="fig-home__hero">
       <h1>FIG Core Design System ポータル</h1>
-      <p class="fig-doc-lead">あなたは開発者 / 利用者 / 管理者のどれですか？まずどこを読めばよいかを下から選べます。</p>
+      <p class="fig-doc-lead">実装に使うための入口です。目的のシナリオから始め、必要な操作へ進んでください。</p>
     </header>
-    <section aria-labelledby="home-roles"><h2 id="home-roles">役割で選ぶ</h2>
-      <ul class="fig-role-cards">${ROLE_ENTRIES.map(roleCard).join('')}</ul></section>
     <section aria-labelledby="home-scenarios"><h2 id="home-scenarios">シナリオで始める</h2>
-      <ul class="fig-doc-list">
-        <li><span class="fig-badge fig-badge--featured">★最優先</span> <a href="#/usage/scenario-existing" data-testid="home-scenario-existing">シナリオA：既存アプリを整える →</a></li>
-        <li><a href="#/usage/scenario-new" data-testid="home-scenario-new">シナリオ②：新規開発で使う →</a></li>
-      </ul></section>
-    <section aria-labelledby="home-order"><h2 id="home-order">はじめに読む順番</h2>
-      <ol class="fig-doc-list">${order}</ol></section>
-    <section aria-labelledby="home-quick"><h2 id="home-quick">主要操作</h2>
-      <ul class="fig-doc-list fig-home__quick">${quick}</ul></section>
-    <p class="fig-doc-muted"><a href="#/overview/components/coverage" data-testid="home-coverage-link">コンポーネント整備状況（余白）を見る →</a></p>
+      <ul class="fig-home-cards">${scenarios}</ul></section>
+    <section aria-labelledby="home-ops"><h2 id="home-ops">主要操作</h2>
+      <ul class="fig-home-cards">${operations}</ul></section>
+    <section aria-labelledby="home-coverage"><h2 id="home-coverage">コンポーネント整備状況</h2>
+      <ul class="fig-home-cards">${homeCard({ id: 'coverage-link', title: '整備状況（余白）を見る', desc: 'Core カタログの整備済／未整備と整備率を一覧で確認する。', route: '#/overview/components/coverage' }, 'home')}</ul></section>
+    <footer class="fig-home-foot" aria-label="その他の入口">
+      <p class="fig-home-foot__lead">開発者以外の入口・参考</p>
+      <div class="fig-home-foot__cols">${footer}</div>
+    </footer>
   </div>`;
 }
 
@@ -55,8 +73,8 @@ export function renderBrowseMargin(ctx) {
   const items = rows.map(r => `<li class="fig-coverage-item" data-testid="coverage-item">
     <span>${esc(r.title)}</span>
     ${r.ready
-      ? '<span class="fig-badge fig-badge--ready" data-testid="coverage-ready">整備済</span>'
-      : '<span class="fig-badge fig-badge--pending" data-testid="coverage-pending">未整備</span>'}
+      ? '<span class="fig-tag fig-tag--ready" data-testid="coverage-ready">整備済</span>'
+      : '<span class="fig-tag fig-tag--pending" data-testid="coverage-pending">未整備</span>'}
   </li>`).join('');
   return `<div class="fig-doc"><h1>コンポーネント整備状況（余白）</h1>
     <p class="fig-doc-lead">整備率 <strong data-testid="coverage-rate">${ready}/${total}</strong>。未整備＝ライブプレビュー未収録です。Core リポジトリ側で preview を足せば、ポータル改修なしに自動で「整備済」へ切り替わります。</p>
@@ -389,12 +407,12 @@ function badge(project) {
   if (project.kind === 'temp-part') return tag('仮パーツ', 'temp');
   return '';
 }
-function tag(label, kind) { return `<span class="fig-badge fig-badge--${kind}" data-testid="badge-${kind}">${esc(label)}</span>`; }
+function tag(label, kind) { return `<span class="fig-tag fig-tag--${kind}" data-testid="badge-${kind}">${esc(label)}</span>`; }
 function fallback(msg, project) {
   return `<div class="fig-empty"><p>${esc(msg)}</p>${project.repoUrl ? `<p><a href="${esc(project.repoUrl)}" target="_blank" rel="noopener noreferrer">製品リポジトリを開く →</a></p>` : ''}</div>`;
 }
 function pending(name) {
-  return `<div class="fig-doc"><h1>${esc(name)} <span class="fig-badge fig-badge--pending">準備中</span></h1>
+  return `<div class="fig-doc"><h1>${esc(name)} <span class="fig-tag fig-tag--pending">準備中</span></h1>
     <p class="fig-empty">この製品は taxonomy に登録されていますが、registry 未登録のため内容がまだありません。鶏卵回避の方針により、開発は仮パーツで継続できます（<a href="#/usage/temp-part">使い方 › 仮パーツ</a>）。</p></div>`;
 }
 function emptyOps(title, msg) {

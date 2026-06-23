@@ -30,6 +30,9 @@
 /* サイドバー: pending 項目の減衰（availability の CSS 連動は portal.css 側） */
 .sidebar-item.is-pending { opacity: 0.6; }
 
+/* 本文リンク（無装飾 <a>）のスタイルは Core（vendor/core/portal.css の .portal-main a）が正典。
+ * U2-8 で Core へ昇格済み（--color-text-link の本文 AA 是正含む）。ポータル側では上書きしない。 */
+
 /* ───────────── ポータル固有ビュー本文（.fig-doc 系） ───────────── */
 .fig-doc h1 { font: var(--typography-display, 600 24px/1.3 sans-serif); margin: 0 0 12px; color: var(--color-text-primary, #111); }
 .fig-doc h2 { font: var(--typography-title, 600 18px/1.4 sans-serif); margin: 24px 0 8px; color: var(--color-text-primary, #111); }
@@ -49,11 +52,22 @@
 .fig-demo-frame { width: 100%; height: 70vh; border: 1px solid var(--color-border-default, #e3e3e3); border-radius: 8px; background: #fff; }
 
 /* バッジ / 状態 */
-.fig-badge { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 999px; vertical-align: middle; }
-.fig-badge--temp { background: #fff3cd; color: #8a6d00; }
-.fig-badge--ext { background: #e7f0fb; color: #1c4f8a; }
-.fig-badge--core { background: #d4edda; color: #1b5e20; }
-.fig-badge--pending { background: #eee; color: #777; }
+/* バッジは inline-flex で中央揃え（行ボックス依存をやめ、文字が枠を貫通しないようにする）。
+   上下余白は文字サイズ比（em）で指定し、CJK が上に詰まる分だけ上を厚く（0.5em / 0.4em）して
+   光学的にセンタリングする＝主要 DS に近い上品な密度。 */
+.fig-tag {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  /* line-height はグリフを収め切る値に（1 だと CJK が行ボックスをはみ出し padding を食う）。
+     高さ = line-height(文字の高さ) + 上下 padding で素直に決まる。 */
+  line-height: 1.2;
+  padding: 0.5em 0.9em 0.4em;   /* 上 0.5em / 左右 0.9em / 下 0.4em（光学センタリング） */
+  border-radius: 999px; vertical-align: middle;
+}
+.fig-tag--temp { background: #fff3cd; color: #8a6d00; }
+.fig-tag--ext { background: #e7f0fb; color: #1c4f8a; }
+.fig-tag--core { background: #d4edda; color: #1b5e20; }
+.fig-tag--pending { background: #eee; color: #777; }
 .fig-showcase-item__preview { display: inline-block; margin: 2px 0 6px; font-size: 12px; }
 .fig-status { font-size: 12px; padding: 2px 8px; border-radius: 999px; }
 .fig-status--up-to-date { background: #d4edda; color: #1b5e20; }
@@ -79,15 +93,79 @@
 .fig-home__hero { margin-bottom: 20px; }
 .fig-home section { margin: 22px 0; }
 .fig-home h2 { font-size: 16px; margin: 0 0 10px; }
-.fig-role-cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
-.fig-role-card { padding: 16px; border: 1px solid var(--color-border-default, #e3e3e3); border-radius: 10px; background: var(--color-surface, #fff); }
-.fig-role-card__title { font-size: 15px; margin: 0 0 6px; display: flex; align-items: center; gap: 8px; }
-.fig-role-card__icon { color: var(--color-text-brand, #1f3a5f); }
-.fig-home__quick { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+/* カードグリッド（シナリオ／主要操作／整備状況で共用・developer-first 再構成 2026-06-23） */
+.fig-home-cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; align-items: start; }
+.fig-home-card { display: flex; }
+.fig-home-card__link {
+  display: flex; flex-direction: column; gap: 6px; width: 100%;
+  padding: 16px; border: 1px solid var(--color-border-default, #e3e3e3); border-radius: 10px;
+  background: var(--color-surface, #fff); text-decoration: none; color: inherit;
+  transition: border-color .12s ease, box-shadow .12s ease, transform .12s ease;
+}
+.fig-home-card__link:hover { border-color: var(--color-border-brand, #1f3a5f); box-shadow: 0 1px 6px rgba(15, 23, 42, 0.08); transform: translateY(-1px); }
+.fig-home-card__link:focus-visible { outline: 2px solid var(--color-border-brand, #1f3a5f); outline-offset: 2px; }
+/* ＞ はタイトル横（右端）に配置。バッジは head に入れないため折返し崩れは起きない。 */
+.fig-home-card__head { display: flex; align-items: center; gap: 8px; }
+.fig-home-card__title { font-size: 15px; font-weight: 600; color: var(--color-text-primary, #111); flex: 1; }
+.fig-home-card__chev { flex: none; opacity: 0.5; display: inline-flex; }
+.fig-home-card__link:hover .fig-home-card__chev { opacity: 0.9; }
+.fig-home-card__link:hover .fig-home-card__chev .fig-link-chev { transform: translateX(2px); }
+.fig-home-card__desc { font-size: 13px; color: var(--color-text-secondary, #334155); line-height: 1.6; }
+/* 推奨バッジは詳細文の下部に独立した段として配置（サブ要素）。 */
+.fig-home-card__badge { margin-top: 6px; display: block; }
+/* 推奨カード: 左バーは用いず、バッジ＋背景を1段階だけ温色へ（warning サーフェスを薄める）。 */
+.fig-home-card--featured .fig-home-card__link {
+  background: color-mix(in srgb, var(--color-surface-warning, #FFFBEB) 45%, var(--color-surface-default, #fff));
+}
+
+/* Home フッター（控えめ・開発者以外の入口） */
+.fig-home-foot { margin-top: 32px; padding-top: 18px; border-top: 1px solid var(--color-border-subtle, #ececec); }
+.fig-home-foot__lead { font-size: 12px; color: var(--color-text-muted, #777); margin: 0 0 12px; }
+.fig-home-foot__cols { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px 24px; }
+.fig-home-foot__title { font-size: 12px; font-weight: 600; color: var(--color-text-secondary, #334155); margin: 0 0 6px; }
+.fig-home-foot__list { list-style: none; margin: 0; padding: 0; }
+.fig-home-foot__list li { margin: 3px 0; }
+.fig-home-foot__list a { font-size: 13px; }
 .fig-doc-note { margin-top: 10px; padding: 10px 12px; background: var(--color-surface-container-low, #f7f8f9); border-left: 3px solid var(--color-border-brand, #1f3a5f); border-radius: 6px; font-size: 13px; color: var(--color-text-muted, #555); }
-.fig-badge--featured { background: #fde6c8; color: #8a4b00; font-weight: 600; }
+/* 推奨バッジ: FIG-UDS の warning サーフェス（a11y 済みトークン・生 HEX 撤去）。
+   上下余白を確保して窮屈さを解消。間隔は配置側のコンテナ（card head の gap 等）が制御。 */
+.fig-tag--featured {
+  /* 温色面（warning text を薄めた peach）でチップを塗る＝白地でも温色カード上でも明瞭に浮く。
+     生 HEX は使わず text-warning トークンから派生。文字 4.6:1≧AA。 */
+  background: color-mix(in srgb, var(--color-text-warning, #B45309) 15%, #fff);
+  color: var(--color-text-warning, #B45309);
+  border: 1px solid color-mix(in srgb, var(--color-text-warning, #B45309) 35%, transparent);
+  font-weight: 600;
+  /* 余白は基盤 .fig-tag の em 比率（0.5/0.4em）を踏襲。横だけ僅かに広げて 2 文字を据わり良く。 */
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+/* リンク末尾シェブロン（「→」の代替）。控えめ・hover で僅かに前進。 */
+.fig-link-chev { vertical-align: middle; margin-left: 4px; opacity: 0.55; transition: transform .12s ease, opacity .12s ease; }
+a:hover > .fig-link-chev { opacity: 0.9; transform: translateX(2px); }
+
+/* 使い方ガイドの注意（落とし穴）。warning サーフェスで控えめに強調。 */
+.fig-usage-notes {
+  background: color-mix(in srgb, var(--color-surface-warning, #FFFBEB) 60%, var(--color-surface-default, #fff));
+  border: 1px solid var(--color-border-warning, rgba(253, 230, 138, 0.6));
+  border-radius: 8px; padding: 10px 12px 10px 28px; margin: 8px 0 16px;
+}
+.fig-usage-notes li { color: var(--color-text-secondary, #334155); }
+
+/* ───────── 使い方ガイドのコピペ・スニペット（quickstart 等） ───────── */
+.fig-usage-snippet { margin: 10px 0 16px; }
+.fig-usage-snippet__label { font-size: 13px; font-weight: 600; margin: 0 0 6px; color: var(--color-text-secondary, #334155); }
+.fig-usage-pre {
+  margin: 0; padding: 12px 14px; overflow-x: auto;
+  background: var(--color-surface-container-low, #f7f8f9);
+  border: 1px solid var(--color-border-subtle, #ececec); border-radius: 8px;
+  font: 13px/1.6 ui-monospace, "Cascadia Code", Consolas, "Noto Sans Mono", monospace;
+  color: var(--color-text-primary, #111);
+}
+.fig-usage-pre code { font: inherit; color: inherit; background: none; }
 
 /* ───────── 未整備可視化「余白」（U2-4 / US-P6） ───────── */
 .fig-coverage { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; }
 .fig-coverage-item { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid var(--color-border-subtle, #ececec); border-radius: 8px; font-size: 14px; }
-.fig-badge--ready { background: #d4edda; color: #1b5e20; }
+.fig-tag--ready { background: #d4edda; color: #1b5e20; }
