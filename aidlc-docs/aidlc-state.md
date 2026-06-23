@@ -16,8 +16,15 @@
 - **正典ブリーフ**: `aidlc-docs/next-initiative-brief.md`（§3 の2大目標がスコープ）
 - **Current Stage**: CONSTRUCTION(#2) - **U2-1〜U2-7 ✅全 Unit 完了**（2026-06-22 U2-7 Code Gen 承認）。残＝**Build and Test（全 Unit 後）**。U2-7 成果＝UX 改修フロー確立（C1 戻り堅牢化＋motion トークン化を代表実証）。**UX/導線の本格改修は保留（今後活用）**。
 
-### 🔖 RESUME POINT（次セッション開始点・2026-06-23 更新＝ポータル UX 精緻化を commit/push 後）
-- **いま（最新・2026-06-23 commit/push 済）**: ポータル UX 精緻化＋Core リンク是正を **commit/push 済**。**① Core PR #4**（`feat/text-link-aa-contrast`・base=core・本文リンク AA 是正＝core-promotion）作成済→⏸ **component-check（lint/VRT/a11y）→ Maintainer 承認マージ→ MINOR タグ v1.3.x** が残（SEC-3 承認ゲート）。**② aidlc-workflows PR**（作業ブランチ・portal＋aidlc-docs）作成済→⏸ portal-deploy quality（VRT/a11y・**見た目変更多数のためベースライン再生成**）→マージが残。**反映機構=rolling（マージ駆動・検証済）**＝Core PR#4 が `core` にマージされ次第、ポータルは次ビルド（tag dispatch/nightly/手動）で自動反映。**ユーザーは目視でポータル反映を確認予定**。
+### 🔖 RESUME POINT（次セッション開始点・2026-06-23 更新＝ポータル UX 精緻化を マージ・デプロイ完了）
+- **いま（最新・2026-06-23 マージ＆ライブ公開済）**: ポータル UX 精緻化＋Core リンク是正を **全 PR マージ＆ライブデプロイ完了**。公開先 **https://takahashiman.github.io/aidlc-workflows/**（portal-deploy run 28007739974＝build/quality/deploy 全 success）。
+  - **① Core PR #4**（`feat/text-link-aa-contrast`→core・本文リンク AA 是正）= lint/VRT/a11y 緑→**squash マージ済**（core HEAD=880166b）。⏸ 残＝任意の MINOR タグ v1.3.x（rolling 追従のポータルは branch マージで既に反映可）。
+  - **② aidlc-workflows PR #6**（developer-first Home 等）= **squash マージ済**（main=691da50）。
+  - **③ 追走 PR #7**（VRT Home ベースライン更新）＋**PR #8**（`.fig-tag` a11y コントラスト是正）= マージ済。
+  - **検証経緯（重要）**: PR#6 マージ後の portal-deploy で (a) **VRT home 失敗**（developer-first で見た目大変化）→ CI Linux 生成スクショで home ベースライン更新（PR#7・coverage/usage-index は不変）／(b) **axe a11y 失敗**＝新規 `.fig-tag` の color-contrast serious（`.fig-tag--featured`「推奨」`#B45309` on peach `#f4e5da`=4.08:1／`.fig-tag--pending`「未整備」`#777` on `#eee`=3.85:1）→ 文字暗色化で AA 化（featured ≈5.75:1〔warning text に黒20%混色〕／pending `#5f5f5f` ≈5.50:1・PR#8）。色差は VRT 0.02 閾値内でベースライン追加更新不要。**3度目の portal-deploy で build/quality/deploy 全緑→公開**。
+  - **教訓**: ① PR 契約文 LICENSE URL は **takahashiman**（awslabs 既定で起票すると Require Contributor Statement 落ち・本セッションで再発）。② Semgrep OSS（第三者アプリ）は portal の innerHTML/HTML-template-string を毎回 serious 報告するが build-time 静的データ＝文脈上 FP・`main` 非保護で非ブロッキング。③ portal-deploy の quality（VRT＋a11y）は見た目変更で都度失敗しうる＝**新規 UI 追加時は VRT ベースライン更新＋axe AA を必ず通す**。④ Pages deploy は既定ブランチ(main)限定＝feature ブランチの workflow_dispatch では quality 緑でも deploy だけ失敗（正常）。[[core-classname-collision]] [[developer-first-home]]
+  - **次の一手**: (1) **IA 改訂の正式記録**（developer-first へ US-P1/BR-PIA 改訂を plans/requirements に反映＝未了）。(2) 別パス＝図解化（テキスト過多解消）・サイドメニュー→フッター一覧化。(3) 任意で Core v1.3.x タグ（pin 消費者向け）。
+- **（旧・参考）ポータル UX 精緻化セッションの未コミット成果**（現在は上記 PR に収容・マージ済）:
 - **（旧・参考）ポータル UX 精緻化セッションの未コミット成果**（現在は上記 PR に収容済）:
 - **このセッションの成果（未コミット）**: ① クイックスタート新設（usage.js・コピペ手順）。② シナリオ番号統一（A→①）。③ **Home 全面再構成（developer-first）**＝役割選択撤去・シナリオ/主要操作/整備状況の3カード・利用者/管理者/参考はフッター（US-P1/BR-PIA を覆す＝ユーザー承認済・**正式な要件記録更新が未了**）。④ **Core リンク是正＋昇格（実装のみ）**＝Core semantic.css の `--color-text-link` を AA 安全値へ＋portal.css に本文リンク新設→portal に rolling 取込・portal-app.css の暫定規則撤去。⑤ バッジ＝「推奨」文言・密度改善（em 比率/光学センタリング）。⑥ **★命名衝突発見**＝ポータルの `.fig-badge` が Core の数値バッジ・コンポーネント（固定 height）と同名衝突→**ポータル側を `.fig-tag` へ全面改名**で解消。アコーディオン「閉じても復活」バグも修正。検証＝portal vitest **42/42**・build PASS（VRT ベースライン再生成は CI）。
 - **未コミット一覧**: aidlc-workflows= `portal/{assets/portal-app.css, src/{content,views,usage,portal}.js, tests/ia.test.js}`＋aidlc-docs（audit/state）。Core(@core)= `assets/portal.css, semantic.css`。
