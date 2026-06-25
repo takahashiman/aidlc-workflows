@@ -230,56 +230,150 @@ const T5_FORM_CHECK_TEXT =
 
 を判定し、修正スコープを決定。`;
 
-const FORM_OPTIMIZATION_RULES =
+const FORM_OPTIMIZATION_RULES_WEB_MOBILE =
 `形態最適化は「現状を計測 → Core 標準と比較 → 書き換え」の機械的フロー。
-色の置換（T5_AI_TEXT の ❶❷❸）と異なり、形態には「デザイン判定」が少ない
-（サイズ値は数値比較・スケールは確定的だから）。
+（カラーは意味的・文脈依存の判定対象であり、UI要素の役割や状態を考慮した解釈が必要となるが、
+　形態は定量的・決定論的な判定対象であり、数値比較による自動判定が可能なため。）
 
-【ステップ 0（新規）: デバイスコンテキスト判定】
-
-T5_DEVICE_CONTEXT_CHECK で対象デバイスを判定。以下の 3 パターンでルールが異なります。
-
-1️⃣ **Web/Mobile コンテキスト**
-   - 適用スケール：Core DS 標準（--font-size-xs～lg 最大 32px、--space-1～16 4px ステップ、--radius-sm～2xl）
-   - 判定フロー：下の「❶❷❌」ルール（Web/Mobile 版）を適用
-
-2️⃣ **Large Display コンテキスト**
-   - 適用スケール：Large Display 拡張（--font-size-ld-sm～2xl 36～72px）
-   - 判定フロー：下の「❶❷❌」ルール（Large Display 版、スケール値のみ異なる）を適用
-   - 注意：Web/Mobile スケール（32px 以下）は採用禁止。Large Display 視認距離に合わせた値を選択
-
-3️⃣ **Hybrid コンテキスト**
-   - 適用スケール：両スケールセット（@media (min-width: ...) で条件分岐）
-   - 判定フロー：両者の修正スコープを並べて比較。ビューポート別の修正が必要か確認
+【Web/Mobile コンテキスト】
+- 適用スケール：Core DS 標準（--font-size-xs～lg 最大 32px、--space-1～16 4px ステップ、--radius-sm～2xl）
+- 視認距離：30-70cm（通常の Web・Mobile デバイス）
 
 【判定フロー（3 つの観点）】
 
 ❶「Core 標準サイズに統一できるか」
   - ボタン size="small/medium/large" → Core spacing + font-size 標準の組み合わせか
-  - カード padding --space-4(16px) 等か
-  - タイポグラフィ font-size が --font-size-* スケールか
+    例：--font-size-sm(13px) + --space-2(8px) / --space-3(12px)
+  - カード padding --space-4(16px) / --space-5(20px) 等か
+  - タイポグラフィ font-size が --font-size-xs(11px)～lg(18px) スケールか
+  - line-height が --lh-jp-body(1.75) / --lh-jp-headline(1.4) か
   - 判定：YES → Core トークン参照に置換。NO → 次の ❷ へ。
 
 ❷「複数パターンが存在するが、うち標準寄りの形態があるか」
-  - 例：ボタンが「14px/16px/18px」3 種類。うち「14px・16px」は Core 標準（--font-size-sm/base）か
+  - 例：ボタンが「14px/16px/18px」3 種類。うち「14px・16px」は Core 標準か
   - 判定：YES → 標準寄りのサイズへ統一。NO → 次の ❸ へ。
 
 ❸「製品固有の形態として保持する必要があるか」
   - 例：「大型アラートは 24px の見出し」など、製品の要件・UI の理由がはっきりしているか
   - 判定：YES → 製品ローカル CSS 変数化（--alert-heading-size など）。NO → Core 標準値で代用。
 
-【具体例（修正前後）】
-- 修正前：\`.btn-small { font-size: 14px; padding: 8px 12px; }\`
-  修正後：\`.btn-small { font-size: var(--font-size-sm); padding: var(--space-2) var(--space-3); }\`
-  判定：❶ に該当・Core トークン参照に統一。
+【修正例（Web/Mobile 版）】
 
-- 修正前：\`.card { padding: 20px; margin-bottom: 18px; }\`
-  修正後：\`.card { padding: var(--space-5); margin-bottom: var(--space-4); }\`
-  判定：❶ に該当・padding 20px(Core --space-5) / margin 18px(非標準)→16px(--space-4) に調整。
+修正前：\`.btn-small { font-size: 14px; padding: 8px 12px; }\`
+修正後：\`.btn-small { font-size: var(--font-size-sm); padding: var(--space-2) var(--space-3); }\`
+判定：❶ に該当・Core トークン参照に統一。
 
-- 修正前：\`h2 { font-size: 20px; line-height: 1.4; }\`
-  修正後：\`h2 { font-size: 20px; line-height: var(--lh-jp-headline); }\`
-  判定：❶ に該当・line-height を日本語標準に統一。font-size 20px はコンポーネント固有→変数化検討。`;
+修正前：\`.card { padding: 20px; margin-bottom: 18px; line-height: 1.5; }\`
+修正後：\`.card { padding: var(--space-5); margin-bottom: var(--space-4); line-height: var(--lh-jp-body); }\`
+判定：❶ に該当・padding 20px(--space-5) / margin 18px(非標準)→16px(--space-4) に調整。line-height を日本語標準に統一。
+
+修正前：\`.title { font-size: 20px; font-weight: bold; }\`
+修正後：\`.title { font-size: var(--font-size-base); font-weight: 600; line-height: var(--lh-jp-headline); }\`
+判定：❶ に該当・タイポグラフィを標準化。font-size 20px は製品固有の見出しなら --headline-md へ変数化検討。`;
+
+const FORM_OPTIMIZATION_RULES_LD =
+`形態最適化は「現状を計測 → Core 標準と比較 → 書き換え」の機械的フロー。
+（カラーは意味的・文脈依存の判定対象であり、UI要素の役割や状態を考慮した解釈が必要となるが、
+　形態は定量的・決定論的な判定対象であり、数値比較による自動判定が可能なため。）
+
+【Large Display コンテキスト】
+- 適用スケール：Large Display 拡張（--font-size-ld-sm～2xl 36～72px）
+- 視認距離：3-5m（駅・空港・施設サイネージ・大型ディスプレイ）
+- ⚠️ 注意：Web/Mobile スケール（32px 以下）は採用禁止。Large Display 視認距離に合わせた値を選択。
+
+【判定フロー（3 つの観点・Large Display 版）】
+
+❶「Large Display 標準サイズに統一できるか」
+  - ボタン size="small/medium/large" → Large Display spacing + font-size 標準の組み合わせか
+    例：--font-size-ld-sm(36px) + --space-ld-2(16px) / --space-ld-3(24px) 等
+  - カード padding --space-ld-4(32px) / --space-ld-5(40px) 等か
+  - タイポグラフィ font-size が --font-size-ld-sm(36px)～2xl(72px) スケールか
+  - line-height が --lh-jp-body(1.75) か（Large Display でも 1.75 推奨）
+  - 判定：YES → Large Display トークン参照に置換。NO → 次の ❷ へ。
+
+❷「複数パターンが存在するが、うち標準寄りの形態があるか」
+  - 例：見出しが「40px/48px/56px」3 種類。うち「48px・56px」は Large Display 標準か
+  - 判定：YES → 標準寄りのサイズへ統一。NO → 次の ❌ へ。
+
+❌「Web/Mobile スケール（32px 以下）が混在していないか【必須チェック】」
+  - 現状で 18～30px の値が残っていないか（Web/Mobile スケール）
+  - Large Display サイネージで 18px テキストは視認不可
+  - 判定：YES（混在あり）→ 全て Large Display スケール（36px～）に置換が必須。
+
+【修正例（Large Display 版）】
+
+修正前：\`.title { font-size: 24px; padding: 10px 15px; }\`  ← Web/Mobile スケール
+修正後：\`.title { font-size: var(--font-size-ld-md); padding: var(--space-ld-2) var(--space-ld-3); }\`  ← 36-72px スケール
+判定：❌ に該当・Web/Mobile スケール除去・Large Display 統一。
+
+修正前：\`.card { font-size: 18px; line-height: 1.4; }\`  ← 危険：18px は Large Display で視認不可
+修正後：\`.card { font-size: var(--font-size-ld-sm); line-height: var(--lh-jp-body); }\`  ← 36px に上げる
+判定：❌ に該当・スケール置換が必須。
+
+修正前：\`h2 { font-size: 28px; margin: 8px 0; }\`  ← Web/Mobile スケール混在
+修正後：\`h2 { font-size: var(--font-size-ld-lg); margin: var(--space-ld-1) 0; }\`  ← 56px + 8px→12px（最小スペーシング）
+判定：❌ に該当・スケール統一・margin も Large Display スケール（--space-ld-*）に合わせ。`;
+
+const FORM_OPTIMIZATION_RULES_HYBRID =
+`形態最適化は「現状を計測 → Core 標準と比較 → 書き換え」の機械的フロー。
+（カラーは意味的・文脈依存の判定対象であり、UI要素の役割や状態を考慮した解釈が必要となるが、
+　形態は定量的・決定論的な判定対象であり、数値比較による自動判定が可能なため。）
+
+【Hybrid コンテキスト】
+- 適用スケール：両スケールセット（Web/Mobile と Large Display 両対応）
+- 実装方法：@media (min-width: ...) で条件分岐
+- 視認距離別対応：30-70cm（Web/Mobile）と 3-5m（Large Display）の両立
+
+【判定フロー（Hybrid 専用）】
+
+🔀 「両コンテキストの修正スコープを並べて比較」
+  1. Web/Mobile スケール（11～32px）と Large Display スケール（36～72px）の両方が存在するか
+  2. 各デバイスタイプで Core 標準への準拠度を判定（Web/Mobile 版・Large Display 版のフロー参照）
+  3. ビューポート別に修正方針を決定
+     - Small（～768px）：Web/Mobile スケール（--font-size-xs～lg 等）
+     - Large（768px～）：Large Display スケール（--font-size-ld-sm～2xl 等）
+  4. @media ブレークポイントはデザイン仕様書で確認
+
+【修正例（Hybrid 版）】
+
+修正前（全サイズ共通）：
+\`\`\`css
+.title { font-size: 20px; padding: 12px 16px; }
+.label { font-size: 14px; margin: 4px 0; }
+\`\`\`
+
+修正後（Hybrid 対応）：
+\`\`\`css
+/* Web/Mobile: 小画面（～768px） */
+.title {
+  font-size: var(--font-size-base);  /* 15px */
+  padding: var(--space-3) var(--space-4);  /* 12px 16px */
+  line-height: var(--lh-jp-headline);
+}
+.label {
+  font-size: var(--font-size-sm);  /* 13px */
+  margin: var(--space-1) 0;  /* 4px 0 */
+}
+
+/* Large Display: 大画面（768px～） */
+@media (min-width: 768px) {
+  .title {
+    font-size: var(--font-size-ld-md);  /* 44px */
+    padding: var(--space-ld-3) var(--space-ld-4);  /* 24px 32px */
+  }
+  .label {
+    font-size: var(--font-size-ld-sm);  /* 36px */
+    margin: var(--space-ld-1) 0;  /* 12px 0 */
+  }
+}
+\`\`\`
+
+判定：両フロー適用・ブレークポイント 768px で切り替え・スケール混在なし。
+
+【修正順序】
+1️⃣ Web/Mobile スケール側を先に統一（小画面は通常の使用頻度が高い）
+2️⃣ Large Display スケール側を追加（@media で条件分岐）
+3️⃣ ビューポート別の状態表現・トークン参照を確認`;
 
 const CH5_AI_TEXT =
 `値は手で決めません。章5 ② で生成した Core のトークンを「使って」置換に徹します（再生成しない）。
@@ -438,6 +532,9 @@ const CH_EXISTING = [
           'checkout 省略＝追加時点の先端コミットに固定（これも pin）。最新を追うなら更新時に vendor/core で fetch→checkout→親で commit が要る。',
         ] },
         { k: 'note', t: 'ポータル自身は rolling（ビルドで core 追従）だが、製品アプリは submodule タグ pin が標準。' },
+      ] },
+      { k: 'hint', summary: 'ヒント：サブモジュールを消したいときは？', blocks: [
+        { k: 'cmd', loc: 'terminal', label: '', body: 'rm -Recurse -Force .git/modules/vendor/core'},
       ] },
       { k: 'h', t: '② パレット（signature/status）を生成（構成共通）' },
       { k: 'cmd', loc: 'terminal', label: 'signature/status を生成（seed=主ブランド色／章4 T1 で特定）', body:
@@ -610,14 +707,24 @@ const CH_EXISTING = [
       { k: 'p', t: '形態の修正は「数値比較」なので、デザイン判定の幅が少ないです。以下のルール（❶❷❸フロー）で、コンポーネントごとに「Core 標準に統一するか・製品ローカルとするか・スコープから外すか」を決めます。' },
       { k: 'p', t: '色の置換テンプレ（CH5_AI_TEXT）の ❶❷❸ と同様のパターンですが、形態は「デザイン意図の確認」より「スケール値の確定性」が優先されます。' },
       { k: 'note', t: 'テンプレ強化セッション（CH5）の「4) 意味分化」と同じ方針＝「人間が判定ルールに基づいて決定 → AI が機械置換」のパターンです。' },
-      { k: 'p', t: '以下がルールです。AI 出力（T5_FORM_AI_TEXT の診断結果）と照らし、ルール ❶❷❸ に従って修正対象を確定します。' },
-      { k: 'ai', label: '形態最適化の判定ルール（FORM_OPTIMIZATION_RULES）', body: FORM_OPTIMIZATION_RULES },
+      { k: 'p', t: '以下はコンテキスト別の判定ルール（❶❷❌フロー）です。ステップ 1 で判定したデバイスコンテキストに応じて、該当するルールタブを選択し、AI 診断結果と照らし合わせてください。' },
+      { k: 'tabs', label: 'コンテキスト別・形態最適化の判定ルール', items: [
+        { id: 'web-mobile', label: 'Web/Mobile', blocks: [
+          { k: 'ai', label: '判定ルール（Web/Mobile 版）', body: FORM_OPTIMIZATION_RULES_WEB_MOBILE },
+        ] },
+        { id: 'large-display', label: 'Large Display', blocks: [
+          { k: 'ai', label: '判定ルール（Large Display 版）', body: FORM_OPTIMIZATION_RULES_LD },
+        ] },
+        { id: 'hybrid', label: 'Hybrid', blocks: [
+          { k: 'ai', label: '判定ルール（Hybrid 版）', body: FORM_OPTIMIZATION_RULES_HYBRID },
+        ] },
+      ] },
       { k: 'h', t: '✎ 人間による最適化設計（ルール適用）' },
-      { k: 'p', t: '上のルール（❶❷❸）を、AI 診断結果（T5_FORM_AI_TEXT）に適用し、コンポーネント ごとに「修正内容」を決めます。' },
+      { k: 'p', t: '上のルール（該当コンテキストの ❶❷❌ ）を、AI 診断結果（T5_FORM_AI_TEXT / T5_FORM_AI_TEXT_LD）に適用し、コンポーネントごとに「修正内容」を決めます。' },
       { k: 'check', items: [
-        'AI 診断結果のボタン・カード・テキストパターン を見て、ルール ❶「Core 標準に統一できるか」を適用',
+        'AI 診断結果のボタン・カード・テキストパターンを見て、該当コンテキストのルール ❶「Core 標準に統一できるか」を適用',
         '当てはまらない場合は ❷「複数パターンがあるが標準寄りがあるか」を適用',
-        '両方とも当てはまらない場合は ❸「製品固有の形態として保持するか」を判定',
+        'Web/Mobile か Large Display の場合は ❌「スケール混在がないか」を確認（Hybrid の場合は両フロー併用）',
         'スコープ（修正対象）を確定。例：「ボタンは Core 標準に統一・カード padding は 3 パターン→1 に統一・見出しは font-size は現状維持・line-height は標準化」のようにリスト化',
       ] },
       { k: 'h', t: '手順 4: 実装＋テスト（AI 実装 + 人間テスト）' },
