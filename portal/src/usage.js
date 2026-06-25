@@ -381,10 +381,75 @@ const FORM_OPTIMIZATION_RULES_HYBRID =
 2️⃣ Large Display スケール側を追加（@media で条件分岐）
 3️⃣ ビューポート別の状態表現・トークン参照を確認`;
 
-const T5_FORM_INSTRUCTION_EXAMPLE =
-`【修正対象】上記「人間による最適化設計」で確定したスコープを AI に伝える。例：
+const T5_FORM_SCOPE_CONFIRMATION =
+`診断結果から「修正スコープ」を AI が自動確定します。
 
-修正対象コンポーネント：
+【AI による自動パターンマッチング（診断結果 → 修正スコープ）】
+
+❶ パターン 1: 複数サイズ存在・全て統一可能（❶ YES）
+診断結果の特徴：ボタン [60px/48px/38px] / カード padding [10px/15px/20px] など複数パターン → すべて Core スケール/スペーシングに対応可
+→ **全項目を Core トークン参照へ置換**
+  修正例：
+    .btn01 60px → var(--fig-button-height-ld-lg)
+    .btn02 48px → var(--fig-button-height-ld-md)
+    .card padding 10px → var(--space-s) / 15px → var(--space-m)
+
+❷ パターン 2: 複数パターン・標準寄りあり（❷ YES）
+診断結果の特徴：見出し [28px/40px/56px] / margin [8px/16px/24px] など、うち一部が Core 標準に近い
+→ **標準寄りのパターンに統一**
+  修正例：
+    h-sm 28px が複数存在 → h-md 44px へ一本化
+    margin 8px → Core 最小 12px(--space-s) へ統一
+    複数パターン → 標準パターン 1 個に絞る
+
+❌ パターン 3: Web/Mobile スケール混在（❌ 必須チェック）
+診断結果の特徴：body 18px / h2 20px / 見出し 120%・125%・140%（% ベース=px 不明確）
+→ **全て固定 px 化 → Core スケール参照へ置換**
+  修正例：
+    body 18px → var(--font-size-lg)
+    h2 20px（非標準） → var(--font-size-md) または最頻出 Core サイズ
+    % ベース 120%@18px=21.6px → 最近傍 Core px（22px→24px など）へ統一
+
+【手順（AI 自動実行）】
+
+1️⃣ 上記「AI 診断結果（T5_FORM_AI_TEXT / T5_FORM_AI_TEXT_LD）」を入力として受け取る
+2️⃣ 各項目（ボタン/カード/テキスト）を見て、パターン 1/2/3 のいずれかに自動判定
+3️⃣ 該当パターンの修正方針に基づいて、コンポーネントごとの「修正内容」をリスト化
+4️⃣ 出力フォーマット（修正スコープ確定表）:
+
+\`\`\`
+修正スコープ確定表（自動生成）:
+
+【ボタン】→ パターン 1
+- .btn01: 60px → var(--fig-button-height-ld-lg)
+- .btn02: 48px → var(--fig-button-height-ld-md)
+- .btn03: 38px → var(--fig-button-height-ld-sm)
+判定理由：全て Core Large Display 標準サイズに対応可
+
+【カード padding】→ パターン 1
+- padding 10px → var(--space-s) / 15px → var(--space-m) / 20px → var(--space-m) に統一
+判定理由：全て Core スペーシングに対応可
+
+【見出し】→ パターン 2
+- h1: 68px → Core ld-2xl に対応・変更なし
+- h2: 28px → 44px に統一（Core ld-md）
+判定理由：h2 の 28px は非標準・次の Core サイズ 44px へ統一
+
+【タイポグラフィ line-height】→ パターン 3
+- 現状: 1.4 (Web/Mobile)
+- 修正: var(--lh-jp-body) = 1.75 (Large Display 標準)
+判定理由：Web/Mobile スケール（line-height 1.4）が残存・Large Display で無効
+\`\`\`
+
+5️⃣ このスコープ確定表を、次の手順 4「修正指示」の入力として活用
+
+【重要】このテンプレートは「診断結果を見て AI が自動判定する」場所です。
+人間は修正スコープ確定表の内容を確認してから、手順 4 の修正指示へ進みます。`;
+
+const T5_FORM_INSTRUCTION_EXAMPLE =
+`【修正対象】上記「修正スコープ確定表」（手順 3.5）で AI が自動生成した修正対象に基づいて、AI に CSS 修正を指示します。例：
+
+修正対象コンポーネント（手順 3.5 で確定したスコープから）：
 1. .btn-small / .btn-medium / .btn-large
    修正内容：Core の spacing + typography トークンで統一
    修正前：.btn-small { font-size: 14px; padding: 8px 12px; }
@@ -750,10 +815,13 @@ const CH_EXISTING = [
         'Web/Mobile か Large Display の場合は ❌「スケール混在がないか」を確認（Hybrid の場合は両フロー併用）',
         'スコープ（修正対象）を確定。例：「ボタンは Core 標準に統一・カード padding は 3 パターン→1 に統一・見出しは font-size は現状維持・line-height は標準化」のようにリスト化',
       ] },*/
+      { k: 'h', t: '手順 3.5: 修正スコープ自動確定（AI による パターンマッチング）' },
+      { k: 'p', t: '上の「判定ルール（❶❷❌）」と「AI 診断結果」を組み合わせ、AI が修正スコープを自動確定します。このスコープ確定表が、次の手順 4「修正指示」の入力になります。' },
+      { k: 'ai', label: '✨ 生成AI　修正スコープ自動確定（診断結果 → パターンマッチング）', body: T5_FORM_SCOPE_CONFIRMATION },
       { k: 'h', t: '手順 4: 実装＋テスト（AI 実装 + 人間テスト）' },
-      { k: 'p', t: 'スコープが確定したら、AI に CSS 修正を指示し、VRT・a11y で非回帰を確認します。' },
+      { k: 'p', t: '上記「修正スコープ確定表」（手順 3.5）に基づいて、AI に CSS 修正を指示し、VRT・a11y で非回帰を確認します。' },
       { k: 'h', t: '① 修正指示（AI への指示内容の例）' },
-      { k: 'ai', label: '修正指示の例（AI へ渡す内容）', body: T5_FORM_INSTRUCTION_EXAMPLE },
+      { k: 'ai', label: '✨ 生成AI　修正指示（修正スコープ確定表 → CSS 修正）', body: T5_FORM_INSTRUCTION_EXAMPLE },
       { k: 'h', t: '② 人間による目視確認' },
       { k: 'check', items: [
         'CSS が正しく修正されたか（git diff で視認）',
