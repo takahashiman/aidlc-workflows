@@ -30,6 +30,25 @@
 /* サイドバー: pending 項目の減衰（availability の CSS 連動は portal.css 側） */
 .sidebar-item.is-pending { opacity: 0.6; }
 
+/* ナビ「すべて閉じる」コントロール（Alt+Q）。scope-meta のラベル行に同居させ、
+   検索の Ctrl+K ヒント（portal.css 側）と対をなす可視アフォーダンスにする。
+   配色は Core 検索ヒントに倣い secondary on container＝AA。 */
+.portal-sidebar__scope-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.portal-sidebar__collapse-all {
+  appearance: none; background: transparent; border: 0; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px; flex: none;
+  font-size: 11px; color: var(--color-text-secondary, #334155); padding: 2px 0;
+}
+.portal-sidebar__collapse-all:hover { color: var(--color-text-primary, #111); }
+.portal-sidebar__collapse-all:focus-visible {
+  outline: 2px solid var(--color-border-brand, #1f3a5f); outline-offset: 2px; border-radius: 4px;
+}
+.portal-sidebar__collapse-all-hint {
+  font-size: 10px; color: var(--color-text-secondary, #334155);
+  background: var(--color-surface-container, #f1f3f5);
+  padding: 1px 5px; border-radius: 999px;
+}
+
 /* 本文リンク（無装飾 <a>）のスタイルは Core（vendor/core/portal.css の .portal-main a）が正典。
  * U2-8 で Core へ昇格済み（--color-text-link の本文 AA 是正含む）。ポータル側では上書きしない。 */
 
@@ -165,6 +184,83 @@ a:hover > .fig-link-chev { opacity: 0.9; transform: translateX(2px); }
   color: var(--color-text-primary, #111);
 }
 .fig-usage-pre code { font: inherit; color: inherit; background: none; }
+
+/* ───────── シナリオ①フロー（章立て・操作場所タグ・テンプレ枠） ───────── */
+.fig-flow-ch { margin: 28px 0; padding-top: 18px; border-top: 1px solid var(--color-border-subtle, #ececec); }
+.fig-flow-ch:first-of-type { border-top: 0; }
+.fig-flow-ch__title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 18px; margin: 0 0 6px; }
+.fig-flow-ch__num {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: 999px; font-size: 13px; font-weight: 700;
+  background: var(--color-surface-brand-strong, #0E6F73); color: #fff;
+}
+.fig-flow-ch__locs { display: inline-flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
+.fig-flow-h { font-size: 14px; margin: 14px 0 6px; color: var(--color-text-secondary, #334155); }
+
+/* 操作場所タグ（4種）。配色は WCAG AA を満たす（terminal は暗色で“黒い画面”を示す）。 */
+.fig-loc { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; line-height: 1; padding: 4px 8px; border-radius: 999px; white-space: nowrap; }
+.fig-loc--github   { background: #e7f0fb; color: #1c4f8a; } /* ≈7:1 */
+.fig-loc--terminal { background: #1e293b; color: #e2e8f0; } /* ≈12:1 */
+.fig-loc--ai       { background: #ede9fe; color: #5b21b6; } /* ≈7:1 */
+.fig-loc--portal   { background: #e0f2f1; color: #0E6F73; } /* ≈5:1 */
+.fig-loc--file     { background: #e8edf3; color: #334155; } /* ≈8:1・書類系（ターミナルと別） */
+
+/* コマンド/コード枠（操作場所ヘッダ付き・terminal は暗色画面） */
+.fig-cmd { margin: 8px 0 14px; border: 1px solid var(--color-border-subtle, #ececec); border-radius: 8px; overflow: hidden; }
+.fig-cmd__head { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: var(--color-surface-container-low, #f7f8f9); border-bottom: 1px solid var(--color-border-subtle, #ececec); }
+.fig-cmd__label { font-size: 12px; color: var(--color-text-secondary, #334155); }
+.fig-cmd__pre { margin: 0; padding: 12px 14px; overflow-x: auto; font: 13px/1.6 ui-monospace, "Cascadia Code", Consolas, "Noto Sans Mono", monospace; background: var(--color-surface-container-low, #f7f8f9); color: var(--color-text-primary, #111); }
+.fig-cmd__pre code { font: inherit; color: inherit; background: none; }
+.fig-cmd--terminal .fig-cmd__head { background: #1e293b; border-bottom-color: #334155; }
+.fig-cmd--terminal .fig-cmd__label { color: #cbd5e1; }
+.fig-cmd--terminal .fig-cmd__pre { background: #0f172a; color: #e2e8f0; } /* ≈15:1 */
+
+/* AI 指示テンプレ枠（✎ 生成AI・コピペ） */
+.fig-ai-tmpl { margin: 8px 0 14px; border: 1px solid color-mix(in srgb, #5b21b6 25%, transparent); border-radius: 8px; overflow: hidden; }
+.fig-ai-tmpl__head { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: #ede9fe; border-bottom: 1px solid color-mix(in srgb, #5b21b6 20%, transparent); }
+.fig-ai-tmpl__label { font-size: 12px; font-weight: 600; color: #5b21b6; }
+.fig-ai-tmpl__pre { margin: 0; padding: 12px 14px; overflow-x: auto; white-space: pre-wrap; font: 13px/1.65 ui-monospace, "Cascadia Code", Consolas, "Noto Sans Mono", monospace; background: var(--color-surface-container-low, #f7f8f9); color: var(--color-text-primary, #111); }
+.fig-ai-tmpl__pre code { font: inherit; color: inherit; background: none; }
+
+/* 人間による判定テンプレ枠（👀 人間による判定・無彩色） */
+.fig-human-tmpl { margin: 8px 0 14px; border: 1px solid color-mix(in srgb, #6b7280 25%, transparent); border-radius: 8px; overflow: hidden; }
+.fig-human-tmpl__head { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: #f3f4f6; border-bottom: 1px solid color-mix(in srgb, #6b7280 20%, transparent); }
+.fig-human-tmpl__label { font-size: 12px; font-weight: 600; color: #6b7280; }
+.fig-human-tmpl__pre { margin: 0; padding: 12px 14px; overflow-x: auto; white-space: pre-wrap; font: 13px/1.65 ui-monospace, "Cascadia Code", Consolas, "Noto Sans Mono", monospace; background: var(--color-surface-container-low, #f7f8f9); color: var(--color-text-primary, #111); }
+.fig-human-tmpl__pre code { font: inherit; color: inherit; background: none; }
+
+/* チェックリスト（Git 整備など） */
+.fig-checklist { list-style: none; margin: 8px 0 14px; padding: 0; }
+.fig-checklist li { position: relative; padding-left: 26px; margin: 6px 0; line-height: 1.6; color: var(--color-text-secondary, #334155); }
+.fig-checklist li::before { content: "\2610"; position: absolute; left: 0; top: -1px; color: var(--color-text-brand-strong, #0E6F73); font-size: 16px; }
+
+/* 正典参照テーブル（AI が従う数値・ルールの所在） */
+.fig-coreref { margin: 10px 0 14px; }
+.fig-coreref code { font-size: 12px; }
+
+/* 生成AI に聞く系の“最短ヒント”を強調（生成AI タグと同じ紫・AA ≈7:1）。 */
+.fig-aitip {
+  display: flex; align-items: flex-start; gap: 8px; margin: 8px 0 14px;
+  padding: 10px 12px; border-radius: 8px;
+  background: #ede9fe; color: #5b21b6;
+  border: 1px solid color-mix(in srgb, #5b21b6 30%, transparent);
+  font-size: 13px; line-height: 1.6; font-weight: 500;
+}
+.fig-aitip__icon { flex: none; }
+
+/* 折りたたみヒント（玄人には不要な確認＝控えめ・クリックで展開） */
+.fig-hint { margin: 8px 0 14px; border: 1px solid var(--color-border-subtle, #ececec); border-radius: 8px; background: var(--color-surface-container-low, #f7f8f9); }
+.fig-hint__sum {
+  cursor: pointer; padding: 8px 12px; font-size: 13px; color: var(--color-text-secondary, #334155);
+  list-style: none; display: flex; align-items: center; gap: 8px;
+}
+.fig-hint__sum::-webkit-details-marker { display: none; }
+.fig-hint__sum::before { content: "\25B8"; display: inline-block; transition: transform .15s ease; color: var(--color-text-secondary, #334155); }
+.fig-hint[open] > .fig-hint__sum::before { transform: rotate(90deg); }
+.fig-hint[open] > .fig-hint__sum { border-bottom: 1px solid var(--color-border-subtle, #ececec); }
+.fig-hint__body { padding: 4px 12px 10px; }
+.fig-hint__body > :first-child { margin-top: 8px; }
+.fig-hint__sum:focus-visible { outline: 2px solid var(--color-border-brand, #1f3a5f); outline-offset: 2px; border-radius: 8px; }
 
 /* ───────── 未整備可視化「余白」（U2-4 / US-P6） ───────── */
 .fig-coverage { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; }

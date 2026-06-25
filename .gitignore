@@ -14,7 +14,7 @@ codebuild_build.sh
 /aidlc-projects/ProductA/
 
 # U2 Portal — ビルド生成物（rolling 取込 Core / バンドル出力）
-/portal/vendor/core/
+# /portal/vendor/core/ は submodule として FIG-Universal-Design-System を参照
 /portal/site/
 /portal/node_modules/
 

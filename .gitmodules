@@ -1,0 +1,3 @@
+[submodule "portal/vendor/core"]
+	path = portal/vendor/core
+	url = https://github.com/takahashiman/FIG-Universal-Design-System.git
