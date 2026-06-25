@@ -312,7 +312,13 @@ const FORM_OPTIMIZATION_RULES_LD =
 
 修正前：\`h2 { font-size: 28px; margin: 8px 0; }\`  ← Web/Mobile スケール混在
 修正後：\`h2 { font-size: var(--font-size-ld-lg); margin: var(--space-ld-1) 0; }\`  ← 56px + 8px→12px（最小スペーシング）
-判定：❌ に該当・スケール統一・margin も Large Display スケール（--space-ld-*）に合わせ。`;
+判定：❌ に該当・スケール統一・margin も Large Display スケール（--space-ld-*）に合わせ。
+
+【本テンプレートの出力範囲（手順 3）】
+本ルールは「各項目ごとの修正必要性と方針」を判定します。
+複数項目にまたがる「修正計画」（フェーズ分類・優先度・時間見積・依存関係）は
+手順 4 で人間が判断します。テンプレートには含まれません。
+`;
 
 const FORM_OPTIMIZATION_RULES_HYBRID =
 `形態最適化は「現状を計測 → Core 標準と比較 → 書き換え」の機械的フロー。
@@ -374,6 +380,23 @@ const FORM_OPTIMIZATION_RULES_HYBRID =
 1️⃣ Web/Mobile スケール側を先に統一（小画面は通常の使用頻度が高い）
 2️⃣ Large Display スケール側を追加（@media で条件分岐）
 3️⃣ ビューポート別の状態表現・トークン参照を確認`;
+
+const T5_FORM_INSTRUCTION_EXAMPLE =
+`【修正対象】上記「人間による最適化設計」で確定したスコープを AI に伝える。例：
+
+修正対象コンポーネント：
+1. .btn-small / .btn-medium / .btn-large
+   修正内容：Core の spacing + typography トークンで統一
+   修正前：.btn-small { font-size: 14px; padding: 8px 12px; }
+   修正後：.btn-small { font-size: var(--font-size-sm); padding: var(--space-2) var(--space-3); }
+
+2. .card { padding: 20px; margin-bottom: 18px; }
+   修正内容：padding を Core --space-5 に統一・margin を --space-4(16px) に調整
+
+3. h2 { font-size: 20px; line-height: 1.4; }
+   修正内容：line-height を日本語標準 --lh-jp-headline に統一
+
+以降、既存ファイルの生の px 値を var(--...) に置換し、VRT ベースライン再生成・a11y 確認を行ってください。`;
 
 const CH5_AI_TEXT =
 `値は手で決めません。章5 ② で生成した Core のトークンを「使って」置換に徹します（再生成しない）。
@@ -719,32 +742,18 @@ const CH_EXISTING = [
           { k: 'ai', label: '判定ルール（Hybrid 版）', body: FORM_OPTIMIZATION_RULES_HYBRID },
         ] },
       ] },
-      { k: 'h', t: '✎ 人間による最適化設計（ルール適用）' },
+      /*{ k: 'h', t: '✎ 人間による最適化設計（ルール適用）' },
       { k: 'p', t: '上のルール（該当コンテキストの ❶❷❌ ）を、AI 診断結果（T5_FORM_AI_TEXT / T5_FORM_AI_TEXT_LD）に適用し、コンポーネントごとに「修正内容」を決めます。' },
       { k: 'check', items: [
         'AI 診断結果のボタン・カード・テキストパターンを見て、該当コンテキストのルール ❶「Core 標準に統一できるか」を適用',
         '当てはまらない場合は ❷「複数パターンがあるが標準寄りがあるか」を適用',
         'Web/Mobile か Large Display の場合は ❌「スケール混在がないか」を確認（Hybrid の場合は両フロー併用）',
         'スコープ（修正対象）を確定。例：「ボタンは Core 標準に統一・カード padding は 3 パターン→1 に統一・見出しは font-size は現状維持・line-height は標準化」のようにリスト化',
-      ] },
+      ] },*/
       { k: 'h', t: '手順 4: 実装＋テスト（AI 実装 + 人間テスト）' },
       { k: 'p', t: 'スコープが確定したら、AI に CSS 修正を指示し、VRT・a11y で非回帰を確認します。' },
       { k: 'h', t: '① 修正指示（AI への指示内容の例）' },
-      { k: 'cmd', loc: 'ai', label: '修正指示の例（AI へ渡す内容）', body: `【修正対象】上記「人間による最適化設計」で確定したスコープを AI に伝える。例：
-
-修正対象コンポーネント：
-1. .btn-small / .btn-medium / .btn-large
-   修正内容：Core の spacing + typography トークンで統一
-   修正前：.btn-small { font-size: 14px; padding: 8px 12px; }
-   修正後：.btn-small { font-size: var(--font-size-sm); padding: var(--space-2) var(--space-3); }
-
-2. .card { padding: 20px; margin-bottom: 18px; }
-   修正内容：padding を Core --space-5 に統一・margin を --space-4(16px) に調整
-
-3. h2 { font-size: 20px; line-height: 1.4; }
-   修正内容：line-height を日本語標準 --lh-jp-headline に統一
-
-以降、既存ファイルの生の px 値を var(--...) に置換し、VRT ベースライン再生成・a11y 確認を行ってください。` },
+      { k: 'ai', label: '修正指示の例（AI へ渡す内容）', body: T5_FORM_INSTRUCTION_EXAMPLE },
       { k: 'h', t: '② 人間による目視確認' },
       { k: 'check', items: [
         'CSS が正しく修正されたか（git diff で視認）',
