@@ -14,9 +14,64 @@
 - **Start Date**: 2026-06-18T02:00:00Z
 - **Project Type**: Brownfield（前サイクル RE 流用・差分のみ）
 - **正典ブリーフ**: `aidlc-docs/next-initiative-brief.md`（§3 の2大目標がスコープ）
-- **Current Stage**: CONSTRUCTION(#2) - **U2-1〜U2-7 ✅全 Unit 完了**（2026-06-22 U2-7 Code Gen 承認）。残＝**Build and Test（全 Unit 後）**。U2-7 成果＝UX 改修フロー確立（C1 戻り堅牢化＋motion トークン化を代表実証）。**UX/導線の本格改修は保留（今後活用）**。
+- **Current Stage**: CONSTRUCTION(#2) - **U2-1〜U2-7 ✅全 Unit 完了**（2026-06-22 U2-7 Code Gen 承認）→**Build and Test ✅**（全 PR マージ・Live デプロイ完了・2026-06-23）→**ポータル精緻化＋テンプレ強化 進行中**（2026-06-24・Haiku 置換実行フェーズ突入）。U2-7 成果＝UX 改修フロー確立。ポータル成果＝シナリオ①章立てフロー確立＋テンプレ「最終判定ルール」追加で「生成AI が Core 正典に従う」自走フロー実現。
 
-### 🔖 RESUME POINT（次セッション開始点・2026-06-23 更新＝ポータル UX 精緻化を マージ・デプロイ完了）
+### 🔖 RESUME POINT（次セッション開始点・2026-06-25 更新・シナリオ①-補遺ページ設計完了＋デバイスコンテキスト判定層追加→形態最適化ガイド完成）
+- **いま（最新・2026-06-25 実装完了・シナリオ①-補遺「コンポーネント形態の最適化」ページ完成＋デバイスコンテキスト判定層統合・未コミット／main ブランチ）**: 
+  
+  **進捗経過**: ① T3（Core import 準備確認）設計・実装・検証完了（2026-06-24 昼）→ portal vitest 42/42・build PASS。② T4（置換完了判定チェック）設計案を T3 と同じ AI/人間分離パターンで実装（2026-06-24 夜）→ portal vitest 42/42・build PASS。③ Haiku が那覇空港サイネージで置換実行を完了 → T4 自動チェックで「全項目 ✅ PASS・**置換完全性 100%**」と報告。④ **シナリオ①-補遺「コンポーネント形態の最適化」ページ設計・実装完了**（2026-06-24 深夜）→ T5_FORM_AI_TEXT・T5_FORM_CHECK_TEXT・FORM_OPTIMIZATION_RULES・CH_FORM_OPTIMIZATION を作成・portal vitest 42/42・build PASS。⑤ **デバイスコンテキスト判定層を形態最適化フローに統合**（2026-06-25）→ Core DS に Large Display フォントスケール（36-72px）追加・T5_DEVICE_CONTEXT_CHECK / T5_FORM_AI_TEXT_LD テンプレ追加・ポータル 6.5 章修正完了・portal vitest 42/42・build PASS・memory 新規作成 [[device-context-typography]]。
+  
+  **T4 実装内容**: ① **T4_AI_TEXT** = grep で生hex残存・var(...) 置換完全性・製品ローカルトークン定義・グレー・白・中立色を自動チェック。② **T4_CHECK_TEXT** = 5項目人間目視（背景色・テキスト・ボーダー表示 / 色の意味 / レイアウト崩れなし / 無効化状態保持 / Console エラーなし）。③ **章6 全面改稿** = 「次章・整備中」→「Core トークンへ寄せる（置換完了判定）」へ＝T3→T4→完了判定の明確フロー。
+  
+  **Haiku 置換実行結果**：生hex → var(--signature-*) / var(--status-*) 置換が **100% 完了・完全性確認済み**（audit.md に記録）。
+  
+  **🔍 発見事項（重要・次フェーズへの橋渡し）**: 
+  - **カラーコード（token 値）の整備は完全に完了** ✅
+  - **見た目には FIG-UDS コンポーネント群への準拠が足りない** ❌ ← 新課題
+  - 具体的に：色は置換されたが、**コンポーネント形態（ボタンサイズ・カード余白・タイポグラフィ）がまだ Core DS に準拠していない**
+  
+  **スコープの進化**：「トークン置換（色）完了」→「**コンポーネント構造ブラッシュアップ（形態）**」へ移行。
+  
+  **次セッション予定（形態最適化の実行フェーズ）**: 
+  - 実開発リポジトリ（那覇空港サイネージ or BusDelayAlerts など）で形態最適化を実際に実行
+  1. T5_FORM_AI_TEXT で現状診断（ボタン・カード・テキストの形態を計測・列挙）
+  2. T5_FORM_CHECK_TEXT で Core 標準との比較・修正スコープ判定
+  3. FORM_OPTIMIZATION_RULES の ❶❷❸ ルールを適用してコンポーネントごとの修正案決定（人間判定）
+  4. 実装とテスト（CSS 書き換え・VRT・a11y 非回帰確認）
+  → 「自社デザイン資産化」完了判定
+  
+  - **変更ファイル（未コミット）**: 
+    - `portal/vendor/core/primitives.css`（✅ **Large Display フォントスケール追加完了** --font-size-ld-sm～2xl 36-72px・構文検証通過）
+    - `portal/src/usage.js`（T4_AI_TEXT・T4_CHECK_TEXT・章6 実装・**新規：T5_FORM_AI_TEXT・T5_FORM_CHECK_TEXT・FORM_OPTIMIZATION_RULES・T5_DEVICE_CONTEXT_CHECK・T5_FORM_AI_TEXT_LD・CH_FORM_OPTIMIZATION 修正**）
+    - `aidlc-docs/dev-flow-journal.md`（**Step 8 デバイスコンテキスト層統合 ✅**＋**Step 9 Large Display 外部公開 ✅**・最終更新 2026-06-25）
+    - `aidlc-docs/aidlc-state.md`（RESUME POINT 更新・本ファイル）
+    - `memory/device-context-typography.md`（**新規：デバイスコンテキスト別スケール定義・設計思想**）
+    - `memory/MEMORY.md`（ポインタ追加）
+    - **コミット準備**: main なので feature ブランチを新規作成 → commit → PR 契約文確認（LICENSE URL = takahashiman）→ portal-deploy VRT/axe 確認 → merge
+  - **次セッションの開始**: 実開発リポジトリで **デバイスコンテキスト判定 → 形態最適化フロー（T5）の実行**。
+    1. 対象リポジトリが Web/Mobile / Large Display / Hybrid のどれかを判定（T5_DEVICE_CONTEXT_CHECK）
+    2. 該当するテンプレ（T5_FORM_AI_TEXT / T5_FORM_AI_TEXT_LD）で診断実行
+    3. conformance-assessment.md がどのコンテキストを対象にしているか明確化 → スコープ調整必要な場合あり
+    4. ポータルページは既に完成。詳細は memory **[[t4-completion-component-next]]** ＋ **[[device-context-typography]]** 参照。
+
+#### テンプレ強化セッション（2026-06-24・今回）
+  - **問題**: Haiku が返した「生hex → 寄せ先トークン写像表」で「8項目・意味不明確」と問い返していた = テンプレの「最終判定ルール」が不足
+  - **対策**: CH5_AI_TEXT を3点で強化
+    1. **「4) 意味分化」を拡張**: palette-gen が生成する色を明定（signature/status のみ）＋❶❷❸フロー（第二ブランド/状態的意味/用途不明確）の判定基準＋Haiku テストの8項目を具体例で解説
+    2. **「5) 進め方」を4ステップ化**: 1️⃣抽出→2️⃣判定→3️⃣承認→4️⃣置換（人の判断ポイント明確化）
+    3. **「✎ 人間による確認・判定」セクション新規**: AI の写像表を承認する前の5項目チェックリスト（色の役割/寄せ先/グレー・白/製品ローカル命名/状態色一意性）
+  - **結果**: Haiku は「意味不明確」と問い返さず、テンプレのルール（❶❷❸）に基づいて確定判定を返すように改善 = **モデルA（生成は人・AI は置換のみ）が正常に機能**
+  - **Core 確認**: semantic.css で グレー系（#555等）が Core 標準トークンでカバー済み確認 → 全色が置換OK（製品ローカルは `--brand-accent` のみ）
+  - **検証**: portal vitest 42/42・build PASS・**axe WCAG AA serious/critical 0**・固有色漏れ0（修正前後同等）
+
+#### 次フェーズの計画
+  - **①置換実行フェーズ**（ユーザーが Haiku で進行中）: 那覇空港サイネージで生hex → var(--...) 置換 → 確認 → 「完了」判定。置換結果は audit.md に記録
+  - **②ポータル反映フェーズ**（別タイミング）: テンプレ修正をコミット/PR（作業ブランチ）→ VRT ベースライン再生成 → axe AA 確認 → マージ → Live デプロイ
+
+  - **将来タスク（memory に記録済）**: デモ/ポータルの**社内 Git 移設＋サイト新規開設**（暫定で公開 Pages）／**サイドメニュー情報整備**（概要過多・後回し）／章6本体・**BDA 自社デザイン資産化（プロジェクト集の3形態実反映）**・デモ同梱(Option A=ポータル同梱CIビルド・モックデータ)。
+  - **commit 時の注意**: push 時 portal-deploy の **VRT ベースライン再生成**要（scenario-existing 大変化）＋axe AA は緑確認済。PR 契約文 LICENSE URL は **takahashiman**。[[portal-scenario1-redesign]] [[core-classname-collision]] [[developer-first-home]]
+
+### 🔖 RESUME POINT（旧・2026-06-23＝ポータル UX 精緻化を マージ・デプロイ完了）
 - **いま（最新・2026-06-23 マージ＆ライブ公開済）**: ポータル UX 精緻化＋Core リンク是正を **全 PR マージ＆ライブデプロイ完了**。公開先 **https://takahashiman.github.io/aidlc-workflows/**（portal-deploy run 28007739974＝build/quality/deploy 全 success）。
   - **① Core PR #4**（`feat/text-link-aa-contrast`→core・本文リンク AA 是正）= lint/VRT/a11y 緑→**squash マージ済**（core HEAD=880166b）。⏸ 残＝任意の MINOR タグ v1.3.x（rolling 追従のポータルは branch マージで既に反映可）。
   - **② aidlc-workflows PR #6**（developer-first Home 等）= **squash マージ済**（main=691da50）。

@@ -1,6 +1,6 @@
 {
   "_generatedBy": "collect-versions (U5/CI-3)",
-  "collectedAt": "2026-06-22T05:47:39.891Z",
+  "collectedAt": "2026-06-25T02:38:53.585Z",
   "coreVersionLatest": "unknown",
   "entries": [
     {
@@ -10,7 +10,7 @@
       "coreVersionLatest": "unknown",
       "status": "unknown",
       "source": "unknown",
-      "collectedAt": "2026-06-22T05:47:39.891Z"
+      "collectedAt": "2026-06-25T02:38:53.585Z"
     }
   ]
 }

@@ -1122,3 +1122,103 @@
 **User Input**: 「`#/overview/components-data/badge` を確認したが Live Preview 上で Badge を確認できない。意図する生成と異なる。PR/マージを経由して Live Preview に反映される認識だった」→（調査・提案後）"Badge も含め、未整備プレビュー群をまとめて整備するタスクが将来的に必要であることを記録。今回の開発プロセスでは保留（最優先目標が別にあるため）"
 **AI Response**: 実データで原因を特定＝**Badge は CSS・spec は在るがプレビュー HTML 実体が無い「未整備（余白）コンポーネント」**。Core `assets/js/portal-content.js` の `core/components-data/badge` は `preview: 'preview/components-badge.html'` を宣言するが**当該ファイルが存在しない**→ポータル `build.mjs` の `extractCoreContent` が実体無し preview を剥がし「未収録」フォールバック（＝余白の正直な可視化）。`.fig-badge`/`.fig-badge--dot` の CSS は `tokens/components.css:249` に実在・`components/badge.spec.md` も実在。**認識ズレの正体**: rolling 反映の理解は正しいが、反映されるのは**マージした中身だけ**で、今回 PR（Core #4 リンク色／Portal #6-8 Home・VRT・`.fig-tag`）には **Badge プレビューを作る変更が一切含まれない**（`.fig-tag` は Core `.fig-badge` 衝突回避の**ポータル内部ラベル＝別物**）。Badge プレビュー欠落は今回作業と独立した**以前からの余白**。**全数調査**: portal-content.js の preview 宣言 48 件中、**実体ファイル無し 22 件**（components-data: badge/icon-bubble/table/accordion/alert/toast/modal、components-inputs: toggle-switch/checkbox/radio-button/picker/form-group、components-navigation: header/navigation-rail/navigation-bar/side-sheet/bottom-sheet/breadcrumb/pagination、components-actions: fab/segmented-button/icon-button）＋ **`preview: null` 4 件**（patterns: page-transition/delay-banner/notification-sheet/route-selector）＝**未整備 計 26 件 / 整備済 26 件**（約半数が余白）。**整備の型**＝U2-6 arrival-card と同じ余白解消（Core に `preview/components-<name>.html` 新規・トークンのみ生HEX0・AA・lucide pin・spec 準拠→core マージ→rolling 反映＋整備率+1・component-check 通過）。**Badge 固有の併せ是正**: ① portal-content.js の code 例 `badge badge--success`→`.fig-badge` へ（spec 準拠）② badge.spec.md の Preview 欄「components-status-pills.html（badge も含め整備）」は誤記（status-pills に badge 0 件）→専用 `components-badge.html` 作成＋欄是正。**ユーザー決定=記録して今回は保留**（最優先目標が別）。memory `portal-uncovered-previews` 新規作成（一覧＋原因＋整備の型）＋MEMORY.md 索引追加＋`initiative2-resume-point` 更新。state「次の一手」に将来タスク追記。
 **Context**: Badge=未整備コンポーネント（プレビュー実体未作成）と判明。未整備 26 件の一括整備を将来タスクとして記録・今回保留。仕組み（rolling）は正常。
+
+## シナリオ①ページの章立て実装＋Haiku 実地テストによる精緻化（多数の反復・未コミット）
+**Timestamp**: 2026-06-24T00:00:00Z
+**User Input**: 「state RESUME POINT＋audit 末尾を確認」→ サイドナビに Alt+Q（全ナビ折りたたみ）を追加。以降「シナリオ①ページを章立て＝俯瞰→詳細でスクロール、玄人/素人の二層、操作場所が分かるコンポーネント、生成AI への厳密な指示テンプレ」を相談ベースで設計→「固まった章5まで実装して」。以降、別環境（Default/Haiku・レガシー素HTML/CSS の那覇空港サイネージ `nahabtV3.0/`）で T1〜章5 を実地テストし、出た疑問・失敗を都度ポータルへ反映。最後に「次セッションへ切替＝進捗まとめ」。
+**AI Response**: ポータルの **シナリオ①「既存アプリを整える」ページを章立てフローへ全面実装**（`portal/src/usage.js` の `GUIDES['scenario-existing']` を `chapters: CH_EXISTING` block モデルへ＋`renderChapterGuide` 分岐）。**新規UIコンポーネント**を helper＋CSS で実装＝操作場所タグ5種（github/terminal暗色/ai紫/portal/**file**）・コマンド枠（terminal暗色 #0f172a）・AI指示テンプレ枠（紫）・チェックリスト・参照元テーブル（種別/実体/何を縛る）・**折りたたみヒント**（`<details>`・玄人には不要な確認を畳む）・生成AI最短ヒント（aitip 紫）・**タブ**（**Core 既存 `.page-tabs`/`.tab-panel` を再利用**＝portal.js の `activateTab` がそのまま切替・JS 不変）。**AI 指示テンプレ（固有色なしプレースホルダ）**＝T1（診断・grep 実数）/T2（完了条件 A必達/B任意＝構成非依存）/CH5_AI_TEXT（寄せる指示）。**章5 を3手順化**＝①Core取得(submodule pin) ②palette生成(palette-gen) を**構成共通で1本化**／③入口CSS は**タブ**（モダン=@theme ブリッジ／レガシー=素CSS直接 var()）＝CSS の書き方だけ分岐。**portal.js 挙動修正2件**＝Alt+Q で全ナビ折りたたみ（`closeAllNav`＋「すべて閉じる」ボタン・検索 Ctrl+K と対）／リロード時スクロール位置維持（window スクロールを route 別 sessionStorage 保存・初回描画で復元・`scrollRestoration='manual'`・`focus({preventScroll:true})`）。**Haiku 実地テストが駆動した精緻化**＝(1) T2 構成非依存化（レガシーは build/VRT 不適用）(2) レガシー経路を正式サポート (3) palette-gen が「値の出どころ」＝AI に手で値を決めさせない・章5 必須（飛ばすと AI が DS 捏造）(4) `file` タグ追加で `@import` のターミナル誤実行を解消 (5) `@import` は入口CSS からの相対パス＝「数え方」ヒント＋「AI に絶対パスを渡し相対化させる」aitip・生成 signature.css vs Core 既定 `vendor/core/tokens/signature.css` の混同注意 (6) モダン/レガシーをタブ化＋共通部1本化 (7) #ffdd00（黄CTA）=Core が生成しない第二ブランド色→`--status-warning` でなく製品ローカル `--brand-accent`＋将来 Taste 候補 (8) **モデルA採用**（生成は人②／AI は置換のみ）＝CH5_AI_TEXT を「②で生成済みトークンを使い置換に徹する・再生成しない」へ＋`CH5_AI_ANSWERS_TEXT` 削除＋前提固定（入口CSS=③で@importした既存ファイル・新規作成/構成変更しない・置換対象=T1のファイル・生成物は出力先にすぎない）＋「5)進め方」（写像表→承認→置換・CLAUDE.md 転記が目的でない）。**検証は毎回** portal vitest 42/42・build PASS・**axe WCAG AA serious/critical 0**・固有色漏れ0・各機能スモーク OK（a11y で出た `scrollable-region-focusable` は `<pre tabindex="0">` で解消）。**全て未コミット（main ブランチ）**＝commit 時は作業ブランチを切る・push 時 portal-deploy の VRT ベースライン再生成要。memory `portal-scenario1-redesign`（このセッションの正典）＋state RESUME POINT 更新。
+**Context**: シナリオ①ページ章立て実装＝**実地テスト駆動で「生成AI が Core 正典に従って既存スタイルを整える」フローを確立**。到達点＝Haiku テストは寄せる(置換)直前。次セッションはユーザーが Haiku で置換実行を継続／ポータル追加実装は指示待ち。
+
+## CH5_AI_TEXT テンプレ修正＋置換実行の計画（2026-06-24）
+**Timestamp**: 2026-06-24T03:30:00Z
+**User Input**: テンプレ「5) 進め方」の内容をHaikuに追加指示→Haiku が「生hex → 寄せ先トークンの写像表＋判定フロー」を返却→「Core トークンに寄せる指示が上手く機能しているか確認して。問題なければ次の章6に進める」
+**AI Response**: Haiku の返却結果を評価→**モデルA（生成済みトークンを使う・置換のみ）が正常に機能している**と判定。（1）テンプレ修正：「4) 意味分化」に❶❷❸フロー＋palette-gen が生成する色を明定＋Haiku テストの8項目を具体例に。（2）テンプレ追加：「✎ 人間による確認・判定」セクションを「AI への指示」と「table core-ref」の間に挿入＝AI の写像表を承認する前に「色の役割・寄せ先・グレー・白・状態色の一意性」の5項目をチェック。（3）Core semantic.css 確認：グレー系（#555/#e5e5e5等）は Core 標準トークン（`--color-text-secondary`, `--color-surface-container-low` 等）でカバー済みと確認→全色が置換OK（製品ローカルは `--brand-accent` のみ）。**判定**: 置換実行OK。
+**Context**: テンプレに「最終判定ルール」と「人間による確認・判定」を追加→Haiku が「意味不明確」と問い返さず確定判定＝モデルA の目的（「置換に徹する」）が実現。
+
+## 置換実行＋ポータル反映計画（2026-06-24・次セッション以降）
+**Timestamp**: 2026-06-24T03:35:00Z
+**User Input**: 「承認・置換を進めることとします。このプロセスはテンプレ『✎ 生成AI Core トークンに寄せる指示以降に記載するべき（人間の判断が求められている為）』『承認・置換結果が問題ないかを確認した後にポータルサイトに反映するよう、予め計画としてメモして』」
+**AI Response**: **作業計画をメモ**＝（① ユーザーが Haiku で置換実行を継続。②置換結果（style.css・sig_genre.css の生hex → var(--...) 置換）を目視/CI で確認。③問題なければ「Haiku の作業が完了」と判定。④別途ポータル章5ガイドの「人間による確認・判定」セクションが未コミット（main ブランチ）→テンプレ修正をコミット/push（PR/マージ）。⑤ポータルのVRT ベースラインを再生成（新規 UI・テンプレ修正による見た目変更が多数）。⑥ Live デプロイで新テンプレを公開）。**実装内容**: （i）テンプレ修正（usage.js）= CH5_AI_TEXT「4) 意味分化」に判定フロー❶❷❸＋palette-gen 定義＋具体例8項目を追加→「5) 進め方」を4ステップ化。（ii）テンプレ新規＝「✎ 人間による確認・判定」セクション（color-ref 前）に5項目チェックリスト＋修正指示の書き方。（iii）変更3ファイル（未コミット）: `portal/src/usage.js`（CH5_AI_TEXT 拡張）・`portal/assets/portal-app.css`・`portal/src/portal.js`。ビルド/テスト( 42/42) OK・固有色漏れ0。**残**: ユーザーが Haiku で置換実行→結果確認→「完了」判定。その後、ポータルは次セッションで commit/push/VRT ベースライン/デプロイ（確認作業を含むため別途タイミング）。章6本体（Core トークンへ整備された既存スタイルの保全・移行ガイド）は未着手（ユーザー指示待ち）。
+**Context**: Haiku の置換実行～ポータル反映までの計画を明確化。テンプレ修正は未コミット→commit 時は作業ブランチを切る・VRT ベースライン再生成が必須。
+
+## テンプレ実装完了＋「人間による確認・判定」分離（2026-06-24・本セッション最終）
+**Timestamp**: 2026-06-24T04:30:00Z
+**User Input**: テンプレに「✎ 生成AI Core トークンに寄せる指示（生成済みトークンを使う・テンプレ）」を指示以降に記載すべきものを実装。Haiku 返却結果（置換戦略表）が適切か確認→目視で問題なし。「人間によるチェックの内容を AI 指示テンプレ内に混ぜてよいか」→分離すべき（AI への指示と人間のアクション）。修正して。進捗メモ＋次回は章6 から開始予定。
+**AI Response**: **①テンプレ修正評価**: Haiku の返却結果（置換戦略表＝生hex 36個全て var(...) 参照に置換・❶❷❸分類正確・グレー・白は Core semantic でカバー・製品ローカル色も明確）→モデルA（生成は人・AI は置換のみ）が正常に機能していることを確認。**②設計判断**: 「✎ 人間による確認・判定」は AI への指示ではなく「人間が 3️⃣承認 の実装方法」のため、CH5_AI_TEXT から分離し CH_EXISTING 章5ブロックで別の `check` block として配置（AI `ai` と人間 `check` が視覚的に分離）。**③実装**: CH5_AI_TEXT から「✎ 人間による確認・判定」セクション（100-114行）を削除→テンプレは「5) 進め方」で終了（AI への指示に徹する）。既存の CH_EXISTING 章5ブロック配置は正確（`ai` → `h`見出し → `p` → `check` → `p` → `table`の順）。④検証: vitest 42/42・build PASS・validate PASS。⑤git status: portal/src/usage.js ほか変更中（未コミット）。
+**Context**: ポータル章5テンプレ実装完了＝Haiku テンプレは「生成は人が実施・AI は置換のみ」をコード上で実現。「人間による確認・判定」は block 種別で UI 上も分離。**次セッション**: 章6（Core トークンへ整備された既存スタイルの保全・移行ガイド）作成へ進む。ポータル反映フェーズ（PR/VRT/axe/マージ）は別タイミング予定。
+
+## T4（置換完了判定チェック）設計案の実装＋置換実行 100% PASS 記録（2026-06-24・夜間セッション）
+**Timestamp**: 2026-06-24T05:00:00Z
+**User Input**: 「T4（置換完了判定チェック）設計案から開始」→ T3 と同じパターン（AI 自動チェック＋人間目視確認）で設計案を提示→「承認」→ 実装・検証＝「全項目 ✅ PASS — 置換完全性 100% と記載されました。自社デザイン資産化に入る前に、FIG-UDS のコンポーネント群に準拠する操作が足りないと感じました。次回はそのブラッシュアップに入るため、進捗の記録を行って。」
+**AI Response**: **T4 設計案（置換完了判定チェック）実装完了**。
+- ①**T4_AI_TEXT**（自動チェック）= grep で生 hex（`#[0-9a-fA-F]{3,6}`）残存確認・`var(--signature-*) / var(--status-*)`置換確認・製品ローカルトークン定義確認・グレー・白・中立色の Core semantic 経由確認。出力形式: ✅/❌/⚠ で報告。
+- ②**T4_CHECK_TEXT**（人間目視）= 5項目チェック（背景色・テキスト・ボーダーの表示確認 / 色の意味（意図通りか）/ レイアウト・UI 崩れなし / グレーアウト・無効化状態の保持 / Console エラーなし）。
+- ③**章6 更新**= 「次章・整備中」→「Core トークンへ寄せる（置換完了判定）」へ全面改稿。T3・T4・完了判定を明確な流れで配置＝T3(import 準備)→T4(置換完了)→章6(最終判定)。
+- ④**検証**: vitest 42/42・build PASS・validate PASS・全テスト緑。
+
+**Haiku 置換実行結果**＝T4 で「全項目 ✅ PASS — 置換完全性 100%」が記載。生hex → var(...) 置換がすべて完了・完全性確認済み。
+
+**🔍 発見事項（重要・次フェーズへの橋渡し）**: 
+- **カラーコード（token 値）の整備は完全に完了**（トークン置換 100%）
+- **見た目には FIG-UDS コンポーネント群への準拠が足りない** ← 新たに発見
+- 具体的には：「色は置換されたが、**コンポーネント形態（ボタンサイズ・カード余白・タイポグラフィ等）がまだ Core DS に準拠していない**」
+
+**スコープの進化**=「トークン置換（色）」は完了→「コンポーネント実装への最適化（形態）」へ進化。
+
+**次セッション予定**:
+1. 置換実行フェーズ終了（Haiku が置換完了・100% PASS）
+2. 「自社デザイン資産化」へ入る前に **コンポーネント構造ブラッシュアップ** を実施
+3. 対象：形状（ボタンサイズ・カード高さ等）・余白（padding/margin）・タイポグラフィ（font-size・line-height）の FIG-UDS 準拠最適化
+
+**記録更新**:
+- aidlc-state.md: 🔖 RESUME POINT を「T4 実装完了→置換実行 100% PASS→コンポーネント準拠へ」に更新
+- memory: 次セッションのテーマを記録（コンポーネント構造ブラッシュアップ）
+
+**Context**: T4（置換完了判定チェック）が設計・実装・検証完了。Haiku による置換実行が「100% PASS・完全性確認」で報告。色の整備は完全ながら、コンポーネント形態の Core DS 準拠が次タスク＝自社デザイン資産化の前に「見た目のブラッシュアップ」が必須。
+
+---
+
+## デバイスコンテキスト別診断・形態最適化フロー統合＋Core DS Large Display トークン外部公開（2026-06-25・環境整備セッション）
+
+**Timestamp**: 2026-06-25T06:00:00Z
+
+**Haiku 指摘（重要）**: 「Core DS には Large Display 専用プロファイルがまだ定義されていないことが判明しました。現在は Consumer（Web/Mobile、12～32px）と Terminal（業務用端末、13～34px）のみです。」
+
+**User Input**: 「既に Core DS に追記ができているならば、一度外部 PRJ でも閲覧できるようにコミットする必要があるでしょう。一連の環境整備を行ってください。」
+
+**環境整備内容**:
+
+① **Core DS `primitives.css` に Large Display フォントスケール追加**
+   - 変更ファイル: `portal/vendor/core/primitives.css`
+   - 追加位置: Font size セクション（134-150 行）直後に新規セクション「Font size · Large Display」
+   - 定義内容（5 段階）:
+     ```css
+     --font-size-ld-sm:   36px;  /* サイネージ内テキスト・ラベル */
+     --font-size-ld-md:   44px;  /* 中見出し・説明文見出し */
+     --font-size-ld-lg:   56px;  /* 副見出し */
+     --font-size-ld-xl:   64px;  /* メイン見出し・強調 */
+     --font-size-ld-2xl:  72px;  /* 超大見出し（限定用途） */
+     ```
+   - コメント記載: 視認距離 3-5m 対象・Web/Mobile との混在禁止・選定根拠（視認可能な最小文字高さを逆算）
+
+② **開発ドキュメント更新**
+   - `dev-flow-journal.md`: 最終更新 → 2026-06-25 / Step 9 追加（Large Display トークン外部公開）
+   - `aidlc-state.md`: RESUME POINT「変更ファイル」セクション更新（primitives.css ✅ 完了記載）
+   - `audit.md`: 本エントリ追加
+
+③ **次ステップ（準備完了）**
+   - feature ブランチ新規作成（`feat/large-display-tokens` など）
+   - 上記修正ファイル 3 点を commit
+   - PR 契約文確認（LICENSE URL = takahashiman）
+   - portal-deploy の VRT / axe AA 実行確認（新規トークン定義のみなので見た目変更なし・陰性テスト）
+   - main へ merge → GitHub Pages 自動デプロイ
+
+**検証状況**:
+- ✅ `primitives.css` 構文検証（ポータル npm build）
+- ✅ Web/Mobile スケール（11-32px）との段階分離が視認可能
+- ✅ コメントに「Web/Mobile との混在禁止」・視認距離（3-5m）の前提を明記
+- ✅ 既存 Web/Mobile テンプレ・ポータル 6.5 章実装との整合性確認済み
+
+**関連メモリ**: [[device-context-typography]]（デバイスコンテキスト別スケール定義・設計思想）
+
+**Context**: 前セッション（2026-06-24）の形態最適化フロー実装で「Large Display フォントスケール」を portal で実装済みだったが、Core DS の正式トークンとして定義・公開されていなかった。本セッション（2026-06-25）で Core `primitives.css` に追加・外部公開の環境整備を完了。コミット準備段階。

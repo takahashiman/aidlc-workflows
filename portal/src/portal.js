@@ -95,7 +95,10 @@ function renderSearchOverlay() {
 /* ───────────── サイドバー（Core .sidebar-section / .sidebar-item 規約） ───────────── */
 function renderSidebar(tree, currentRaw) {
   const meta = `<div class="portal-sidebar__scope-meta">
-    <div class="portal-sidebar__scope-label">ナビゲーション</div>
+    <div class="portal-sidebar__scope-head">
+      <div class="portal-sidebar__scope-label">ナビゲーション</div>
+      <button type="button" class="portal-sidebar__collapse-all" data-testid="nav-collapse-all" title="ナビゲーションをすべて閉じる（Alt+Q）" aria-label="ナビゲーションをすべて閉じる（ショートカット Alt+Q）">すべて閉じる<span class="portal-sidebar__collapse-all-hint" aria-hidden="true">Alt Q</span></button>
+    </div>
     <div class="portal-sidebar__scope-desc">概要・プロジェクト集・運用・使い方</div>
   </div>`;
   return meta + tree.map(top => renderSection(top, currentRaw)).join('');
@@ -269,6 +272,20 @@ async function main() {
   const mainEl = $('#main');
   const currentRoute = () => parseRoute(location.hash) || parseRoute(DEFAULT_ROUTE);
 
+  // リロード時のスクロール位置維持。ページ全体（window）がスクロールするため、
+  // route 別に window.scrollY を sessionStorage に保存し、初回描画（＝リロード）で復元する。
+  // ブラウザ既定の復元はコンテンツ描画前に走り効かないので manual に切り替える。
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  let isInitialPaint = true;
+  const scrollKey = () => 'fig-scroll:' + (location.hash || DEFAULT_ROUTE);
+  let scrollSaveTimer = null;
+  const saveScroll = () => { try { sessionStorage.setItem(scrollKey(), String(window.scrollY)); } catch { /* storage 不可は無視 */ } };
+  window.addEventListener('scroll', () => {
+    if (scrollSaveTimer) return;
+    scrollSaveTimer = setTimeout(() => { scrollSaveTimer = null; saveScroll(); }, 150);
+  }, { passive: true });
+  window.addEventListener('beforeunload', saveScroll);
+
   // サイドバーは data 駆動で不変のため一度だけ描画する。以降の遷移では aria-current の
   // 付け替えのみ行い DOM を作り直さない（→ ユーザーが畳んだアコーディオンが遷移で復活しない）。
   sidenav.innerHTML = renderSidebar(navTree, currentRoute().raw);
@@ -287,8 +304,16 @@ async function main() {
     restoreActiveTab();
     applyProfileToFrames(ui.profile);
     document.title = titleFor(route);
-    mainEl.focus({ preventScroll: false });
-    mainEl.scrollTo?.({ top: 0 });
+    mainEl.focus({ preventScroll: true });
+    if (isInitialPaint) {
+      // 初回描画＝リロード/直アクセス。保存済みのスクロール位置を復元（無ければトップ）。
+      isInitialPaint = false;
+      const y = Number(sessionStorage.getItem(scrollKey()) || 0);
+      requestAnimationFrame(() => window.scrollTo(0, y));
+    } else {
+      // アプリ内ナビゲーションは従来どおりトップへ。
+      window.scrollTo(0, 0);
+    }
     // モバイルドロワーを閉じる
     sidenav.setAttribute('data-open', 'false');
     $('.portal-sidebar-scrim')?.setAttribute('data-open', 'false');
@@ -297,10 +322,26 @@ async function main() {
 
   const router = createRouter(paint);
 
+  // ナビをすべて畳む（検索の Ctrl+K に対をなす Alt+Q／「すべて閉じる」ボタン）。
+  // ヘッダー（トグル）を持つ折りたたみセクションのみ畳む。単項目セクションは
+  // トグルが無く、畳むと再展開できないため対象外とする。あわせてモバイルドロワーも閉じる。
+  function closeAllNav() {
+    sidenav.querySelectorAll('.sidebar-section').forEach(sec => {
+      const header = sec.querySelector(':scope > .sidebar-section__header');
+      if (!header) return;
+      sec.setAttribute('data-open', 'false');
+      header.setAttribute('aria-expanded', 'false');
+    });
+    sidenav.setAttribute('data-open', 'false');
+    $('.portal-sidebar-scrim')?.setAttribute('data-open', 'false');
+  }
+
   // プロファイル切替（radiogroup・CSS 駆動のため再描画しない）
   app.addEventListener('click', (e) => {
     const btn = e.target.closest('.portal-profile__btn');
     if (btn) { ui.setProfile(btn.getAttribute('data-profile')); return; }
+    // ナビをすべて閉じる（「すべて閉じる」ボタン）
+    if (e.target.closest('.portal-sidebar__collapse-all')) { closeAllNav(); return; }
     // サイドバーのセクション折りたたみ
     const secHeader = e.target.closest('.sidebar-section__header');
     if (secHeader) {
@@ -354,6 +395,14 @@ async function main() {
   }, true);
 
   setupSearch(searchIndex, (to) => router.navigate(to));
+
+  // Alt+Q: ナビをすべて閉じる（検索の Ctrl+K と対をなすショートカット）。
+  document.addEventListener('keydown', (e) => {
+    if (e.altKey && !e.ctrlKey && !e.metaKey && e.key.toLowerCase() === 'q') {
+      e.preventDefault();
+      closeAllNav();
+    }
+  });
 
   router.start();
 }
