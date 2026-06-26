@@ -623,8 +623,29 @@ const CH_EXISTING = [
         { k: 'cmd', loc: 'terminal', label: '', body: 'rm -Recurse -Force .git/modules/vendor/core'},
       ] },
       { k: 'h', t: '② パレット（signature/status）を生成（構成共通）' },
-      { k: 'cmd', loc: 'terminal', label: 'signature/status を生成（seed=主ブランド色／章4 T1 で特定）', body:
-'node vendor/core/tools/palette-gen/generate.mjs --seed=<#主ブランド色のカラーコード> --out src/styles/generated' },
+      { k: 'note', t: 'seed（=主ブランド色）の決め方は2通り。下のタブで選ぶ（両方はやらない）。移行の原則は「ブランド不変」なので既定は〔既存色を保持〕。a11y で色味を整えたい時だけ〔Hue×Taste で精錬〕（色がわずかに変わる＝意図的なリブランド）。どちらを選んでも以降の生成・取り込み手順は同じ。' },
+      { k: 'tabs', label: 'seed（主ブランド色）の決め方', items: [
+        { id: 'preserve', label: '既存色を保持（推奨・移行の既定）', blocks: [
+          { k: 'p', t: 'seed は章4 診断(T1)が特定した既存の主ブランド色をそのまま使う。手で考えて打つのではなく T1 の結果を貼る。ブランドの見た目は変えず、派生（light/dark/tint/shadow）と a11y だけを生成器に任せる。' },
+          { k: 'cmd', loc: 'terminal', label: 'T1 で特定した既存色を seed に生成', body:
+'node vendor/core/tools/palette-gen/generate.mjs --seed=<章4 T1 の主ブランド色（例 #2C6B5E）> --out src/styles/generated' },
+          { k: 'aitip', t: 'T1 の出力（最頻出のブランド色 hex）をそのまま --seed に貼る。迷ったら生成AI に「T1 で出た主ブランド色を --seed にしたコマンドにして」と頼む。' },
+        ] },
+        { id: 'refine', label: 'Hue×Taste でキュレート精錬（任意・色味調整）', blocks: [
+          { k: 'note', t: '既存色を、その色相のまま a11y キュレート済みプリセットに寄せる。色がわずかに変わる（＝意図的なブランド精錬）。手順：①既存色の色相を見極め（赤/橙/青緑/青/モノ）→②Taste を選ぶ（Pop=明・親しみ／Trust=深・業務／Calm=淡・静謐）→③対応プリセット値を seed にする。新製品フロー（ai-co-creation）はこの Hue×Taste 選択を UI 上で行う。' },
+          { k: 'h', t: 'プリセット早見（tokens/signature-presets.json が正典）' },
+          { k: 'ul', items: [
+            '青緑 Turquoise： Pop #26B7BC ／ Trust #1A8589 ／ Calm #5CCED2',
+            '青 Sky： Pop #38A1DB ／ Trust #2378A8 ／ Calm #6BB8E4',
+            '赤 Red： Pop #E5484D ／ Trust #B91C1C ／ Calm #FECDD3',
+            '橙 Orange： Pop #F97316 ／ Trust #C2410C ／ Calm #FED7AA',
+            'モノ Mono： Pop #64748B ／ Trust #595757 ／ Calm #B5B5B6',
+          ] },
+          { k: 'cmd', loc: 'terminal', label: '選んだプリセット値を seed に生成（例：赤×Trust = #B91C1C）', body:
+'node vendor/core/tools/palette-gen/generate.mjs --seed=#B91C1C --out src/styles/generated' },
+          { k: 'aitip', t: 'プリセット値は出発点。light/dark は生成器が AA を保証して決めるので手で選ばない。' },
+        ] },
+      ] },
       { k: 'hint', summary: '🔍ヒント：palette-gen はビルドに必要？（ビルドの無いサイトでも使える）', blocks: [
         { k: 'ul', items: [
           'palette-gen は node の“一回限りの生成ツール”。サイトの常時ビルドに組み込む必要はない。',
