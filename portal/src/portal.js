@@ -13,6 +13,7 @@ import { ui } from './state.js';
 import { buildNav } from './nav.js';
 import { createRouter, parseRoute, DEFAULT_ROUTE } from './router.js';
 import { renderHome, renderOverview, renderDeveloper, renderProjects, renderOps, renderUsage, notFound } from './views.js';
+import { updateSeedPicker } from './usage.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -375,6 +376,11 @@ async function main() {
   mainEl.addEventListener('click', (e) => {
     const tab = e.target.closest('.page-tab'); if (!tab) return;
     activateTab(tab.closest('.page-tabs'), tab.getAttribute('data-tab'));
+  });
+  // seedpicker（hue×taste → seed hex）切替・event delegation（初期表示は描画 HTML の既定値）
+  mainEl.addEventListener('change', (e) => {
+    const sel = e.target.closest('[data-seed-hue], [data-seed-taste]'); if (!sel) return;
+    updateSeedPicker(sel.closest('.fig-seedpicker'));
   });
   mainEl.addEventListener('keydown', (e) => {
     const list = e.target.closest('.page-tabs'); if (!list) return;

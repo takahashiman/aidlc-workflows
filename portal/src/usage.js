@@ -632,18 +632,10 @@ const CH_EXISTING = [
           { k: 'aitip', t: 'T1 の出力（最頻出のブランド色 hex）をそのまま --seed に貼る。迷ったら生成AI に「T1 で出た主ブランド色を --seed にしたコマンドにして」と頼む。' },
         ] },
         { id: 'refine', label: 'Hue×Taste でキュレート精錬（任意・色味調整）', blocks: [
-          { k: 'note', t: '既存色を、その色相のまま a11y キュレート済みプリセットに寄せる。色がわずかに変わる（＝意図的なブランド精錬）。手順：①既存色の色相を見極め（赤/橙/青緑/青/モノ）→②Taste を選ぶ（Pop=明・親しみ／Trust=深・業務／Calm=淡・静謐）→③対応プリセット値を seed にする。新製品フロー（ai-co-creation）はこの Hue×Taste 選択を UI 上で行う。' },
-          { k: 'h', t: 'プリセット早見（tokens/signature-presets.json が正典）' },
-          { k: 'ul', items: [
-            '青緑 Turquoise： Pop #26B7BC ／ Trust #1A8589 ／ Calm #5CCED2',
-            '青 Sky： Pop #38A1DB ／ Trust #2378A8 ／ Calm #6BB8E4',
-            '赤 Red： Pop #E5484D ／ Trust #B91C1C ／ Calm #FECDD3',
-            '橙 Orange： Pop #F97316 ／ Trust #C2410C ／ Calm #FED7AA',
-            'モノ Mono： Pop #64748B ／ Trust #595757 ／ Calm #B5B5B6',
-          ] },
-          { k: 'cmd', loc: 'terminal', label: '選んだプリセット値を seed に生成（例：赤×Trust = #B91C1C）', body:
-'node vendor/core/tools/palette-gen/generate.mjs --seed=#B91C1C --out src/styles/generated' },
-          { k: 'aitip', t: 'プリセット値は出発点。light/dark は生成器が AA を保証して決めるので手で選ばない。' },
+          { k: 'note', t: '既存色を、その色相のまま a11y キュレート済みプリセットに寄せる。色がわずかに変わる（＝意図的なブランド精錬）。新製品フロー（ai-co-creation）と同じ Hue×Taste 軸（tokens/signature-presets.json が正典）。' },
+          { k: 'h', t: 'Hue × Taste を選ぶ → seed（value）の色味を確認' },
+          { k: 'seedpicker' },
+          { k: 'aitip', t: '色相 (Hue)＝既存色の系統、テイスト (Taste)＝Pop(明・親しみ)/Trust(深・業務)/Calm(淡・静謐)。選ぶと value の色味が見え、直下コマンドの --seed が追従する。light/dark は生成器が AA を保証して決めるので手で選ばない。' },
         ] },
       ] },
       { k: 'hint', summary: '🔍ヒント：palette-gen はビルドに必要？（ビルドの無いサイトでも使える）', blocks: [
@@ -890,6 +882,42 @@ function coreRefTable() {
     <tbody>${rows.map(r => `<tr><td>${esc(r[0])}</td><td><code>${esc(r[1])}</code></td><td>${esc(r[2])}</td></tr>`).join('')}</tbody>
   </table>`;
 }
+/* Hue × Taste → signature seed プリセット。
+ * 正典: Core tokens/signature-presets.json（ai-co-creation.js の PRESETS と一致させる・ランタイム同期コピー）。 */
+export const SEED_PRESETS = {
+  'turquoise-pop':   { value: '#26B7BC', name: 'Brand Turquoise' },
+  'turquoise-trust': { value: '#1A8589', name: 'Deep Turquoise'  },
+  'turquoise-calm':  { value: '#5CCED2', name: 'Light Turquoise' },
+  'blue-pop':        { value: '#38A1DB', name: 'Brand Sky'       },
+  'blue-trust':      { value: '#2378A8', name: 'Operations Blue' },
+  'blue-calm':       { value: '#6BB8E4', name: 'Light Sky'       },
+  'red-pop':         { value: '#E5484D', name: 'Signal Red'      },
+  'red-trust':       { value: '#B91C1C', name: 'Deep Crimson'    },
+  'red-calm':        { value: '#FECDD3', name: 'Petal Rose'      },
+  'orange-pop':      { value: '#F97316', name: 'Energetic Orange'},
+  'orange-trust':    { value: '#C2410C', name: 'Burnt Amber'     },
+  'orange-calm':     { value: '#FED7AA', name: 'Soft Apricot'    },
+  'mono-pop':        { value: '#64748B', name: 'Slate Mid'       },
+  'mono-trust':      { value: '#595757', name: 'FIG Sub-2'       },
+  'mono-calm':       { value: '#B5B5B6', name: 'FIG Sub-1'       },
+};
+
+/** seedpicker の選択（hue×taste）から value・プレビュー・コマンドの hex を更新。
+ *  portal.js の change 委譲から呼ばれる（初期表示は描画 HTML の既定値で JS 不要）。 */
+export function updateSeedPicker(root) {
+  if (!root) return;
+  const hue   = (root.querySelector('[data-seed-hue]')   || {}).value || 'turquoise';
+  const taste = (root.querySelector('[data-seed-taste]') || {}).value || 'pop';
+  const id = `${hue}-${taste}`;
+  const p = SEED_PRESETS[id] || SEED_PRESETS['turquoise-pop'];
+  const hex = p.value.toUpperCase();
+  const set = (sel, fn) => { const el = root.querySelector(sel); if (el) fn(el); };
+  set('[data-seed-chip]',  el => { el.style.background = hex; });
+  set('[data-seed-value]', el => { el.textContent = hex; });
+  set('[data-seed-name]',  el => { el.textContent = `${id} / ${p.name}`; });
+  set('[data-seed-hex]',   el => { el.textContent = hex; });
+}
+
 function renderFlowBlock(b) {
   switch (b.k) {
     case 'p':     return `<p class="fig-doc-lead">${esc(b.t)}</p>`;
@@ -913,6 +941,36 @@ function renderFlowBlock(b) {
       return `<div class="page-tabs" role="tablist" aria-label="${esc(b.label || '構成を選択')}" data-testid="flow-tabs">${tablist}</div><div class="page-panels">${panels}</div>`;
     }
     case 'hint':  return `<details class="fig-hint" data-testid="flow-hint"><summary class="fig-hint__sum">${esc(b.summary)}</summary><div class="fig-hint__body">${(b.blocks || []).map(renderFlowBlock).join('')}</div></details>`;
+    case 'seedpicker': {
+      // Hue × Taste を選ぶと value（色味）を確認でき、直下コマンドの --seed が追従する。
+      // 既定 = turquoise-pop（#26B7BC）。更新は portal.js の change 委譲 → updateSeedPicker。
+      const d = SEED_PRESETS['turquoise-pop'];
+      const opt = (v, label, sel) => `<option value="${v}"${sel ? ' selected' : ''}>${label}</option>`;
+      return `<div class="fig-seedpicker" data-testid="seed-picker">
+        <div class="fig-seedpicker__controls">
+          <label class="fig-seedpicker__field"><span class="fig-seedpicker__label">色相 (Hue)</span>
+            <select class="fig-seedpicker__select" data-seed-hue aria-label="色相 (Hue)">${
+              opt('turquoise', '青緑 Turquoise（FIG準拠）', true) + opt('blue', '青 Sky Blue（FIG準拠）') +
+              opt('red', '赤 Red（緊急・情熱）') + opt('orange', '橙 Orange（活発）') + opt('mono', 'モノ Mono（静謐）')
+            }</select>
+          </label>
+          <label class="fig-seedpicker__field"><span class="fig-seedpicker__label">テイスト (Taste)</span>
+            <select class="fig-seedpicker__select" data-seed-taste aria-label="テイスト (Taste)">${
+              opt('pop', 'Pop（明・親しみ）', true) + opt('trust', 'Trust（深・業務）') + opt('calm', 'Calm（淡・静謐）')
+            }</select>
+          </label>
+        </div>
+        <div class="fig-seedpicker__result">
+          <span class="fig-seedpicker__swatch" data-seed-chip style="background:${d.value}" aria-hidden="true"></span>
+          <code class="fig-seedpicker__value" data-seed-value>${d.value.toUpperCase()}</code>
+          <span class="fig-seedpicker__name" data-seed-name>turquoise-pop / ${esc(d.name)}</span>
+        </div>
+        <div class="fig-cmd fig-cmd--terminal">
+          <div class="fig-cmd__head">${locTag('terminal')}<span class="fig-cmd__label">選んだ seed で生成（上の選択に追従）</span></div>
+          <pre class="fig-cmd__pre" tabindex="0"><code>node vendor/core/tools/palette-gen/generate.mjs --seed=<span data-seed-hex>${d.value.toUpperCase()}</span> --out src/styles/generated</code></pre>
+        </div>
+      </div>`;
+    }
     case 'aitip': return `<p class="fig-aitip" data-testid="ai-tip"><span class="fig-aitip__icon" aria-hidden="true">${LOC_META.ai.icon}</span><span>${esc(b.t)}</span></p>`;
     case 'note':  return `<p class="fig-doc-note">${esc(b.t)}</p>`;
     case 'links': return `<ul class="fig-doc-list">${b.items.map(i => `<li><a href="${esc(i.route)}">${esc(i.label)}</a></li>`).join('')}</ul>`;
