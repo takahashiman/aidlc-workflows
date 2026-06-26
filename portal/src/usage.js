@@ -53,9 +53,7 @@ const T3_AI_TEXT =
    → DevTools Console を確認
 4. CSS 変数が定義されているか
    → DevTools → Elements → :root セクションで以下が見えること：
-      --color-signature-base, --color-signature-light
-      --color-semantic-brand-primary, --color-semantic-bg-canvas
-      等
+      --color-...等
 
 【出力形式】
 ✅ / ❌ / 不適用 で各項目を報告し、項目ごとに簡潔に根拠を添える。
@@ -603,7 +601,7 @@ const CH_EXISTING = [
       { k: 'p', t: 'Core(FIG-UDS) を取り込み、ブランド(signature)・状態色(status) を“手で決めず”生成器に出させる。AI はこの章で入る実体ファイルの数値・ルールを正典に作業する。' },
       { k: 'note', t: 'この章は ①Core を取り込む → ②パレットを生成 → ③入口 CSS に取り込む、の3手順。①②は構成共通、③の「CSS への書き方」だけがモダン/レガシーで分かれる（最後にタブで選ぶ）。' },
       { k: 'h', t: '① Core を取り込む（構成共通）' },
-      { k: 'hint', summary: 'ヒント：このコマンドはどこで実行する？', blocks: [
+      { k: 'hint', summary: '🔍ヒント：このコマンドはどこで実行する？', blocks: [
         { k: 'ul', items: [
           '章2でクローンした「作業対象アプリ」の repo root（.git がある階層）で実行する。AI-DLC のクローンや Core 本体の中では実行しない。',
           'vendor/ は事前作成不要（submodule add が作る）。',
@@ -613,7 +611,7 @@ const CH_EXISTING = [
 'git submodule add https://github.com/takahashiman/FIG-Universal-Design-System.git vendor/core\n' +
 'git -C vendor/core checkout <参照する Core リリースタグ>\n' +
 'git submodule update --init --recursive' },
-      { k: 'hint', summary: 'ヒント：タグ pin は必須？（最新を使う場合）', blocks: [
+      { k: 'hint', summary: '🔍ヒント：タグ pin は必須？（最新を使う場合）', blocks: [
         { k: 'p', t: 'submodule add した時点で Core デフォルトブランチの最新コミットが取得され、親はその SHA を記録する。checkout <タグ> を省いても“追加時点の最新”に pin されるだけで、自動追従にはならない（サブモジュールに「常に最新」はなく、更新は毎回手動で pin し直す）。' },
         { k: 'ul', items: [
           'タグ pin あり＝どの版か明確・再現性◎（CORE-DS-VERSION／版ダッシュボード／CI 検査と整合＝本システム標準）。',
@@ -621,13 +619,13 @@ const CH_EXISTING = [
         ] },
         { k: 'note', t: 'ポータル自身は rolling（ビルドで core 追従）だが、製品アプリは submodule タグ pin が標準。' },
       ] },
-      { k: 'hint', summary: 'ヒント：サブモジュールを消したいときは？', blocks: [
+      { k: 'hint', summary: '🔍ヒント：サブモジュールを消したいときは？', blocks: [
         { k: 'cmd', loc: 'terminal', label: '', body: 'rm -Recurse -Force .git/modules/vendor/core'},
       ] },
       { k: 'h', t: '② パレット（signature/status）を生成（構成共通）' },
       { k: 'cmd', loc: 'terminal', label: 'signature/status を生成（seed=主ブランド色／章4 T1 で特定）', body:
 'node vendor/core/tools/palette-gen/generate.mjs --seed=<#主ブランド色のカラーコード> --out src/styles/generated' },
-      { k: 'hint', summary: 'ヒント：palette-gen はビルドに必要？（ビルドの無いサイトでも使える）', blocks: [
+      { k: 'hint', summary: '🔍ヒント：palette-gen はビルドに必要？（ビルドの無いサイトでも使える）', blocks: [
         { k: 'ul', items: [
           'palette-gen は node の“一回限りの生成ツール”。サイトの常時ビルドに組み込む必要はない。',
           'ビルドがある構成（Vite 等）は prebuild に入れて自動生成も可。',
@@ -636,7 +634,7 @@ const CH_EXISTING = [
         ] },
       ] },
       { k: 'h', t: '③ 入口 CSS に取り込む（ここだけ構成で分かれる）' },
-      { k: 'hint', summary: 'ヒント：入口 CSS ってどのファイル？（探し方・両構成共通）', blocks: [
+      { k: 'hint', summary: '🔍ヒント：入口 CSS ってどのファイル？（探し方・両構成共通）', blocks: [
         { k: 'p', t: '入口 CSS＝アプリが最初に読み込む“大元の CSS ファイル”。ここに @import を足すとサイト全体に効く。「最後に（後勝ち）」＝既存の読み込みより後ろに置くと、あなたのブリッジが優先される（CSS は後に書いた方が勝つ）。' },
         { k: 'h', t: '探し方' },
         { k: 'ul', items: [
@@ -679,7 +677,7 @@ const CH_EXISTING = [
 '/* 以降、生 hex を var(--signature-*) / var(--status-*) に置換していく */' },
         ] },
       ] },
-      { k: 'hint', summary: 'ヒント：@import のパスが解決しない時（相対パスの数え方・両構成共通）', blocks: [
+      { k: 'hint', summary: '🔍ヒント：@import のパスが解決しない時（相対パスの数え方・両構成共通）', blocks: [
         { k: 'p', t: '@import のパスは「入口 CSS ファイルの場所」を基準にした相対パス。repo root や、コマンドを打ったフォルダが基準ではない。ここを取り違えると解決しない（最頻出の失敗）。下のコード例のパスは特定の配置を前提にした例なので、必ず自分の入口 CSS の位置に合わせて直す。' },
         { k: 'h', t: '数え方' },
         { k: 'ul', items: [
@@ -923,7 +921,7 @@ export const GUIDES = {
     steps: [
       '左サイドナビ上位の4区分（概要 / プロジェクト集 / 運用 / 使い方）から目的の情報種別を選ぶ。',
       '「プロジェクト集」はカテゴリ＞サブカテゴリ＞製品の順に辿り、末端の製品リンクで直接到達する。',
-      '右上のプロファイル切替（Web-Admin / Consumer / Terminal）で各デバイスの見え方を確認する。',
+      '右上のプロファイル切替（Admin / Consumer / Terminal / Signage）で各デバイス・視環境での見え方を確認する。',
       '共有したい表示は、その時の URL をそのまま渡す（プロファイル等が URL に反映される）。',
     ],
     verification: ['目的の製品ページに数クリックで到達でき、URL を共有すると相手も同じ表示になる。'],

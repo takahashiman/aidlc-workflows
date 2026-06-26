@@ -5,7 +5,7 @@
  * 機密・個人情報は保存しない（UI 設定のみ / BR-STATE-3）。
  */
 const LS_KEY = 'fig-portal-ui';
-const PROFILES = ['admin', 'consumer', 'terminal'];
+const PROFILES = ['admin', 'consumer', 'terminal', 'signage'];
 const DEFAULTS = { profile: 'admin' };
 
 function readLS() {

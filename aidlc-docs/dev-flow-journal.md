@@ -571,3 +571,116 @@ Haiku が自動的にフェーズ分類を生成したことから、**テンプ
   5. **[新] T5_FORM_SCOPE_CONFIRMATION で修正スコープを自動確定表として生成**
   6. T5_FORM_INSTRUCTION_EXAMPLE で修正指示を生成・実装
   7. VRT/a11y テスト確認
+
+---
+
+### Step 10. Portal Large Display Signage プロファイル実装（2026-06-25）
+
+> セッションテーマ: 那覇空港サイネージ向けの Large Display 対応をポータルから見えるようにし、
+> デバイスコンテキスト別診断で設計した Signage 環境を、Portal プロファイル切替え・CSS 管理・
+> ドキュメント体系に統合。視環境の差異（距離 × 視認方向）を軸に、全 4 プロファイルの体系化完成。
+
+- **何を**: 前セッション（Step 9.5）で構想した Large Display フォントスケール（36-72px）と、
+  コンテキスト別判定層を、Portal UI・Core DS トークン管理・ドキュメント記述に統合実装。
+  
+  1. **視環境の差異を表すアイコン設計**（デバイス形態から視環境軸へ再構成）
+     - Admin = デスク・近距離 30cm（机に座った状態）
+     - Consumer = 手持ち・中距離（スマートフォン操作）
+     - Terminal = 立位・固定視認（バーコードスキャン・業務端末）
+     - **Signage = 遠距離 3-5m・見上げ（大型ディスプレイ）** ← 新規
+  
+  2. **Portal プロファイルスイッチャー（4 プロファイル対応）**
+     - state.js の PROFILES 配列に 'signage' を追加
+     - portal.js の ICON 定義に signage SVG を追加
+     - portal.js の PROFILE_META に signage メタデータを追加（title に視環境情報を付記）
+     - 全 4 プロファイルのボタンを radio button としてレンダリング
+  
+  3. **Core DS tokens/profile-signage.css 新規作成**
+     - 8 段階フォントスケール：28/32/36/40/44/56/64/72px
+     - 遠距離視認性（3-5m）向けスペーシング・interactive target・density
+     - コメントに視距離・対象用途・設計指針を明記
+  
+  4. **Portal ドキュメント更新**
+     - usage.js でのプロファイル表記を 4 プロファイル対応に更新
+     - views.js の code/a11y パネルで 'signage' を iteration に追加
+     - portal.js の availability 属性に data-avail-signage を追加
+
+- **Why**:
+  - **視環境軸の体系化**：従来の「デバイス形態」（PC/スマートフォン/業務端末）から
+    「デバイスが前提する視認距離」（30cm / 手持ち / 固定 / 3-5m）へ軸を転換。
+    これにより「同じアプリ（例：BusDelayAlerts）でも、表示環境によってフォントサイズが変わる」
+    というコンテキスト依存の必然性が言語化される。
+  - **Core DS と Portal の統合**：前セッションで構想した「コンテキスト別判定」と「LD スケール」を、
+    Portal UI と公式トークン管理として確立。これで開発者が「うちはサイネージ対応だから Signage で検証」と
+    Portal だけで完結できる。
+  - **外部プロジェクト参照可能に**：Core DS の `profile-signage.css` が公式トークンとして登録されることで、
+    BusDelayAlerts や他企画プロジェクトが「大型画面向けフォントサイズ」を正式に引用可能に。
+
+- **How（実施内容）**:
+  1. **Portal ファイル修正**:
+     - `portal/src/state.js` line 8：PROFILES に 'signage' を追加
+     - `portal/src/portal.js` line 26：signage SVG icon を追加（大型ディスプレイ + 支柱を表現）
+     - `portal/src/portal.js` line 31-36：PROFILE_META を 4 プロファイル対応に更新
+       - 各タイトルに視環境情報（距離・状況）を付記
+       - 例：`'Web-Admin（デスク・近距離30cm・情報密度優先）'`
+     - `portal/src/portal.js` line 134：sidebar availability 属性に `data-avail-signage` を追加
+     - `portal/src/usage.js` line 926：ドキュメント表記を「Admin / Consumer / Terminal / Signage」に更新
+     - `portal/src/views.js` line 230, 242：code/a11y panel の profile iteration に 'signage' を追加
+  
+  2. **Core DS ファイル新規作成/修正**:
+     - **新規**: `FIG-Universal-Design-System/tokens/profile-signage.css`
+       ```css
+       .fig-profile-signage {
+         --fig-size-caption:    28px;    /* 最小 */
+         --fig-size-body:       32px;    /* 本文 */
+         --fig-size-body-strong:36px;    /* 強調 */
+         --fig-size-title:      40px;    /* 中見出し */
+         --fig-size-headline:   56px;    /* 大見出し */
+         --fig-size-display:    72px;    /* ヒーロー・最大 */
+         /* + spacing/target/density/radius/layout/motion */
+       }
+       ```
+     - **修正**: `FIG-Universal-Design-System/tokens/base.css` line 13
+       - コメント更新：「tokens/profile-*.css ⇒ Admin / Consumer / Terminal / Signage」に明記
+       - body クラス例に `fig-profile-signage` を追加
+
+- **確認（修正内容の検証）**:
+  - `git diff` で全修正箇所を確認・Portal 4 ファイル + Core DS 2 ファイル
+  - Portal `npm run build` 成功・`npm run test` 42/42 PASS
+  - Core DS 構文検証：`profile-signage.css` スコープ・コメント・トークン定義確認
+  - SVG icon（signage）：横長大画面 + 支柱で遠距離表示を視覚化
+  - PROFILE_META の title 文言：Admin/Consumer/Terminal/Signage で視環境が区別されて読みやすい
+
+- **つまずき・注意**:
+  - **視環境軸の定着**：従来「Mobile-Terminal = 業務端末」と呼んでいた概念が「視環境軸」へ再構成されたため、
+    既存ドキュメント（tutorial/spec）との読み替え教育が後々必要。本セッションは Portal のみ更新。
+  - **CSS プロファイルの cascade 順序**：base.css の既定から profile-signage.css への上書きが効くよう、
+    読み込み順序が critical。コメント明記で注意喚起。
+  - **大型サイネージと Web アプリの共存**：同じ Core DS を引用しながらコンテキストが違うため、
+    プロジェクトが「うちはどれか」を最初に確定する重要性。ポータル操作ガイド等での前提化が必須。
+
+- **成果物**:
+  - ✅ Portal プロファイルスイッチャー：4 プロファイル対応・各プロファイルで CSS クラス切替え・
+    iframe と同期・URL に profile を保存・共有リンク対応
+  - ✅ Core DS `profile-signage.css`：8 段階スケール・視認距離 3-5m 前提・外部参照可能なトークン
+  - ✅ Portal ドキュメント：プロファイル表記の一貫性・usage ガイドの 4 プロファイル記述
+  - ✅ Icon 統一：視環境の差異を視覚化（desk/hand/scanner/large-display）
+
+- **ポータル反映**：
+  - Portal Home → プロファイル切替ボタン（4 つ）が表示
+  - Portal Developer ガイド → Code/a11y パネルで Signage コンテキスト対応コード確認可能
+  - Portal 使い方 → 「4 つのプロファイルで見え方を確認」と記述
+  - Portal タイポグラフィ見本 → 4 プロファイル全てで表示切替可能
+
+- **次セッション（実装側）の接続**:
+  - 那覇空港サイネージ or BusDelayAlerts で、
+    「コンテキスト判定 = Signage」と確定後、
+    `body.fig-profile-signage` を付与してローカル検証可能に
+  - conformance-assessment.md で「対象 = Signage プロファイル」を明示
+  - Phase B-A-C の修正時に profile-signage.css のトークンを参照
+
+- **記録更新**:
+  - `aidlc-state.md` Stage Progress に「Large Display Signage プロファイル Portal 実装完了」を追記
+  - `memory/initiative2-resume-point.md` を最新に更新
+  - `memory/MEMORY.md` に新規メモリ「portal-signage-profile-context.md」を索引追加
+  

@@ -23,15 +23,17 @@ const ICON = {
   admin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="14" height="14"><rect x="2" y="4" width="20" height="14" rx="2"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="12" y1="18" x2="12" y2="20"/></svg>',
   consumer: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="14" height="14"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg>',
   terminal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="14" height="14"><rect x="3" y="5" width="18" height="14" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+  signage: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="14" height="14"><rect x="4" y="2" width="16" height="12" rx="1"/><line x1="8" y1="18" x2="16" y2="18"/><line x1="10" y1="18" x2="10" y2="20"/><line x1="14" y1="18" x2="14" y2="20"/></svg>',
   search: '<svg class="portal-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>',
   searchPanel: '<svg class="search-panel__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>',
   menu: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>',
   chevron: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
 };
 const PROFILE_META = {
-  admin: { label: 'Admin', title: 'Web-Admin（PCメイン・情報密度優先）' },
-  consumer: { label: 'Consumer', title: 'Mobile-Consumer（一般ユーザー向け・操作性優先）' },
-  terminal: { label: 'Terminal', title: 'Mobile-Terminal（業務端末・固定視認性）' },
+  admin: { label: 'Admin', title: 'Web-Admin（デスク・近距離30cm・情報密度優先）' },
+  consumer: { label: 'Consumer', title: 'Mobile-Consumer（手持ち・中距離・操作性優先）' },
+  terminal: { label: 'Terminal', title: 'Mobile-Terminal（立位・固定視認・バーコードスキャン）' },
+  signage: { label: 'Signage', title: 'Large Display（遠距離3-5m・見上げ・サイネージ）' },
 };
 
 async function loadJson(path, fallback) {
@@ -129,7 +131,7 @@ function renderItem(node, currentRaw) {
   const isCurrent = ('#/' + currentRaw).split('?')[0] === route.split('?')[0];
   const av = node.avail;
   const availAttrs = av
-    ? ` data-avail-admin="${esc(av.admin || 'recommended')}" data-avail-consumer="${esc(av.consumer || 'recommended')}" data-avail-terminal="${esc(av.terminal || 'recommended')}"`
+    ? ` data-avail-admin="${esc(av.admin || 'recommended')}" data-avail-consumer="${esc(av.consumer || 'recommended')}" data-avail-terminal="${esc(av.terminal || 'recommended')}" data-avail-signage="${esc(av.signage || 'recommended')}"`
     : '';
   const badges = av
     ? `<span class="sidebar-item__badge sidebar-item__badge--avoid" aria-hidden="true">N/A</span><span class="sidebar-item__badge sidebar-item__badge--caution" aria-hidden="true">注意</span>`

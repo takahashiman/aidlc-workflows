@@ -227,7 +227,7 @@ function specPanel(page) {
 /** code（プロファイル連動・全 profile を DOM 出力し CSS が現 profile を表示） */
 function codeBlocks(code) {
   if (!code) return '';
-  const blocks = ['admin', 'consumer', 'terminal'].map(p => {
+  const blocks = ['admin', 'consumer', 'terminal', 'signage'].map(p => {
     const body = resolveProfileValue(code, p);
     return body ? `<pre class="page-code" data-code-profile="${p}"><code class="language-html">${esc(body)}</code></pre>` : '';
   }).join('');
@@ -235,10 +235,10 @@ function codeBlocks(code) {
   return `<h3 class="page-prose">Code（プロファイル連動）</h3><div class="code-blocks">${blocks}</div>`;
 }
 
-/** a11y（プロファイル連動・3 ブロックを常時出力し CSS が現 profile を表示。a11y は信頼 HTML） */
+/** a11y（プロファイル連動・4 ブロックを常時出力し CSS が現 profile を表示。a11y は信頼 HTML） */
 function a11yPanel(page) {
   const fallback = 'このページの a11y 注意点は spec を参照してください。';
-  const blocks = ['admin', 'consumer', 'terminal'].map(p => {
+  const blocks = ['admin', 'consumer', 'terminal', 'signage'].map(p => {
     const body = resolveProfileValue(page.a11y, p) || fallback;
     return `<div class="a11y-callout" data-a11y-profile="${p}"><strong>Accessibility</strong><div class="jp-text">${body}</div></div>`;
   }).join('');
