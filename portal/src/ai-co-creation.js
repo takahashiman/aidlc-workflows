@@ -263,37 +263,47 @@
      "createdAt": "${dateStr}"
    }
 
-3. index.html の生成
+3. パレット生成（手で色を決めない・生成物は DO NOT EDIT）
+   \`project-settings.json\` の \`signatureColor.value\` を seed として、本プロジェクト専用の
+   signature.css / status.css を決定的に生成すること（静的 hex・WCAG AA 保証）：
+
+       node tools/palette-gen/generate.mjs --seed=${v.signatureValue} --out extensions/${v.projectName}/styles/generated
+
+   - 出力された signature.css / status.css は生成物。手で編集しないこと。
+   - 色を変えたいときは seed を変えて本コマンドを再実行する（再生成）。
+
+4. index.html の生成
    \`extensions/template/index.html\` を雛形として \`extensions/${v.projectName}/index.html\` を生成。
    - \`<body class="fig-profile-${profileShort}">\` を必ず付与すること。
    - \`<head>\` で以下を必ずこの順に読み込むこと：
        1) ../../primitives.css
        2) ../../semantic.css
-       3) ../../tokens/signature.css                  ← --color-signature-* 派生層（Core 不変）
-       4) ../../tokens/base.css
-       5) ../../tokens/profile-${profileShort}.css    ← 選択プロファイルに対応する1つのみ
-       6) ../../tokens/components.css
-       7) ./styles/extensions.css
+       3) ./styles/generated/signature.css            ← 手順3の生成物（本PRJの seed・DO NOT EDIT）
+       4) ./styles/generated/status.css               ← 同上（機能色・AA保証）
+       5) ../../tokens/base.css
+       6) ../../tokens/profile-${profileShort}.css    ← 選択プロファイルに対応する1つのみ
+       7) ../../tokens/components.css
+       8) ./styles/extensions.css
 
-4. プロジェクト固有スタイルの配置
+5. プロジェクト固有スタイルの配置
    - プロジェクト固有スタイルは \`extensions/${v.projectName}/styles/extensions.css\` に記述。
-   - 値は必ず \`--fig-*\` / \`--color-*\` 等のトークン経由で参照すること（生 px / 生 hex は禁止）。
+   - 値は必ず \`--fig-*\` / \`--color-*\` / \`--signature-*\` / \`--status-*\` 等のトークン経由で参照すること（生 px / 生 hex は禁止）。
    - クラス命名規約: \`.${v.projectName}-{component}\` 形式（プロジェクト名前置で衝突回避）。
    - Core 部品の \`.fig-*\` クラスは上書きしないこと。
-   - \`extensions.css\` の冒頭で必ず以下の 1 行を記述すること（\`signatureColor.value\` と一致させる）：
+   - \`extensions.css\` に \`--color-signature\` 等のシグネチャー変数を手書きしないこと
+     （手順3の生成物が定義済み。手書き上書きは派生値 light/dark/tint/shadow と不整合になる）。
 
-       :root { --color-signature: ${v.signatureValue}; }
-
-5. シグネチャーカラーの取り扱い
-   - シグネチャーカラーは \`project-settings.json\` の \`signatureColor.value\` と
-     \`extensions.css\` の \`--color-signature\` の **2 箇所のみ** に書く（値は一致）。
-   - \`--color-signature-light\` / \`-dark\` / \`-tint\` / \`-shadow\` は
-     \`tokens/signature.css\` が \`color-mix()\` で自動派生するため、絶対に直接定義しないこと。
-   - Core ブランドの不変点（\`--color-brand-primary\` 等）を改変しないこと。
-   - 機能色（Success / Warning / Error / Info）は Core 既定を継承し、独自定義しないこと。
+6. シグネチャーカラーの取り扱い（生成物・手書き禁止）
+   - seed の正典は \`project-settings.json\` の \`signatureColor.value\` のみ。
+   - その seed から手順3の palette-gen が \`signature.css\` / \`status.css\` を決定的に生成する
+     （静的 hex・WCAG AA 保証・先頭に DO NOT EDIT）。手で書かない／light・dark を選ばないこと。
+   - 色変更は seed を変えて手順3を再実行する（再生成）。
+   - \`--color-signature-light\` / \`-dark\` / \`-tint\` / \`-shadow\` / ramp は生成物が確定値で持つ。直接定義しないこと。
+   - Core ブランドの不変点（\`--color-brand-primary\` 等）は生成物が委譲済み。改変しないこと。
+   - 機能色（Success / Warning / Error / Info）は生成物 \`status.css\` を使い、独自定義しないこと。
    - \`harmonization\` は \`tokens/signature-presets.json\` のプリセット ID を正典とする。
 
-6. ポータルへの登録
+7. ポータルへの登録
    \`assets/js/portal-content.js\` の \`SITEMAP.extensions.sections\` 配列に
    { id: '${v.projectName}', label: '${v.displayName} (${v.profile})', hint: '${v.description}', items: [{ id: 'overview', label: 'Overview' }] }
    を追加し、\`PAGES\` に \`'extensions/${v.projectName}/overview'\` エントリを定義すること。

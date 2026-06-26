@@ -685,6 +685,7 @@ const CH_EXISTING = [
           '例：入口 CSS が css/style.css（root 直下の css/）なら root へは ../ 一つ → vendor/core/semantic.css は ../vendor/core/semantic.css。',
           '例：入口 CSS が src/styles/index.css（2 階層）なら root へは ../../ → vendor/core は ../../vendor/core/...。',
           '生成ファイル（signature.css/status.css）は palette-gen の --out で出した場所を指す。Core 同梱の vendor/core/tokens/signature.css（既定の teal）とは別物なので混同しない。',
+          'signature.css/status.css は生成物（先頭に DO NOT EDIT）。手で編集せず、色変更は seed を変えて palette-gen を再実行（再生成）する。',
         ] },
         { k: 'aitip', t: '入口 CSS と各ファイルの絶対パスを生成AI に渡し「入口 CSS から見た正しい相対 @import にして」と頼むのが最短・確実。' },
         { k: 'note', t: 'VS Code 等なら、解決できない @import は警告（赤波線）で分かる。生成ファイルをエディタで右クリック→「相対パスをコピー」も有効。ターミナル出力の .\\signature.css を Ctrl+クリックすると別の同名ファイルに飛ぶことがあるので、--out で出した実体のパスを使う。' },
