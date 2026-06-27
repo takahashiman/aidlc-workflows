@@ -271,6 +271,10 @@
 
    - 出力された signature.css / status.css は生成物。手で編集しないこと。
    - 色を変えたいときは seed を変えて本コマンドを再実行する（再生成）。
+   - 多色パレット（第二ブランド／アクセント）が要るときは \`--scheme=<dyad|triad|tetrad|pentad|hexad|
+     complementary|split-complementary|analogous>\` を付けて accent.css も生成し、\`--accent-{n}-*\`
+     （accent-1 は \`--color-brand-secondary\` に委譲）を使う。seed と L 統一・AA 保証で調和する。
+     既定は monochromatic（単色・accent なし）。
 
 4. index.html の生成
    \`extensions/template/index.html\` を雛形として \`extensions/${v.projectName}/index.html\` を生成。

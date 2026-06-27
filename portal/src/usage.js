@@ -462,17 +462,17 @@ const T5_FORM_INSTRUCTION_EXAMPLE =
 以降、既存ファイルの生の px 値を var(--...) に置換し、VRT ベースライン再生成・a11y 確認を行ってください。`;
 
 const CH5_AI_TEXT =
-`値は手で決めません。章5 ② で生成した Core のトークンを「使って」置換に徹します（再生成しない）。
+`値は手で決めません。src/styles/generated に生成したトークンを「使って」置換に徹します（再生成しない）。
 
 前提（ここを先に固定する）：
-- 章5 ② で palette-gen 実行済み（seed=主ブランド色）。③ で入口 CSS に @import 済み。以降は --signature-* / --status-* を参照するだけ。
-- 入口 CSS は③で @import を追加した「既存のファイル」。新しい入口 CSS は作らない・アプリ構成（フォルダ移動等）も変えない。
-- 置換対象は章4 診断(T1)で生 hex が挙がった既存ファイル群（例：style.css など）。
-- 生成物の置き場（例 src/styles/generated）は palette の出力先であって、入口 CSS でも新しいソースでもない。
+- palette-gen 実行済み（seed=主ブランド色）。入口 CSS に @import 済み。以降は --signature-* / --status-* を参照するだけ。
+- 入口 CSS とは @import を追加した「既存のファイル」。新しい入口 CSS は作らない。アプリ構成（フォルダ移動等）も変えない。
+- 置換対象はスタイルの現状診断で生 hex が挙がった既存ファイル群（例：style.css など）。
+- 生成物の置き場（例：src/styles/generated）は palette の出力先であって、入口 CSS でも新しいソースでもない。
 
 1) ブランド（signature）
-   - seed の見極め：章4 診断(T1)の最頻出色のうち、ロゴ/ヘッダ/主要ボタンなど”ブランドの意図”で
-     使われている色＝主ブランド色（②でこの色を seed に生成済み）。
+   - seed の見極め：スタイルの現状診断の最頻出色のうち、ロゴ/ヘッダ/主要ボタンなど”ブランドの意図”で
+     使われている色＝主ブランド色（既にその色を seed とみなし、生成済み）。
    - 生成された --signature-base/light/dark/... を使う（light/dark を手で選ばない・AA 保証）。
 
 2) status（success/warning/danger）
@@ -487,13 +487,19 @@ const CH5_AI_TEXT =
    【palette-gen が生成する色】
    - signature（seed=主ブランド色から自動生成）：--signature-base / light / dark / tint / shadow / on + 色相 ramp（50-900）
    - status（WCAG AA保証・3種）：--status-success / warning / danger（各 surface / tint / on）
-   - これ以外の色は palette-gen では生成されない。
+   - （リブランド時のみ）accent（--scheme で N 色相）：--accent-{n}-*（accent-1 は --color-brand-secondary に委譲）
+   - 上記以外の色は palette-gen では生成されない。
 
    【生hex → 寄せ先の判定フロー】
 
-   ❶ 「本来ブランド色のはずだが、seed以外の色」（例：第二ブランド、CTA黄）
-      → 製品ローカルトークン化（例：--brand-accent、--brand-secondary）
-      ※ Core palette-gen は seed 1色からしか作らないので「寄せる」ではなく「新規定義」
+   ❶ 「本来ブランド色のはずだが、seed以外の色」（例：第二ブランド、CTA色）
+      ── 先に方針を決める：「保持（ブランド不変・既定）」か「リブランド（色味を整える）」か ──
+      ❶-A 保持（既定）
+         → 製品ローカルトークン化（例：--brand-accent、--brand-secondary）。既存の色味を1ミリも動かさない。
+      ❶-B リブランド
+         → seed から調和派生したアクセントへ寄せる。主色を seed に、配色スキームを選んで再生成する：
+           node vendor/core/tools/palette-gen/generate.mjs --seed=<主ブランド色> --scheme=<dyad|triad|tetrad|pentad|hexad|complementary|split-complementary|analogous> --out src/styles/generated
+           → 出た --accent-{n}-* / --color-brand-secondary を使う（AA 保証・seed と L 統一で調和・わずかに色が変わる＝意図的）。
 
    ❷ 「状態的な意味がある色」（エラー/赤、警告/黄、成功/緑 等）
       → status-danger / warning / success へ寄せてOK
@@ -504,7 +510,7 @@ const CH5_AI_TEXT =
         か、その色をもう使わないなら削除。置換ではなく「整理」が本来の対応。
 
    【具体例（Haiku テスト結果から）】
-   - #ffdd00(黄CTA) → ❶。palette-gen は黄を生成しない。status-warning に寄せない → 製品ローカル --brand-accent
+   - #ffdd00(黄CTA) → ❶。status-warning には寄せない。保持なら製品ローカル --brand-accent（❶-A）／リブランドなら scheme 生成の --accent-{n}（❶-B）
    - #f00(赤エラー) → ❷。「エラー表示」=状態的意味 → --status-danger へ寄せてOK
    - #91c455(緑ボタン) → ❸。「フロアマップボタン」の固有色・実際の用途が不明確 → 暫定で --btn-floormap（製品ローカル）
    - #FD7E33(オレンジリンク) → ❷。「テキストリンク」=視覚的強調・警告的 → --status-warning へ寄せてOK
